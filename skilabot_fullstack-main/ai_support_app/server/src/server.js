@@ -9,6 +9,7 @@ import { nanoid } from "nanoid";
 import { readDb, updateDb } from "./store.js";
 import { makeBotReply, classify } from "./bot.js";
 import nodemailer from "nodemailer";
+import { prisma } from "./db.js";
 
 const app = express();
 const PORT = Number(process.env.PORT || 4000);
@@ -237,19 +238,15 @@ app.post("/api/leads", async (req, res) => {
     return res.status(400).json({ error: "Email is required" });
   }
 
-  const lead = await updateDb(async db => {
-    const item = {
-      id: nanoid(),
+  const lead = await prisma.lead.create({
+    data: {
       email,
       name,
       subject,
       message,
       source,
-      createdAt: new Date().toISOString(),
-    };
-
-    db.leads.push(item);
-    return item;
+      status: "new",
+    },
   });
 
   try {
@@ -260,10 +257,11 @@ app.post("/api/leads", async (req, res) => {
 
   res.status(201).json({
     ok: true,
-    message: "Lead saved and email notification sent",
+    message: "Lead saved and email attempted",
     lead,
   });
 });
+  
 
 // ── Admin routes ──────────────────────────────────────────────────────────────
 
