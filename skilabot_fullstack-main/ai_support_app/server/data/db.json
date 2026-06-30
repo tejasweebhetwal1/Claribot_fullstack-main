@@ -75,7 +75,26 @@
       "updatedAt": "2026-06-30T03:38:53.065Z"
     }
   ],
-  "leads": [],
+  "leads": [
+    {
+      "id": "_bdWki7xgCmIgS8z-cDZa",
+      "email": "tejasweebhetwal1@gmail.com",
+      "name": "",
+      "subject": "",
+      "message": "",
+      "source": "hero",
+      "createdAt": "2026-06-30T08:03:26.460Z"
+    },
+    {
+      "id": "bJYToA__ybUx4sLb_AlAR",
+      "email": "tejasweebhetwal1@gmail.com",
+      "name": "",
+      "subject": "",
+      "message": "",
+      "source": "hero",
+      "createdAt": "2026-06-30T08:12:12.838Z"
+    }
+  ],
   "settings": {
     "businessName": "Claribot ",
     "escalationEmail": "admin@yourcompany.com",

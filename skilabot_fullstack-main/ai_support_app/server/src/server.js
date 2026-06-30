@@ -157,7 +157,7 @@ app.post("/api/admin/login", async (req, res) => {
 
 // ── Conversations ─────────────────────────────────────────────────────────────
 
-aapp.get("/api/admin/summary", auth, adminOnly, async (req, res) => {
+app.get("/api/admin/summary", auth, adminOnly, async (req, res) => {
   const db = await readDb();
   const convs = db.conversations
     .filter(c => c.userId === req.user.id)
@@ -187,7 +187,7 @@ app.get("/api/admin/summary", auth, adminOnly, async (req, res) => {
   res.status(201).json(conv);
 });
 
-aapp.get("/api/admin/summary", auth, adminOnly, async (req, res) => {
+app.get("/api/admin/summary", auth, adminOnly, async (req, res) => {
   await updateDb(async db => {
     const idx = db.conversations.findIndex(c => c.id === req.params.id && c.userId === req.user.id);
     if (idx !== -1) db.conversations.splice(idx, 1);
