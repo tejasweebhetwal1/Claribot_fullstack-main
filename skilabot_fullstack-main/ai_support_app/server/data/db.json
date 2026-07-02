@@ -1,107 +1,145 @@
 {
   "users": [
     {
-      "id": "EvPpbZ4iv1LRZ3o2Ah-C5",
-      "name": "tejaswee",
-      "email": "tessa@gmail.com",
-      "passwordHash": "$2a$10$GwUHK.WdBfNsKzE4QEUsCOeFoUjoLb1zvmYcPmN5jiYfOW1AW9s.6",
-      "role": "admin",
-      "createdAt": "2026-06-29T12:04:09.846Z"
+      "id": "1782998668214",
+      "name": "Mike",
+      "email": "mike@gmail.com",
+      "password": "$2b$10$399..86aSZqIKJqsFF40iut2hsR6vuX3Jb2zBFbaYpZ5otCGUA1xO",
+      "role": "customer",
+      "createdAt": "2026-07-02T13:24:28.214Z"
+    },
+    {
+      "id": "1782999003466",
+      "name": "mukesh",
+      "email": "mukeshsapkota55@gmail.com",
+      "password": "$2b$10$jfiFSxWsOHqod83BeV7qdu2WjwEWzGe92s7nUM80xzlktXRJatKSa",
+      "role": "customer",
+      "createdAt": "2026-07-02T13:30:03.466Z"
     }
   ],
   "conversations": [
     {
-      "id": "A2D4funUPD96XUlIG-WCs",
-      "userId": "EvPpbZ4iv1LRZ3o2Ah-C5",
-      "title": "Can I export my chat history?",
-      "status": "resolved",
-      "sentiment": "positive",
-      "messages": [
-        {
-          "id": "ldPIZ-1JAkp2opRj5VQNd",
-          "role": "user",
-          "text": "Can I export my chat history?",
-          "createdAt": "2026-06-29T12:04:38.095Z"
-        },
-        {
-          "id": "M2BkE6u8uakIMBgxGKQ44",
-          "role": "bot",
-          "text": "Thanks for explaining. I’ve recorded your message and here’s the best next step: please share any account email, order number, or screenshot if relevant, and I’ll guide you or escalate it.",
-          "createdAt": "2026-06-29T12:04:38.095Z"
-        },
-        {
-          "id": "20ehrGhlNdb_ruWi6i1PU",
-          "role": "user",
-          "text": "32415",
-          "createdAt": "2026-06-29T12:04:54.150Z"
-        },
-        {
-          "id": "bF6sK8_P-ecBoK7EfjsLG",
-          "role": "bot",
-          "text": "Thanks for explaining. I’ve recorded your message and here’s the best next step: please share any account email, order number, or screenshot if relevant, and I’ll guide you or escalate it.",
-          "createdAt": "2026-06-29T12:04:54.150Z"
-        },
-        {
-          "id": "oyDwUEnGdnncGvIzWG5JI",
-          "role": "user",
-          "text": "my order number is 67",
-          "createdAt": "2026-06-29T12:05:05.749Z"
-        },
-        {
-          "id": "ErhAMGbuy0A8Ms34Z9HLp",
-          "role": "bot",
-          "text": "Thanks for explaining. I’ve recorded your message and here’s the best next step: please share any account email, order number, or screenshot if relevant, and I’ll guide you or escalate it.",
-          "createdAt": "2026-06-29T12:05:05.749Z"
-        }
-      ],
-      "createdAt": "2026-06-29T12:04:38.095Z",
-      "updatedAt": "2026-06-29T12:05:05.749Z"
-    },
-    {
-      "id": "qtHG2XXP3hpPZpRyvpbgE",
-      "userId": "EvPpbZ4iv1LRZ3o2Ah-C5",
+      "id": "1783000099338",
+      "userId": "guest",
       "title": "New conversation",
       "status": "open",
-      "sentiment": "neutral",
       "messages": [
         {
-          "id": "RwhlTR_XuIO56LRAsOK3B",
+          "id": "1783000099338",
           "role": "bot",
-          "text": "Hello! 👋 I'm ClariBot, your AI support assistant. How can I help you today?",
-          "createdAt": "2026-06-30T03:38:53.065Z"
+          "text": "Hello! 👋 I’m ClariBot, your AI support assistant. How can I help you today?",
+          "createdAt": "2026-07-02T13:48:19.338Z"
+        },
+        {
+          "id": "1783000775675",
+          "role": "user",
+          "text": "How can I contact support?",
+          "createdAt": "2026-07-02T13:59:35.675Z"
+        },
+        {
+          "id": "1783000775676",
+          "role": "bot",
+          "text": "You can contact our support team by email at support@claribot.com or call us during business hours.",
+          "createdAt": "2026-07-02T13:59:35.675Z"
+        },
+        {
+          "id": "1783000779847",
+          "role": "user",
+          "text": "delivery",
+          "createdAt": "2026-07-02T13:59:39.847Z"
+        },
+        {
+          "id": "1783000779848",
+          "role": "bot",
+          "text": "Thanks for reaching out! I'd be happy to help. Could you share a bit more detail so I can give you the most accurate answer?",
+          "createdAt": "2026-07-02T13:59:39.847Z"
+        },
+        {
+          "id": "1783000782485",
+          "role": "user",
+          "text": "refund",
+          "createdAt": "2026-07-02T13:59:42.485Z"
+        },
+        {
+          "id": "1783000782486",
+          "role": "bot",
+          "text": "Refund requests are reviewed by our support team. Please provide your order details so we can assist you further.",
+          "createdAt": "2026-07-02T13:59:42.485Z"
+        },
+        {
+          "id": "1783000796587",
+          "role": "user",
+          "text": "opening hours",
+          "createdAt": "2026-07-02T13:59:56.587Z"
+        },
+        {
+          "id": "1783000796588",
+          "role": "bot",
+          "text": "Our opening hours are Monday to Friday, 9:00 AM to 5:00 PM. We are closed on weekends and public holidays.",
+          "createdAt": "2026-07-02T13:59:56.587Z"
+        },
+        {
+          "id": "1783000803156",
+          "role": "user",
+          "text": "product",
+          "createdAt": "2026-07-02T14:00:03.156Z"
+        },
+        {
+          "id": "1783000803157",
+          "role": "bot",
+          "text": "Thanks for reaching out! I'd be happy to help. Could you share a bit more detail so I can give you the most accurate answer?",
+          "createdAt": "2026-07-02T14:00:03.156Z"
+        },
+        {
+          "id": "1783000932741",
+          "role": "user",
+          "text": "refund",
+          "createdAt": "2026-07-02T14:02:12.741Z"
+        },
+        {
+          "id": "1783000932742",
+          "role": "bot",
+          "text": "Refund requests are reviewed by our support team. Please provide your order details so we can assist you further.",
+          "createdAt": "2026-07-02T14:02:12.741Z"
+        },
+        {
+          "id": "1783000943416",
+          "role": "user",
+          "text": "contact",
+          "createdAt": "2026-07-02T14:02:23.416Z"
+        },
+        {
+          "id": "1783000943417",
+          "role": "bot",
+          "text": "You can contact our support team by email at support@claribot.com or call us during business hours.",
+          "createdAt": "2026-07-02T14:02:23.416Z"
+        },
+        {
+          "id": "1783001409265",
+          "role": "user",
+          "text": "contact",
+          "createdAt": "2026-07-02T14:10:09.265Z"
+        },
+        {
+          "id": "1783001409266",
+          "role": "bot",
+          "text": "You can contact our support team by email at support@claribot.com or call us during business hours.",
+          "createdAt": "2026-07-02T14:10:09.265Z"
+        },
+        {
+          "id": "1783001412396",
+          "role": "user",
+          "text": "thank you",
+          "createdAt": "2026-07-02T14:10:12.396Z"
+        },
+        {
+          "id": "1783001412397",
+          "role": "bot",
+          "text": "You’re welcome! I’m happy to help.",
+          "createdAt": "2026-07-02T14:10:12.396Z"
         }
       ],
-      "createdAt": "2026-06-30T03:38:53.065Z",
-      "updatedAt": "2026-06-30T03:38:53.065Z"
+      "createdAt": "2026-07-02T13:48:19.338Z"
     }
-  ],
-  "leads": [
-    {
-      "id": "_bdWki7xgCmIgS8z-cDZa",
-      "email": "tejasweebhetwal1@gmail.com",
-      "name": "",
-      "subject": "",
-      "message": "",
-      "source": "hero",
-      "createdAt": "2026-06-30T08:03:26.460Z"
-    },
-    {
-      "id": "bJYToA__ybUx4sLb_AlAR",
-      "email": "tejasweebhetwal1@gmail.com",
-      "name": "",
-      "subject": "",
-      "message": "",
-      "source": "hero",
-      "createdAt": "2026-06-30T08:12:12.838Z"
-    }
-  ],
-  "settings": {
-    "businessName": "Claribot ",
-    "escalationEmail": "admin@yourcompany.com",
-    "botTone": "Friendly and concise",
-    "retentionDays": 90,
-    "confidenceThreshold": 85,
-    "maxTurns": 8,
-    "slackWebhook": ""
-  }
+  ]
 }

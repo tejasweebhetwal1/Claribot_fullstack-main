@@ -5,33 +5,31 @@ import {
   Menu,
   X,
   Home,
-  MessageCircle,
   HelpCircle,
   Briefcase,
-  LayoutDashboard,
   LogOut,
   ChevronDown,
+  User,
+  Mail,
+  Shield,
 } from "lucide-react";
 import { clearSession, getUser } from "../lib/api";
 
 const NAV_ITEMS = [
   { to: "/", label: "Home", icon: Home },
-
   { to: "/faq", label: "FAQ", icon: HelpCircle },
   { to: "/business", label: "Business", icon: Briefcase },
-  
 ];
 
 export default function Root() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const user = getUser();
 
-  // Pages that use their own nav (landing)
   const isLanding = location.pathname === "/";
-  
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20);
@@ -39,12 +37,10 @@ export default function Root() {
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
-  // Landing page manages its own nav — just render children
   if (isLanding) return <Outlet />;
 
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#fef0f5" }}>
-      {/* Top nav */}
       <nav
         className="sticky top-0 z-40 transition-all duration-300"
         style={{
@@ -54,7 +50,6 @@ export default function Root() {
         }}
       >
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          {/* Logo */}
           <button onClick={() => navigate("/")} className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg,#7c3aed,#9d5cf5)" }}>
               <Bot size={16} color="#fff" />
@@ -64,7 +59,6 @@ export default function Root() {
             </span>
           </button>
 
-          {/* Desktop links */}
           <div className="hidden md:flex items-center gap-1">
             {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
               <NavLink
@@ -84,30 +78,64 @@ export default function Root() {
             ))}
           </div>
 
-          {/* Right actions */}
-          <div className="hidden md:flex items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl" style={{ background: "rgba(124,58,237,0.08)" }}>
-              <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ background: "#7c3aed" }}>{(user?.name || "A").charAt(0).toUpperCase()}</div>
-              <span className="text-sm font-medium" style={{ color: "#12082a", fontFamily: "var(--font-display)" }}>{user?.name || "Admin"}</span>
-              <ChevronDown size={13} style={{ color: "#7c3aed" }} />
-            </div>
+          <div className="hidden md:flex items-center gap-3 relative">
             <button
-              onClick={() => { clearSession(); navigate("/login"); }}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-red-50"
-              style={{ color: "#ef4444", fontFamily: "var(--font-body)" }}
+              onClick={() => setProfileOpen((v) => !v)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl"
+              style={{ background: "rgba(124,58,237,0.08)" }}
             >
-              <LogOut size={15} />
-              Logout
+              <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ background: "#7c3aed" }}>
+                {(user?.name || "A").charAt(0).toUpperCase()}
+              </div>
+              <span className="text-sm font-medium" style={{ color: "#12082a", fontFamily: "var(--font-display)" }}>
+                {user?.name || "Settings"}
+              </span>
+              <ChevronDown size={13} style={{ color: "#7c3aed" }} />
             </button>
+
+            {profileOpen && (
+              <div
+                className="absolute right-0 top-12 w-64 rounded-2xl shadow-lg p-4 z-50"
+                style={{ background: "#fff", border: "1px solid rgba(124,58,237,0.15)" }}
+              >
+                <p className="font-bold mb-3" style={{ color: "#12082a" }}>Admin Profile</p>
+
+                <div className="flex items-center gap-2 text-sm mb-2">
+                  <User size={15} />
+                  <span>{user?.name || "Admin"}</span>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm mb-2">
+                  <Mail size={15} />
+                  <span>{user?.email || "admin@claribot.com"}</span>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm mb-4">
+                  <Shield size={15} />
+                  <span>{user?.role || "Admin"}</span>
+                </div>
+
+                <button
+                  onClick={() => {
+                    clearSession();
+                    setProfileOpen(false);
+                    navigate("/login");
+                  }}
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium hover:bg-red-50"
+                  style={{ color: "#ef4444" }}
+                >
+                  <LogOut size={15} />
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* Mobile toggle */}
-          <button className="md:hidden p-2 rounded-lg" onClick={() => setMobileOpen(v => !v)}>
+          <button className="md:hidden p-2 rounded-lg" onClick={() => setMobileOpen((v) => !v)}>
             {mobileOpen ? <X size={20} style={{ color: "#12082a" }} /> : <Menu size={20} style={{ color: "#12082a" }} />}
           </button>
         </div>
 
-        {/* Mobile menu */}
         {mobileOpen && (
           <div className="md:hidden border-t px-4 py-4 flex flex-col gap-1" style={{ borderColor: "rgba(124,58,237,0.1)", background: "rgba(254,240,245,0.98)" }}>
             {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
@@ -127,8 +155,13 @@ export default function Root() {
                 {label}
               </NavLink>
             ))}
+
             <button
-              onClick={() => { clearSession(); setMobileOpen(false); navigate("/login"); }}
+              onClick={() => {
+                clearSession();
+                setMobileOpen(false);
+                navigate("/login");
+              }}
               className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium mt-1"
               style={{ color: "#ef4444", fontFamily: "var(--font-body)" }}
             >
@@ -139,7 +172,6 @@ export default function Root() {
         )}
       </nav>
 
-      {/* Page content */}
       <main className="flex-1">
         <Outlet />
       </main>

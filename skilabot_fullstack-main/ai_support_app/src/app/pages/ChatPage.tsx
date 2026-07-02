@@ -2,9 +2,27 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { api, getToken, clearSession, type ApiConversation } from "../lib/api";
 import {
-  Bot, Send, Plus, Search, MoreHorizontal, Trash2, Edit3, ThumbsUp, ThumbsDown,
-  Copy, RefreshCw, Paperclip, Smile, Mic, MicOff, X, MessageSquare, Sparkles,
-  CheckCheck, LogOut, Download, StopCircle,
+  Bot,
+  Send,
+  Plus,
+  Search,
+  MoreHorizontal,
+  Trash2,
+  ThumbsUp,
+  ThumbsDown,
+  Copy,
+  RefreshCw,
+  Paperclip,
+  Smile,
+  Mic,
+  MicOff,
+  X,
+  MessageSquare,
+  Sparkles,
+  CheckCheck,
+  LogOut,
+  Download,
+  StopCircle,
 } from "lucide-react";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -26,24 +44,153 @@ interface Conversation {
   isApi?: boolean;
 }
 
-// ── Fallback replies (used when backend is offline) ───────────────────────────
+// ── Fallback replies ──────────────────────────────────────────────────────────
 
 const BOT_RESPONSES: Record<string, string> = {
-  default: "Thanks for reaching out! I'd be happy to help. Could you share a bit more detail so I can give you the most accurate answer?",
-  billing: "I can see your account details right here. Your latest invoice #4421 was generated on June 20, 2026 for $99. I can resend it to your registered email — want me to do that?",
-  plan: "The **Growth plan** at $99/mo includes 20,000 conversations per month, 5 channel integrations, advanced analytics, human handoff, and priority support. Would you like to upgrade?",
-  slack: "Connecting Slack takes about 2 minutes! Go to **Settings → Integrations → Slack**, click Connect, and authorise ClariBot in your Slack workspace. Need a step-by-step walkthrough?",
-  export: "Yes! You can export your full chat history as CSV or JSON. Head to **Settings → Data → Export Conversations**. You'll receive a download link by email within minutes.",
-  training: "ClariBot learns from every conversation automatically. You can also upload documents in **Settings → AI Training → Knowledge Base**. Changes take effect within 15 minutes.",
+  default:
+    "Thanks for reaching out! I'd be happy to help. Could you share a bit more detail so I can give you the most accurate answer?",
+
+  billing:
+    "I can see your account details right here. Your latest invoice #4421 was generated on June 20, 2026 for $99. I can resend it to your registered email — want me to do that?",
+
+  plan:
+    "The **Growth plan** at $99/mo includes 20,000 conversations per month, 5 channel integrations, advanced analytics, human handoff, and priority support. Would you like to upgrade?",
+
+  slack:
+    "Connecting Slack takes about 2 minutes! Go to **Settings → Integrations → Slack**, click Connect, and authorise ClariBot in your Slack workspace. Need a step-by-step walkthrough?",
+
+  export:
+    "Yes! You can export your full chat history as CSV or JSON. Head to **Settings → Data → Export Conversations**. You'll receive a download link by email within minutes.",
+
+  training:
+    "ClariBot learns from every conversation automatically. You can also upload documents in **Settings → AI Training → Knowledge Base**. Changes take effect within 15 minutes.",
+
+  opening:
+    "Our opening hours are **Monday to Friday, 9:00 AM to 5:00 PM**. We are closed on weekends and public holidays.",
+
+  delivery:
+    "Delivery is available during our business hours: **Monday to Friday, 9:00 AM to 5:00 PM**. Delivery time may depend on your location and order size.",
+
+  contact:
+    "You can contact our support team by email at **support@claribot.com** or through the live chat during business hours.",
+
+  refund:
+    "Refund requests are reviewed by our support team. Please provide your order number, email address, and reason for refund so we can assist you.",
+
+  greeting:
+    "Hello! 👋 I'm ClariBot, your AI support assistant. How can I help you today?",
+
+  thanks:
+    "You're welcome! I'm happy to help.",
 };
 
 function getBotReply(input: string): string {
   const lower = input.toLowerCase();
-  if (lower.includes("billing") || lower.includes("invoice") || lower.includes("payment")) return BOT_RESPONSES.billing;
-  if (lower.includes("plan") || lower.includes("growth") || lower.includes("pricing")) return BOT_RESPONSES.plan;
-  if (lower.includes("slack") || lower.includes("connect") || lower.includes("integration")) return BOT_RESPONSES.slack;
-  if (lower.includes("export") || lower.includes("history") || lower.includes("download")) return BOT_RESPONSES.export;
-  if (lower.includes("train") || lower.includes("ai") || lower.includes("learn")) return BOT_RESPONSES.training;
+
+  if (
+    lower.includes("opening") ||
+    lower.includes("opening time") ||
+    lower.includes("opening hours") ||
+    lower.includes("business hours") ||
+    lower.includes("open time") ||
+    lower.includes("what time do you open") ||
+    lower.includes("what time are you open") ||
+    lower.includes("when do you open") ||
+    lower.includes("when are you open") ||
+    lower.includes("close time") ||
+    lower.includes("closing time") ||
+    lower.includes("hours")
+  ) {
+    return BOT_RESPONSES.opening;
+  }
+
+  if (
+    lower.includes("delivery") ||
+    lower.includes("deliver") ||
+    lower.includes("shipping") ||
+    lower.includes("ship") ||
+    lower.includes("home delivery")
+  ) {
+    return BOT_RESPONSES.delivery;
+  }
+
+  if (
+    lower.includes("contact") ||
+    lower.includes("phone") ||
+    lower.includes("call") ||
+    lower.includes("email") ||
+    lower.includes("support")
+  ) {
+    return BOT_RESPONSES.contact;
+  }
+
+  if (
+    lower.includes("refund") ||
+    lower.includes("return") ||
+    lower.includes("money back") ||
+    lower.includes("cancel")
+  ) {
+    return BOT_RESPONSES.refund;
+  }
+
+  if (
+    lower.includes("billing") ||
+    lower.includes("invoice") ||
+    lower.includes("payment")
+  ) {
+    return BOT_RESPONSES.billing;
+  }
+
+  if (
+    lower.includes("plan") ||
+    lower.includes("growth") ||
+    lower.includes("pricing") ||
+    lower.includes("price") ||
+    lower.includes("cost") ||
+    lower.includes("fee")
+  ) {
+    return BOT_RESPONSES.plan;
+  }
+
+  if (
+    lower.includes("slack") ||
+    lower.includes("connect") ||
+    lower.includes("integration")
+  ) {
+    return BOT_RESPONSES.slack;
+  }
+
+  if (
+    lower.includes("export") ||
+    lower.includes("history") ||
+    lower.includes("download")
+  ) {
+    return BOT_RESPONSES.export;
+  }
+
+  if (
+    lower.includes("train") ||
+    lower.includes("ai") ||
+    lower.includes("learn")
+  ) {
+    return BOT_RESPONSES.training;
+  }
+
+  if (
+    lower.includes("hello") ||
+    lower.includes("hi") ||
+    lower.includes("hey")
+  ) {
+    return BOT_RESPONSES.greeting;
+  }
+
+  if (
+    lower.includes("thank") ||
+    lower.includes("thanks")
+  ) {
+    return BOT_RESPONSES.thanks;
+  }
+
   return BOT_RESPONSES.default;
 }
 
@@ -51,23 +198,39 @@ const QUICK_REPLIES = [
   "What's included in the Growth plan?",
   "How do I connect Slack?",
   "Can I export my chat history?",
-  "How does AI training work?",
+  "What are your opening hours?",
+  "Do you provide delivery?",
+  "How can I contact support?",
 ];
 
 function now() {
-  return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  return new Date().toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function toUiMessages(conv: ApiConversation): Message[] {
-  return conv.messages.map(m => ({
-    id: m.id, role: m.role, text: m.text,
-    time: new Date(m.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+  return conv.messages.map((m) => ({
+    id: m.id,
+    role: m.role,
+    text: m.text,
+    time: new Date(m.createdAt).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
   }));
 }
 
 // ── Message Bubble ────────────────────────────────────────────────────────────
 
-function Bubble({ msg, onLike }: { msg: Message; onLike: (id: number | string, v: boolean) => void }) {
+function Bubble({
+  msg,
+  onLike,
+}: {
+  msg: Message;
+  onLike: (id: number | string, v: boolean) => void;
+}) {
   const [copied, setCopied] = useState(false);
 
   function copy() {
@@ -81,17 +244,30 @@ function Bubble({ msg, onLike }: { msg: Message; onLike: (id: number | string, v
   return (
     <div className={`flex gap-3 group ${isBot ? "justify-start" : "justify-end"}`}>
       {isBot && (
-        <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-1" style={{ background: "linear-gradient(135deg,#7c3aed,#9d5cf5)" }}>
+        <div
+          className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-1"
+          style={{ background: "linear-gradient(135deg,#7c3aed,#9d5cf5)" }}
+        >
           <Bot size={15} color="#fff" />
         </div>
       )}
+
       <div className="max-w-[72%] flex flex-col gap-1">
         <div
           className="px-4 py-3 rounded-2xl text-sm leading-relaxed"
           style={
             isBot
-              ? { background: "#fff", color: "#12082a", borderBottomLeftRadius: "4px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }
-              : { background: "linear-gradient(135deg,#7c3aed,#9d5cf5)", color: "#fff", borderBottomRightRadius: "4px" }
+              ? {
+                  background: "#fff",
+                  color: "#12082a",
+                  borderBottomLeftRadius: "4px",
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                }
+              : {
+                  background: "linear-gradient(135deg,#7c3aed,#9d5cf5)",
+                  color: "#fff",
+                  borderBottomRightRadius: "4px",
+                }
           }
         >
           {msg.text.split("**").map((part, i) =>
@@ -99,34 +275,62 @@ function Bubble({ msg, onLike }: { msg: Message; onLike: (id: number | string, v
           )}
         </div>
 
-        <div className={`flex items-center gap-2 px-1 opacity-0 group-hover:opacity-100 transition-opacity ${isBot ? "justify-start" : "justify-end"}`}>
-          <span className="text-xs" style={{ color: "#7a6080" }}>{msg.time}</span>
+        <div
+          className={`flex items-center gap-2 px-1 opacity-0 group-hover:opacity-100 transition-opacity ${
+            isBot ? "justify-start" : "justify-end"
+          }`}
+        >
+          <span className="text-xs" style={{ color: "#7a6080" }}>
+            {msg.time}
+          </span>
+
           {!isBot && <CheckCheck size={12} style={{ color: "#7c3aed" }} />}
+
           {isBot && (
             <>
-              <button onClick={copy} className="p-1 rounded hover:bg-black/5 transition-colors" title="Copy">
-                {copied ? <CheckCheck size={13} style={{ color: "#10b981" }} /> : <Copy size={13} style={{ color: "#7a6080" }} />}
+              <button
+                onClick={copy}
+                className="p-1 rounded hover:bg-black/5 transition-colors"
+                title="Copy"
+              >
+                {copied ? (
+                  <CheckCheck size={13} style={{ color: "#10b981" }} />
+                ) : (
+                  <Copy size={13} style={{ color: "#7a6080" }} />
+                )}
               </button>
+
               <button
                 onClick={() => onLike(msg.id, true)}
                 className="p-1 rounded hover:bg-black/5 transition-colors"
                 title="Helpful"
               >
-                <ThumbsUp size={13} style={{ color: msg.liked === true ? "#10b981" : "#7a6080" }} />
+                <ThumbsUp
+                  size={13}
+                  style={{ color: msg.liked === true ? "#10b981" : "#7a6080" }}
+                />
               </button>
+
               <button
                 onClick={() => onLike(msg.id, false)}
                 className="p-1 rounded hover:bg-black/5 transition-colors"
                 title="Not helpful"
               >
-                <ThumbsDown size={13} style={{ color: msg.liked === false ? "#ef4444" : "#7a6080" }} />
+                <ThumbsDown
+                  size={13}
+                  style={{ color: msg.liked === false ? "#ef4444" : "#7a6080" }}
+                />
               </button>
             </>
           )}
         </div>
       </div>
+
       {!isBot && (
-        <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-1 text-white text-xs font-bold" style={{ background: "#f97316" }}>
+        <div
+          className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-1 text-white text-xs font-bold"
+          style={{ background: "#f97316" }}
+        >
           U
         </div>
       )}
@@ -138,11 +342,18 @@ function Bubble({ msg, onLike }: { msg: Message; onLike: (id: number | string, v
 
 export default function ChatPage() {
   const navigate = useNavigate();
+
   const [activeConvId, setActiveConvId] = useState<number | string>(1);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [messages, setMessages] = useState<Message[]>([
-    { id: 0, role: "bot", text: "Hello! 👋 I'm ClariBot, your AI support assistant. How can I help you today?", time: now() },
+    {
+      id: 0,
+      role: "bot",
+      text: "Hello! 👋 I'm ClariBot, your AI support assistant. How can I help you today?",
+      time: now(),
+    },
   ]);
+
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -150,6 +361,7 @@ export default function ChatPage() {
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState<any>(null);
+
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -161,17 +373,27 @@ export default function ChatPage() {
   // Load conversations from backend
   useEffect(() => {
     if (!getToken()) return;
-    api.conversations()
-      .then(items => {
+
+    api
+      .conversations()
+      .then((items) => {
         if (!items.length) return;
-        const uiConvs: Conversation[] = items.map(c => ({
+
+        const uiConvs: Conversation[] = items.map((c) => ({
           id: c.id,
           title: c.title,
           preview: c.messages[c.messages.length - 1]?.text?.slice(0, 60) || "",
-          time: new Date(c.updatedAt).toLocaleDateString([], { month: "short", day: "numeric" }),
+          time: c.updatedAt
+            ? new Date(c.updatedAt).toLocaleDateString([], {
+                month: "short",
+                day: "numeric",
+              })
+            : "Now",
           isApi: true,
         }));
+
         setConversations(uiConvs);
+
         const latest = items[0];
         setActiveConvId(latest.id);
         setMessages(toUiMessages(latest));
@@ -183,57 +405,107 @@ export default function ChatPage() {
   useEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
+
     el.style.height = "auto";
     el.style.height = Math.min(el.scrollHeight, 120) + "px";
   }, [input]);
 
   // Setup speech recognition
   useEffect(() => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
     if (!SpeechRecognition) return;
+
     const rec = new SpeechRecognition();
+
     rec.continuous = false;
     rec.interimResults = false;
     rec.lang = "en-US";
+
     rec.onresult = (e: any) => {
       const transcript = e.results[0][0].transcript;
-      setInput(prev => prev + (prev ? " " : "") + transcript);
+      setInput((prev) => prev + (prev ? " " : "") + transcript);
       setIsListening(false);
     };
+
     rec.onerror = () => setIsListening(false);
     rec.onend = () => setIsListening(false);
+
     setRecognition(rec);
   }, []);
 
   async function send(text?: string) {
     const txt = (text ?? input).trim();
+
     if (!txt) return;
-    const userMsg: Message = { id: Date.now(), role: "user", text: txt, time: now() };
-    setMessages(m => [...m, userMsg]);
+
+    const userMsg: Message = {
+      id: Date.now(),
+      role: "user",
+      text: txt,
+      time: now(),
+    };
+
+    setMessages((m) => [...m, userMsg]);
     setInput("");
     setTyping(true);
+
     try {
-      if (!getToken()) throw new Error("Not signed in");
-      const result = await api.chat(txt, activeConvId);
+      if (!getToken()) {
+        throw new Error("Not signed in");
+      }
+
+      let conversationId = activeConvId;
+
+      // Important fix:
+      // If no real backend conversation exists yet, create one first.
+      // This makes the customer chat save properly so admin can see it.
+      if (typeof conversationId !== "string") {
+        const newConv = await api.newConversation();
+        conversationId = newConv.id;
+        setActiveConvId(newConv.id);
+      }
+
+      const result = await api.chat(txt, conversationId);
+
       setActiveConvId(result.conversation.id);
       setTyping(false);
       setMessages(toUiMessages(result.conversation));
-      // Update conversation list
+
+      const replyText =
+        result.reply?.text ||
+        result.botMessage?.text ||
+        result.conversation.messages[result.conversation.messages.length - 1]?.text ||
+        "";
+
       const updatedConv: Conversation = {
         id: result.conversation.id,
         title: result.conversation.title,
-        preview: result.reply.text.slice(0, 60),
+        preview: replyText.slice(0, 60),
         time: "Just now",
         isApi: true,
       };
-      setConversations(prev => {
-        const without = prev.filter(c => c.id !== updatedConv.id);
+
+      setConversations((prev) => {
+        const without = prev.filter((c) => c.id !== updatedConv.id);
         return [updatedConv, ...without];
       });
-    } catch {
+    } catch (error) {
+      console.error("Chat save failed:", error);
+
       setTimeout(() => {
         setTyping(false);
-        setMessages(m => [...m, { id: Date.now() + 1, role: "bot", text: getBotReply(txt), time: now() }]);
+
+        setMessages((m) => [
+          ...m,
+          {
+            id: Date.now() + 1,
+            role: "bot",
+            text: getBotReply(txt),
+            time: now(),
+          },
+        ]);
       }, 700);
     }
   }
@@ -241,49 +513,85 @@ export default function ChatPage() {
   async function startNewConversation() {
     try {
       const conv = getToken() ? await api.newConversation() : null;
+
       if (conv) {
         setActiveConvId(conv.id);
         setMessages(toUiMessages(conv));
-        setConversations(prev => [{
-          id: conv.id, title: conv.title,
-          preview: "New conversation started", time: "Now", isApi: true,
-        }, ...prev]);
+
+        setConversations((prev) => [
+          {
+            id: conv.id,
+            title: conv.title,
+            preview: "New conversation started",
+            time: "Now",
+            isApi: true,
+          },
+          ...prev,
+        ]);
       } else {
         setActiveConvId(Date.now());
-        setMessages([{ id: 0, role: "bot", text: "Hi there! Starting a new conversation. What can I help you with?", time: now() }]);
+        setMessages([
+          {
+            id: 0,
+            role: "bot",
+            text: "Hi there! Starting a new conversation. What can I help you with?",
+            time: now(),
+          },
+        ]);
       }
     } catch {
       setActiveConvId(Date.now());
-      setMessages([{ id: 0, role: "bot", text: "Hi there! Starting a new conversation. What can I help you with?", time: now() }]);
+      setMessages([
+        {
+          id: 0,
+          role: "bot",
+          text: "Hi there! Starting a new conversation. What can I help you with?",
+          time: now(),
+        },
+      ]);
     }
   }
 
   async function deleteCurrentConversation() {
     setMoreMenuOpen(false);
+
     if (typeof activeConvId === "string" && getToken()) {
-      try { await api.deleteConversation(activeConvId); } catch { }
+      try {
+        await api.deleteConversation(activeConvId);
+      } catch {}
     }
-    setConversations(prev => prev.filter(c => c.id !== activeConvId));
+
+    setConversations((prev) => prev.filter((c) => c.id !== activeConvId));
     await startNewConversation();
   }
 
   function exportChat() {
     setMoreMenuOpen(false);
-    const text = messages.map(m => `[${m.time}] ${m.role === "bot" ? "ClariBot" : "You"}: ${m.text}`).join("\n");
+
+    const text = messages
+      .map((m) => `[${m.time}] ${m.role === "bot" ? "ClariBot" : "You"}: ${m.text}`)
+      .join("\n");
+
     const blob = new Blob([text], { type: "text/plain" });
     const a = document.createElement("a");
+
     a.href = URL.createObjectURL(blob);
     a.download = `chat-export-${new Date().toISOString().slice(0, 10)}.txt`;
     a.click();
+
     URL.revokeObjectURL(a.href);
   }
 
   function refreshConversation() {
     if (!getToken() || typeof activeConvId !== "string") return;
-    api.conversations().then(items => {
-      const conv = items.find(c => c.id === activeConvId);
-      if (conv) setMessages(toUiMessages(conv));
-    }).catch(() => {});
+
+    api
+      .conversations()
+      .then((items) => {
+        const conv = items.find((c) => c.id === activeConvId);
+        if (conv) setMessages(toUiMessages(conv));
+      })
+      .catch(() => {});
   }
 
   function toggleMic() {
@@ -291,6 +599,7 @@ export default function ChatPage() {
       alert("Speech recognition is not supported in your browser. Try Chrome.");
       return;
     }
+
     if (isListening) {
       recognition.stop();
       setIsListening(false);
@@ -306,19 +615,24 @@ export default function ChatPage() {
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+
     if (!file) return;
+
     const maxMB = 5;
+
     if (file.size > maxMB * 1024 * 1024) {
       alert(`File too large. Maximum size is ${maxMB}MB.`);
       return;
     }
-    // Tell the bot a file was attached
+
     send(`[Attached file: ${file.name}]`);
     e.target.value = "";
   }
 
   function handleLike(id: number | string, v: boolean) {
-    setMessages(m => m.map(msg => msg.id === id ? { ...msg, liked: v } : msg));
+    setMessages((m) =>
+      m.map((msg) => (msg.id === id ? { ...msg, liked: v } : msg))
+    );
   }
 
   function handleLogout() {
@@ -326,11 +640,15 @@ export default function ChatPage() {
     navigate("/login");
   }
 
-  const filtered = conversations.filter(c => c.title.toLowerCase().includes(search.toLowerCase()));
+  const filtered = conversations.filter((c) =>
+    c.title.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div className="flex h-[calc(100vh-4rem)]" style={{ fontFamily: "var(--font-body)" }}>
-
+    <div
+      className="flex h-[calc(100vh-4rem)]"
+      style={{ fontFamily: "var(--font-body)" }}
+    >
       {/* Hidden file input */}
       <input
         ref={fileInputRef}
@@ -340,14 +658,25 @@ export default function ChatPage() {
         onChange={handleFileChange}
       />
 
-      {/* ── Sidebar ── */}
+      {/* Sidebar */}
       <aside
-        className={`flex-shrink-0 flex flex-col border-r transition-all duration-300 ${sidebarOpen ? "w-72" : "w-0 overflow-hidden"}`}
+        className={`flex-shrink-0 flex flex-col border-r transition-all duration-300 ${
+          sidebarOpen ? "w-72" : "w-0 overflow-hidden"
+        }`}
         style={{ borderColor: "rgba(124,58,237,0.1)", background: "#fff" }}
       >
-        <div className="p-4 border-b" style={{ borderColor: "rgba(124,58,237,0.08)" }}>
+        <div
+          className="p-4 border-b"
+          style={{ borderColor: "rgba(124,58,237,0.08)" }}
+        >
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-bold text-base" style={{ fontFamily: "var(--font-display)", color: "#12082a" }}>Conversations</h2>
+            <h2
+              className="font-bold text-base"
+              style={{ fontFamily: "var(--font-display)", color: "#12082a" }}
+            >
+              Conversations
+            </h2>
+
             <button
               onClick={startNewConversation}
               className="w-8 h-8 rounded-lg flex items-center justify-center transition-colors hover:bg-[#f3e8ff]"
@@ -357,11 +686,17 @@ export default function ChatPage() {
               <Plus size={16} style={{ color: "#7c3aed" }} />
             </button>
           </div>
+
           <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "#7a6080" }} />
+            <Search
+              size={14}
+              className="absolute left-3 top-1/2 -translate-y-1/2"
+              style={{ color: "#7a6080" }}
+            />
+
             <input
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search conversations…"
               className="w-full pl-9 pr-3 py-2 rounded-xl text-sm outline-none"
               style={{ background: "#f5e6f0", color: "#12082a" }}
@@ -371,35 +706,76 @@ export default function ChatPage() {
 
         <div className="flex-1 overflow-y-auto py-2" style={{ scrollbarWidth: "none" }}>
           {filtered.length === 0 ? (
-            <p className="text-xs text-center py-8" style={{ color: "#7a6080" }}>No conversations yet.</p>
+            <p className="text-xs text-center py-8" style={{ color: "#7a6080" }}>
+              No conversations yet.
+            </p>
           ) : (
-            filtered.map(conv => (
+            filtered.map((conv) => (
               <button
                 key={conv.id}
                 onClick={() => {
                   setActiveConvId(conv.id);
+
                   if (conv.isApi && getToken()) {
-                    api.conversations().then(items => {
-                      const c = items.find(x => x.id === conv.id);
-                      if (c) setMessages(toUiMessages(c));
-                    }).catch(() => {});
+                    api
+                      .conversations()
+                      .then((items) => {
+                        const c = items.find((x) => x.id === conv.id);
+                        if (c) setMessages(toUiMessages(c));
+                      })
+                      .catch(() => {});
                   }
                 }}
                 className="w-full text-left px-4 py-3 transition-colors hover:bg-[#fef0f5] flex items-start gap-3"
-                style={{ background: activeConvId === conv.id ? "#f3e8ff" : "transparent" }}
+                style={{
+                  background: activeConvId === conv.id ? "#f3e8ff" : "transparent",
+                }}
               >
-                <div className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center" style={{ background: activeConvId === conv.id ? "#7c3aed" : "rgba(124,58,237,0.1)" }}>
-                  <MessageSquare size={15} style={{ color: activeConvId === conv.id ? "#fff" : "#7c3aed" }} />
+                <div
+                  className="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center"
+                  style={{
+                    background:
+                      activeConvId === conv.id ? "#7c3aed" : "rgba(124,58,237,0.1)",
+                  }}
+                >
+                  <MessageSquare
+                    size={15}
+                    style={{
+                      color: activeConvId === conv.id ? "#fff" : "#7c3aed",
+                    }}
+                  />
                 </div>
+
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-0.5">
-                    <p className="text-sm font-semibold truncate" style={{ color: "#12082a", fontFamily: "var(--font-display)" }}>{conv.title}</p>
-                    <span className="text-xs flex-shrink-0 ml-1" style={{ color: "#7a6080" }}>{conv.time}</span>
+                    <p
+                      className="text-sm font-semibold truncate"
+                      style={{
+                        color: "#12082a",
+                        fontFamily: "var(--font-display)",
+                      }}
+                    >
+                      {conv.title}
+                    </p>
+
+                    <span
+                      className="text-xs flex-shrink-0 ml-1"
+                      style={{ color: "#7a6080" }}
+                    >
+                      {conv.time}
+                    </span>
                   </div>
-                  <p className="text-xs truncate" style={{ color: "#7a6080" }}>{conv.preview}</p>
+
+                  <p className="text-xs truncate" style={{ color: "#7a6080" }}>
+                    {conv.preview}
+                  </p>
                 </div>
+
                 {conv.unread && (
-                  <span className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ background: "#7c3aed", fontSize: "10px" }}>
+                  <span
+                    className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                    style={{ background: "#7c3aed", fontSize: "10px" }}
+                  >
                     {conv.unread}
                   </span>
                 )}
@@ -408,12 +784,23 @@ export default function ChatPage() {
           )}
         </div>
 
-        <div className="p-4 border-t space-y-2" style={{ borderColor: "rgba(124,58,237,0.08)" }}>
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl" style={{ background: "rgba(16,185,129,0.08)" }}>
+        <div
+          className="p-4 border-t space-y-2"
+          style={{ borderColor: "rgba(124,58,237,0.08)" }}
+        >
+          <div
+            className="flex items-center gap-2 px-3 py-2 rounded-xl"
+            style={{ background: "rgba(16,185,129,0.08)" }}
+          >
             <span className="w-2 h-2 rounded-full" style={{ background: "#10b981" }} />
-            <span className="text-xs font-medium" style={{ color: "#10b981" }}>ClariBot is online</span>
+
+            <span className="text-xs font-medium" style={{ color: "#10b981" }}>
+              ClariBot is online
+            </span>
+
             <Sparkles size={11} style={{ color: "#10b981", marginLeft: "auto" }} />
           </div>
+
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-colors hover:bg-red-50"
@@ -424,21 +811,44 @@ export default function ChatPage() {
         </div>
       </aside>
 
-      {/* ── Main area ── */}
+      {/* Main area */}
       <div className="flex-1 flex flex-col min-w-0" style={{ background: "#fef9ff" }}>
-
         {/* Header */}
-        <div className="flex items-center gap-3 px-5 py-3.5 border-b bg-white relative" style={{ borderColor: "rgba(124,58,237,0.1)" }}>
-          <button onClick={() => setSidebarOpen(v => !v)} className="p-2 rounded-lg transition-colors hover:bg-[#f3e8ff]">
-            {sidebarOpen ? <X size={18} style={{ color: "#7c3aed" }} /> : <MessageSquare size={18} style={{ color: "#7c3aed" }} />}
+        <div
+          className="flex items-center gap-3 px-5 py-3.5 border-b bg-white relative"
+          style={{ borderColor: "rgba(124,58,237,0.1)" }}
+        >
+          <button
+            onClick={() => setSidebarOpen((v) => !v)}
+            className="p-2 rounded-lg transition-colors hover:bg-[#f3e8ff]"
+          >
+            {sidebarOpen ? (
+              <X size={18} style={{ color: "#7c3aed" }} />
+            ) : (
+              <MessageSquare size={18} style={{ color: "#7c3aed" }} />
+            )}
           </button>
-          <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: "linear-gradient(135deg,#7c3aed,#9d5cf5)" }}>
+
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center"
+            style={{ background: "linear-gradient(135deg,#7c3aed,#9d5cf5)" }}
+          >
             <Bot size={17} color="#fff" />
           </div>
+
           <div className="flex-1">
-            <p className="font-bold text-sm" style={{ fontFamily: "var(--font-display)", color: "#12082a" }}>ClariBot</p>
-            <p className="text-xs" style={{ color: "#10b981" }}>● Online — replies instantly</p>
+            <p
+              className="font-bold text-sm"
+              style={{ fontFamily: "var(--font-display)", color: "#12082a" }}
+            >
+              ClariBot
+            </p>
+
+            <p className="text-xs" style={{ color: "#10b981" }}>
+              ● Online — replies instantly
+            </p>
           </div>
+
           <div className="flex items-center gap-1">
             <button
               onClick={refreshConversation}
@@ -447,8 +857,9 @@ export default function ChatPage() {
             >
               <RefreshCw size={16} style={{ color: "#7a6080" }} />
             </button>
+
             <button
-              onClick={() => setMoreMenuOpen(v => !v)}
+              onClick={() => setMoreMenuOpen((v) => !v)}
               className="p-2 rounded-lg transition-colors hover:bg-[#f3e8ff]"
               title="More options"
             >
@@ -456,10 +867,10 @@ export default function ChatPage() {
             </button>
           </div>
 
-          {/* More menu dropdown */}
           {moreMenuOpen && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setMoreMenuOpen(false)} />
+
               <div
                 className="absolute right-4 top-14 z-20 rounded-xl shadow-xl border py-1 w-48"
                 style={{ background: "#fff", borderColor: "rgba(124,58,237,0.15)" }}
@@ -471,6 +882,7 @@ export default function ChatPage() {
                 >
                   <Download size={14} /> Export chat
                 </button>
+
                 <button
                   onClick={startNewConversation}
                   className="w-full text-left px-4 py-2.5 text-sm flex items-center gap-2 hover:bg-[#f3e8ff] transition-colors"
@@ -478,7 +890,12 @@ export default function ChatPage() {
                 >
                   <Plus size={14} /> New conversation
                 </button>
-                <div className="my-1 h-px mx-3" style={{ background: "rgba(124,58,237,0.1)" }} />
+
+                <div
+                  className="my-1 h-px mx-3"
+                  style={{ background: "rgba(124,58,237,0.1)" }}
+                />
+
                 <button
                   onClick={deleteCurrentConversation}
                   className="w-full text-left px-4 py-2.5 text-sm flex items-center gap-2 hover:bg-red-50 transition-colors"
@@ -495,38 +912,67 @@ export default function ChatPage() {
         <div className="flex-1 overflow-y-auto px-5 py-6 space-y-4" style={{ scrollbarWidth: "none" }}>
           <div className="flex items-center gap-3 my-2">
             <div className="flex-1 h-px" style={{ background: "rgba(124,58,237,0.1)" }} />
-            <span className="text-xs px-3 py-1 rounded-full" style={{ background: "rgba(124,58,237,0.08)", color: "#7a6080" }}>Today</span>
+
+            <span
+              className="text-xs px-3 py-1 rounded-full"
+              style={{ background: "rgba(124,58,237,0.08)", color: "#7a6080" }}
+            >
+              Today
+            </span>
+
             <div className="flex-1 h-px" style={{ background: "rgba(124,58,237,0.1)" }} />
           </div>
 
-          {messages.map(m => <Bubble key={m.id} msg={m} onLike={handleLike} />)}
+          {messages.map((m) => (
+            <Bubble key={m.id} msg={m} onLike={handleLike} />
+          ))}
 
           {typing && (
             <div className="flex gap-3 justify-start">
-              <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center" style={{ background: "linear-gradient(135deg,#7c3aed,#9d5cf5)" }}>
+              <div
+                className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center"
+                style={{ background: "linear-gradient(135deg,#7c3aed,#9d5cf5)" }}
+              >
                 <Bot size={15} color="#fff" />
               </div>
-              <div className="px-4 py-3 rounded-2xl bg-white shadow-sm" style={{ borderBottomLeftRadius: "4px" }}>
+
+              <div
+                className="px-4 py-3 rounded-2xl bg-white shadow-sm"
+                style={{ borderBottomLeftRadius: "4px" }}
+              >
                 <span className="flex gap-1 items-center">
-                  {[0, 1, 2].map(i => (
-                    <span key={i} className="w-2 h-2 rounded-full" style={{ background: "#7c3aed", animation: `bounce 1s infinite ${i * 0.15}s` }} />
+                  {[0, 1, 2].map((i) => (
+                    <span
+                      key={i}
+                      className="w-2 h-2 rounded-full"
+                      style={{
+                        background: "#7c3aed",
+                        animation: `bounce 1s infinite ${i * 0.15}s`,
+                      }}
+                    />
                   ))}
                 </span>
               </div>
             </div>
           )}
+
           <div ref={bottomRef} />
         </div>
 
         {/* Quick replies */}
         {messages.length <= 1 && (
           <div className="px-5 pb-3 flex flex-wrap gap-2">
-            {QUICK_REPLIES.map(q => (
+            {QUICK_REPLIES.map((q) => (
               <button
                 key={q}
                 onClick={() => send(q)}
                 className="px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:bg-[#f3e8ff] hover:border-[#7c3aed]"
-                style={{ borderColor: "rgba(124,58,237,0.2)", color: "#7c3aed", background: "#fff", fontFamily: "var(--font-body)" }}
+                style={{
+                  borderColor: "rgba(124,58,237,0.2)",
+                  color: "#7c3aed",
+                  background: "#fff",
+                  fontFamily: "var(--font-body)",
+                }}
               >
                 {q}
               </button>
@@ -536,10 +982,15 @@ export default function ChatPage() {
 
         {/* Voice indicator */}
         {isListening && (
-          <div className="mx-5 mb-2 px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-medium" style={{ background: "rgba(239,68,68,0.08)", color: "#ef4444" }}>
+          <div
+            className="mx-5 mb-2 px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-medium"
+            style={{ background: "rgba(239,68,68,0.08)", color: "#ef4444" }}
+          >
             <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: "#ef4444" }} />
             Listening… speak now
-            <button onClick={toggleMic} className="ml-auto"><StopCircle size={16} /></button>
+            <button onClick={toggleMic} className="ml-auto">
+              <StopCircle size={16} />
+            </button>
           </div>
         )}
 
@@ -547,7 +998,11 @@ export default function ChatPage() {
         <div className="px-5 pb-5 pt-2">
           <div
             className="flex items-end gap-2 rounded-2xl px-4 py-3 border"
-            style={{ background: "#fff", borderColor: "rgba(124,58,237,0.15)", boxShadow: "0 2px 12px rgba(124,58,237,0.08)" }}
+            style={{
+              background: "#fff",
+              borderColor: "rgba(124,58,237,0.15)",
+              boxShadow: "0 2px 12px rgba(124,58,237,0.08)",
+            }}
           >
             <div className="flex gap-1">
               <button
@@ -557,30 +1012,49 @@ export default function ChatPage() {
               >
                 <Paperclip size={17} style={{ color: "#7a6080" }} />
               </button>
-              <button className="p-1.5 rounded-lg transition-colors hover:bg-[#f3e8ff]" title="Emoji (coming soon)">
+
+              <button
+                className="p-1.5 rounded-lg transition-colors hover:bg-[#f3e8ff]"
+                title="Emoji (coming soon)"
+              >
                 <Smile size={17} style={{ color: "#7a6080" }} />
               </button>
             </div>
+
             <textarea
               ref={textareaRef}
               value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  send();
+                }
+              }}
               placeholder="Type a message… (Enter to send, Shift+Enter for new line)"
               rows={1}
               className="flex-1 resize-none text-sm outline-none leading-relaxed"
-              style={{ color: "#12082a", background: "transparent", fontFamily: "var(--font-body)", maxHeight: "120px" }}
+              style={{
+                color: "#12082a",
+                background: "transparent",
+                fontFamily: "var(--font-body)",
+                maxHeight: "120px",
+              }}
             />
+
             <div className="flex gap-1">
               <button
                 onClick={toggleMic}
                 className="p-1.5 rounded-lg transition-colors hover:bg-[#f3e8ff]"
                 title={isListening ? "Stop listening" : "Voice input"}
               >
-                {isListening
-                  ? <MicOff size={17} style={{ color: "#ef4444" }} />
-                  : <Mic size={17} style={{ color: "#7a6080" }} />}
+                {isListening ? (
+                  <MicOff size={17} style={{ color: "#ef4444" }} />
+                ) : (
+                  <Mic size={17} style={{ color: "#7a6080" }} />
+                )}
               </button>
+
               <button
                 onClick={() => send()}
                 disabled={!input.trim() || typing}
@@ -591,6 +1065,7 @@ export default function ChatPage() {
               </button>
             </div>
           </div>
+
           <p className="text-center text-xs mt-2" style={{ color: "#7a6080" }}>
             ClariBot may occasionally make mistakes. Verify important information.
           </p>
@@ -602,7 +1077,10 @@ export default function ChatPage() {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-4px); }
         }
-        textarea { scrollbar-width: none; }
+
+        textarea {
+          scrollbar-width: none;
+        }
       `}</style>
     </div>
   );
