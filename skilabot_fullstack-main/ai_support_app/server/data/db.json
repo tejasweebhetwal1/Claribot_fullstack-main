@@ -15,6 +15,14 @@
       "password": "$2b$10$jfiFSxWsOHqod83BeV7qdu2WjwEWzGe92s7nUM80xzlktXRJatKSa",
       "role": "customer",
       "createdAt": "2026-07-02T13:30:03.466Z"
+    },
+    {
+      "id": "1783044408101",
+      "name": "tej",
+      "email": "tej@gmail.com",
+      "password": "$2b$10$Tk0gLZOp3BZS7uNCqP8H4.RcLjZMYluTk6jlJey7Mf2dPPal6eS8O",
+      "role": "customer",
+      "createdAt": "2026-07-03T02:06:48.101Z"
     }
   ],
   "conversations": [
@@ -137,9 +145,144 @@
           "role": "bot",
           "text": "You’re welcome! I’m happy to help.",
           "createdAt": "2026-07-02T14:10:12.396Z"
+        },
+        {
+          "id": "1783005528068",
+          "role": "user",
+          "text": "delivery",
+          "createdAt": "2026-07-02T15:18:48.068Z"
+        },
+        {
+          "id": "1783005528069",
+          "role": "bot",
+          "text": "Thanks for reaching out! I'd be happy to help. Could you share a bit more detail so I can give you the most accurate answer?",
+          "createdAt": "2026-07-02T15:18:48.069Z"
+        },
+        {
+          "id": "1783005535138",
+          "role": "user",
+          "text": "refund",
+          "createdAt": "2026-07-02T15:18:55.138Z"
+        },
+        {
+          "id": "1783005535139",
+          "role": "bot",
+          "text": "Refund requests are reviewed by our support team. Please provide your order details so we can assist you further.",
+          "createdAt": "2026-07-02T15:18:55.138Z"
+        },
+        {
+          "id": "1783043674026",
+          "role": "user",
+          "text": "contact",
+          "createdAt": "2026-07-03T01:54:34.026Z"
+        },
+        {
+          "id": "1783043674027",
+          "role": "bot",
+          "text": "You can contact our support team by email at support@claribot.com or call us during business hours.",
+          "createdAt": "2026-07-03T01:54:34.027Z"
+        },
+        {
+          "id": "1783043680828",
+          "role": "user",
+          "text": "thank you",
+          "createdAt": "2026-07-03T01:54:40.828Z"
+        },
+        {
+          "id": "1783043680829",
+          "role": "bot",
+          "text": "You’re welcome! I’m happy to help.",
+          "createdAt": "2026-07-03T01:54:40.828Z"
         }
       ],
       "createdAt": "2026-07-02T13:48:19.338Z"
+    },
+    {
+      "id": "1783044437117",
+      "userId": "guest",
+      "title": "New conversation",
+      "status": "open",
+      "messages": [
+        {
+          "id": "1783044437117",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI support assistant. How can I help you today?",
+          "createdAt": "2026-07-03T02:07:17.117Z"
+        },
+        {
+          "id": "1783044443782",
+          "role": "user",
+          "text": "How can I contact support?",
+          "createdAt": "2026-07-03T02:07:23.782Z"
+        },
+        {
+          "id": "1783044443783",
+          "role": "bot",
+          "text": "You can contact our support team by email at support@claribot.com or call us during business hours.",
+          "createdAt": "2026-07-03T02:07:23.782Z"
+        },
+        {
+          "id": "1783044449729",
+          "role": "user",
+          "text": "delivery",
+          "createdAt": "2026-07-03T02:07:29.729Z"
+        },
+        {
+          "id": "1783044449730",
+          "role": "bot",
+          "text": "Thanks for reaching out! I'd be happy to help. Could you share a bit more detail so I can give you the most accurate answer?",
+          "createdAt": "2026-07-03T02:07:29.729Z"
+        },
+        {
+          "id": "1783044454233",
+          "role": "user",
+          "text": "return",
+          "createdAt": "2026-07-03T02:07:34.233Z"
+        },
+        {
+          "id": "1783044454234",
+          "role": "bot",
+          "text": "Refund requests are reviewed by our support team. Please provide your order details so we can assist you further.",
+          "createdAt": "2026-07-03T02:07:34.233Z"
+        },
+        {
+          "id": "1783044461932",
+          "role": "user",
+          "text": "opening hours",
+          "createdAt": "2026-07-03T02:07:41.932Z"
+        },
+        {
+          "id": "1783044461933",
+          "role": "bot",
+          "text": "Our opening hours are Monday to Friday, 9:00 AM to 5:00 PM. We are closed on weekends and public holidays.",
+          "createdAt": "2026-07-03T02:07:41.932Z"
+        },
+        {
+          "id": "1783044781297",
+          "role": "user",
+          "text": "opening",
+          "createdAt": "2026-07-03T02:13:01.297Z"
+        },
+        {
+          "id": "1783044781298",
+          "role": "bot",
+          "text": "Our opening hours are Monday to Friday, 9:00 AM to 5:00 PM. We are closed on weekends and public holidays.",
+          "createdAt": "2026-07-03T02:13:01.297Z"
+        },
+        {
+          "id": "1783044818602",
+          "role": "user",
+          "text": "refund",
+          "createdAt": "2026-07-03T02:13:38.602Z"
+        },
+        {
+          "id": "1783044818603",
+          "role": "bot",
+          "text": "Refund requests are reviewed by our support team. Please provide your order details so we can assist you further.",
+          "createdAt": "2026-07-03T02:13:38.602Z"
+        }
+      ],
+      "createdAt": "2026-07-03T02:07:17.117Z"
     }
   ]
 }
