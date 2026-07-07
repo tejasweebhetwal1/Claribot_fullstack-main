@@ -193,6 +193,90 @@
           "role": "bot",
           "text": "You’re welcome! I’m happy to help.",
           "createdAt": "2026-07-03T01:54:40.828Z"
+        },
+        {
+          "id": "1783309031518",
+          "role": "user",
+          "text": "thank you",
+          "createdAt": "2026-07-06T03:37:11.518Z"
+        },
+        {
+          "id": "1783309031519",
+          "role": "bot",
+          "text": "You’re welcome! I’m happy to help.",
+          "createdAt": "2026-07-06T03:37:11.519Z"
+        },
+        {
+          "id": "1783309036521",
+          "role": "user",
+          "text": "contact",
+          "createdAt": "2026-07-06T03:37:16.521Z"
+        },
+        {
+          "id": "1783309036522",
+          "role": "bot",
+          "text": "You can contact our support team by email at support@claribot.com or call us during business hours.",
+          "createdAt": "2026-07-06T03:37:16.522Z"
+        },
+        {
+          "id": "1783309040166",
+          "role": "user",
+          "text": "refund",
+          "createdAt": "2026-07-06T03:37:20.166Z"
+        },
+        {
+          "id": "1783309040167",
+          "role": "bot",
+          "text": "Refund requests are reviewed by our support team. Please provide your order details so we can assist you further.",
+          "createdAt": "2026-07-06T03:37:20.166Z"
+        },
+        {
+          "id": "1783309043227",
+          "role": "user",
+          "text": "opening",
+          "createdAt": "2026-07-06T03:37:23.227Z"
+        },
+        {
+          "id": "1783309043228",
+          "role": "bot",
+          "text": "Our opening hours are Monday to Friday, 9:00 AM to 5:00 PM. We are closed on weekends and public holidays.",
+          "createdAt": "2026-07-06T03:37:23.227Z"
+        },
+        {
+          "id": "1783309048617",
+          "role": "user",
+          "text": "delivery",
+          "createdAt": "2026-07-06T03:37:28.617Z"
+        },
+        {
+          "id": "1783309048618",
+          "role": "bot",
+          "text": "Thanks for reaching out! I'd be happy to help. Could you share a bit more detail so I can give you the most accurate answer?",
+          "createdAt": "2026-07-06T03:37:28.617Z"
+        },
+        {
+          "id": "1783423031519",
+          "role": "user",
+          "text": "What products do you offer?",
+          "createdAt": "2026-07-07T11:17:11.519Z"
+        },
+        {
+          "id": "1783423031521",
+          "role": "bot",
+          "text": "Thanks for reaching out! I'd be happy to help. Could you share a bit more detail so I can give you the most accurate answer?",
+          "createdAt": "2026-07-07T11:17:11.520Z"
+        },
+        {
+          "id": "1783423049670",
+          "role": "user",
+          "text": "Show me your prices",
+          "createdAt": "2026-07-07T11:17:29.671Z"
+        },
+        {
+          "id": "1783423049672",
+          "role": "bot",
+          "text": "Our pricing depends on your business needs. Please contact our support team and we will help you choose the best plan.",
+          "createdAt": "2026-07-07T11:17:29.671Z"
         }
       ],
       "createdAt": "2026-07-02T13:48:19.338Z"
@@ -280,9 +364,497 @@
           "role": "bot",
           "text": "Refund requests are reviewed by our support team. Please provide your order details so we can assist you further.",
           "createdAt": "2026-07-03T02:13:38.602Z"
+        },
+        {
+          "id": "1783310117599",
+          "role": "user",
+          "text": "delivery",
+          "createdAt": "2026-07-06T03:55:17.599Z"
+        },
+        {
+          "id": "1783310117600",
+          "role": "bot",
+          "text": "Thanks for reaching out! I'd be happy to help. Could you share a bit more detail so I can give you the most accurate answer?",
+          "createdAt": "2026-07-06T03:55:17.599Z"
+        },
+        {
+          "id": "1783310132955",
+          "role": "user",
+          "text": "hello",
+          "createdAt": "2026-07-06T03:55:32.955Z"
+        },
+        {
+          "id": "1783310132956",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI support assistant. How can I help you today?",
+          "createdAt": "2026-07-06T03:55:32.955Z"
         }
       ],
       "createdAt": "2026-07-03T02:07:17.117Z"
+    },
+    {
+      "id": "1783310148512",
+      "userId": "guest",
+      "title": "New conversation",
+      "status": "open",
+      "messages": [
+        {
+          "id": "1783310148512",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI support assistant. How can I help you today?",
+          "createdAt": "2026-07-06T03:55:48.512Z"
+        }
+      ],
+      "createdAt": "2026-07-06T03:55:48.512Z"
+    },
+    {
+      "id": "1783310159791",
+      "userId": "guest",
+      "title": "New conversation",
+      "status": "open",
+      "messages": [
+        {
+          "id": "1783310159791",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI support assistant. How can I help you today?",
+          "createdAt": "2026-07-06T03:55:59.791Z"
+        },
+        {
+          "id": "1783310199182",
+          "role": "user",
+          "text": "Do you provide delivery?",
+          "createdAt": "2026-07-06T03:56:39.182Z"
+        },
+        {
+          "id": "1783310199183",
+          "role": "bot",
+          "text": "Thanks for reaching out! I'd be happy to help. Could you share a bit more detail so I can give you the most accurate answer?",
+          "createdAt": "2026-07-06T03:56:39.182Z"
+        },
+        {
+          "id": "1783310209377",
+          "role": "user",
+          "text": "refund",
+          "createdAt": "2026-07-06T03:56:49.377Z"
+        },
+        {
+          "id": "1783310209378",
+          "role": "bot",
+          "text": "Refund requests are reviewed by our support team. Please provide your order details so we can assist you further.",
+          "createdAt": "2026-07-06T03:56:49.377Z"
+        },
+        {
+          "id": "1783310216385",
+          "role": "user",
+          "text": "opening hours",
+          "createdAt": "2026-07-06T03:56:56.385Z"
+        },
+        {
+          "id": "1783310216386",
+          "role": "bot",
+          "text": "Our opening hours are Monday to Friday, 9:00 AM to 5:00 PM. We are closed on weekends and public holidays.",
+          "createdAt": "2026-07-06T03:56:56.385Z"
+        },
+        {
+          "id": "1783312312176",
+          "role": "user",
+          "text": "customer support",
+          "createdAt": "2026-07-06T04:31:52.176Z"
+        },
+        {
+          "id": "1783312312177",
+          "role": "bot",
+          "text": "Thanks for reaching out! I'd be happy to help. Could you share a bit more detail so I can give you the most accurate answer?",
+          "createdAt": "2026-07-06T04:31:52.177Z"
+        },
+        {
+          "id": "1783312330914",
+          "role": "user",
+          "text": "support team",
+          "createdAt": "2026-07-06T04:32:10.914Z"
+        },
+        {
+          "id": "1783312330915",
+          "role": "bot",
+          "text": "Thanks for reaching out! I'd be happy to help. Could you share a bit more detail so I can give you the most accurate answer?",
+          "createdAt": "2026-07-06T04:32:10.914Z"
+        }
+      ],
+      "createdAt": "2026-07-06T03:55:59.791Z"
+    },
+    {
+      "id": "1783311347690",
+      "userId": "guest",
+      "title": "New conversation",
+      "status": "open",
+      "messages": [
+        {
+          "id": "1783311347690",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI support assistant. How can I help you today?",
+          "createdAt": "2026-07-06T04:15:47.690Z"
+        },
+        {
+          "id": "1783311352424",
+          "role": "user",
+          "text": "What's included in the Growth plan?",
+          "createdAt": "2026-07-06T04:15:52.424Z"
+        },
+        {
+          "id": "1783311352425",
+          "role": "bot",
+          "text": "Thanks for reaching out! I'd be happy to help. Could you share a bit more detail so I can give you the most accurate answer?",
+          "createdAt": "2026-07-06T04:15:52.424Z"
+        },
+        {
+          "id": "1783311362165",
+          "role": "user",
+          "text": "refiund",
+          "createdAt": "2026-07-06T04:16:02.165Z"
+        },
+        {
+          "id": "1783311362166",
+          "role": "bot",
+          "text": "Thanks for reaching out! I'd be happy to help. Could you share a bit more detail so I can give you the most accurate answer?",
+          "createdAt": "2026-07-06T04:16:02.165Z"
+        },
+        {
+          "id": "1783311366928",
+          "role": "user",
+          "text": "refund",
+          "createdAt": "2026-07-06T04:16:06.928Z"
+        },
+        {
+          "id": "1783311366929",
+          "role": "bot",
+          "text": "Refund requests are reviewed by our support team. Please provide your order details so we can assist you further.",
+          "createdAt": "2026-07-06T04:16:06.928Z"
+        },
+        {
+          "id": "1783311375749",
+          "role": "user",
+          "text": "opening hours?",
+          "createdAt": "2026-07-06T04:16:15.749Z"
+        },
+        {
+          "id": "1783311375750",
+          "role": "bot",
+          "text": "Our opening hours are Monday to Friday, 9:00 AM to 5:00 PM. We are closed on weekends and public holidays.",
+          "createdAt": "2026-07-06T04:16:15.749Z"
+        }
+      ],
+      "createdAt": "2026-07-06T04:15:47.690Z"
+    },
+    {
+      "id": "1783311387398",
+      "userId": "guest",
+      "title": "New conversation",
+      "status": "open",
+      "messages": [
+        {
+          "id": "1783311387398",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI support assistant. How can I help you today?",
+          "createdAt": "2026-07-06T04:16:27.398Z"
+        }
+      ],
+      "createdAt": "2026-07-06T04:16:27.398Z"
+    },
+    {
+      "id": "1783422494921",
+      "userId": "guest",
+      "title": "New conversation",
+      "status": "open",
+      "messages": [
+        {
+          "id": "1783422494921",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI support assistant. How can I help you today?",
+          "createdAt": "2026-07-07T11:08:14.921Z"
+        }
+      ],
+      "createdAt": "2026-07-07T11:08:14.921Z"
+    },
+    {
+      "id": "1783422498456",
+      "userId": "guest",
+      "title": "New conversation",
+      "status": "open",
+      "messages": [
+        {
+          "id": "1783422498456",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI support assistant. How can I help you today?",
+          "createdAt": "2026-07-07T11:08:18.456Z"
+        }
+      ],
+      "createdAt": "2026-07-07T11:08:18.456Z"
+    },
+    {
+      "id": "1783422504222",
+      "userId": "guest",
+      "title": "opening hours",
+      "status": "open",
+      "messages": [
+        {
+          "id": "1783422504222",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI support assistant. How can I help you today?",
+          "createdAt": "2026-07-07T11:08:24.222Z"
+        },
+        {
+          "id": "1783422520584",
+          "role": "user",
+          "text": "What's included in the Growth plan?",
+          "createdAt": "2026-07-07T11:08:40.584Z"
+        },
+        {
+          "id": "1783422520585",
+          "role": "bot",
+          "text": "Thanks for reaching out! I'd be happy to help. Could you share a bit more detail so I can give you the most accurate answer?",
+          "createdAt": "2026-07-07T11:08:40.584Z"
+        },
+        {
+          "id": "1783422527511",
+          "role": "user",
+          "text": "pricing",
+          "createdAt": "2026-07-07T11:08:47.511Z"
+        },
+        {
+          "id": "1783422527512",
+          "role": "bot",
+          "text": "Our pricing depends on your business needs. Please contact our support team and we will help you choose the best plan.",
+          "createdAt": "2026-07-07T11:08:47.511Z"
+        },
+        {
+          "id": "1783422535399",
+          "role": "user",
+          "text": "return",
+          "createdAt": "2026-07-07T11:08:55.399Z"
+        },
+        {
+          "id": "1783422535400",
+          "role": "bot",
+          "text": "Refund requests are reviewed by our support team. Please provide your order details so we can assist you further.",
+          "createdAt": "2026-07-07T11:08:55.399Z"
+        },
+        {
+          "id": "1783422543123",
+          "role": "user",
+          "text": "opening",
+          "createdAt": "2026-07-07T11:09:03.123Z"
+        },
+        {
+          "id": "1783422543124",
+          "role": "bot",
+          "text": "Our opening hours are Monday to Friday, 9:00 AM to 5:00 PM. We are closed on weekends and public holidays.",
+          "createdAt": "2026-07-07T11:09:03.123Z"
+        },
+        {
+          "id": "1783422549214",
+          "role": "user",
+          "text": "delivery",
+          "createdAt": "2026-07-07T11:09:09.214Z"
+        },
+        {
+          "id": "1783422549215",
+          "role": "bot",
+          "text": "Thanks for reaching out! I'd be happy to help. Could you share a bit more detail so I can give you the most accurate answer?",
+          "createdAt": "2026-07-07T11:09:09.214Z"
+        },
+        {
+          "id": "1783430537548",
+          "role": "user",
+          "text": "opening hours",
+          "createdAt": "2026-07-07T13:22:17.548Z"
+        },
+        {
+          "id": "1783430537549",
+          "role": "bot",
+          "text": "Our opening hours are Monday to Friday, 9:00 AM to 5:00 PM. We are closed on weekends and public holidays. The chatbot is available 24/7 for basic support.",
+          "createdAt": "2026-07-07T13:22:17.548Z"
+        },
+        {
+          "id": "1783430542911",
+          "role": "user",
+          "text": "delivery",
+          "createdAt": "2026-07-07T13:22:22.911Z"
+        },
+        {
+          "id": "1783430542912",
+          "role": "bot",
+          "text": "Yes, we provide digital delivery for chatbot services. After signup, the chatbot can be integrated into the business website. Setup time depends on the selected plan and business requirements.",
+          "createdAt": "2026-07-07T13:22:22.911Z"
+        },
+        {
+          "id": "1783430549580",
+          "role": "user",
+          "text": "product",
+          "createdAt": "2026-07-07T13:22:29.580Z"
+        },
+        {
+          "id": "1783430549581",
+          "role": "bot",
+          "text": "We offer AI customer support products and services:\n\n\n1. Starter Plan — $0/month\nBest for testing. Includes basic chatbot replies, lead capture, and 1,000 monthly conversations.\n\n2. Growth Plan — $99/month\nBest for small businesses. Includes 20,000 conversations, admin dashboard, analytics, conversation history, and priority support.\n\n3. Enterprise Plan — $299/month\nBest for larger businesses. Includes unlimited conversations, custom AI training, advanced support, SLA support, and white-label option.\n\n4. Custom Chatbot Setup — From $499 one-time\nIncludes chatbot setup, business FAQ training, support flow setup, and website integration.\n\n5. AI Knowledge Base Setup — From $199 one-time\nIncludes adding product details, pricing, refund policy, delivery details, opening hours, and business FAQs.\n",
+          "createdAt": "2026-07-07T13:22:29.580Z"
+        },
+        {
+          "id": "1783430557453",
+          "role": "user",
+          "text": "refund",
+          "createdAt": "2026-07-07T13:22:37.453Z"
+        },
+        {
+          "id": "1783430557454",
+          "role": "bot",
+          "text": "Refund requests are reviewed by our support team. Please provide your registered email, order or plan details, payment date, and reason for refund. If the service has not been used or the issue is valid, the support team may approve a refund according to business policy.",
+          "createdAt": "2026-07-07T13:22:37.453Z"
+        },
+        {
+          "id": "1783430563489",
+          "role": "user",
+          "text": "email",
+          "createdAt": "2026-07-07T13:22:43.489Z"
+        },
+        {
+          "id": "1783430563490",
+          "role": "bot",
+          "text": "You can contact our support team by email at support@claribot.com. Business support is available Monday to Friday, 9:00 AM to 5:00 PM. You can also continue asking questions here.",
+          "createdAt": "2026-07-07T13:22:43.489Z"
+        },
+        {
+          "id": "1783430800502",
+          "role": "user",
+          "text": "Tell me about growth plan",
+          "createdAt": "2026-07-07T13:26:40.502Z"
+        },
+        {
+          "id": "1783430800503",
+          "role": "bot",
+          "text": "Here is our pricing:\n\n\n1. Starter Plan — $0/month\nBest for testing. Includes basic chatbot replies, lead capture, and 1,000 monthly conversations.\n\n2. Growth Plan — $99/month\nBest for small businesses. Includes 20,000 conversations, admin dashboard, analytics, conversation history, and priority support.\n\n3. Enterprise Plan — $299/month\nBest for larger businesses. Includes unlimited conversations, custom AI training, advanced support, SLA support, and white-label option.\n\n4. Custom Chatbot Setup — From $499 one-time\nIncludes chatbot setup, business FAQ training, support flow setup, and website integration.\n\n5. AI Knowledge Base Setup — From $199 one-time\nIncludes adding product details, pricing, refund policy, delivery details, opening hours, and business FAQs.\n\nFor most small businesses, the Growth Plan at $99/month is the best option.",
+          "createdAt": "2026-07-07T13:26:40.502Z"
+        },
+        {
+          "id": "1783430834572",
+          "role": "user",
+          "text": "which plan is best for small business",
+          "createdAt": "2026-07-07T13:27:14.572Z"
+        },
+        {
+          "id": "1783430834574",
+          "role": "bot",
+          "text": "Here is our pricing:\n\n\n1. Starter Plan — $0/month\nBest for testing. Includes basic chatbot replies, lead capture, and 1,000 monthly conversations.\n\n2. Growth Plan — $99/month\nBest for small businesses. Includes 20,000 conversations, admin dashboard, analytics, conversation history, and priority support.\n\n3. Enterprise Plan — $299/month\nBest for larger businesses. Includes unlimited conversations, custom AI training, advanced support, SLA support, and white-label option.\n\n4. Custom Chatbot Setup — From $499 one-time\nIncludes chatbot setup, business FAQ training, support flow setup, and website integration.\n\n5. AI Knowledge Base Setup — From $199 one-time\nIncludes adding product details, pricing, refund policy, delivery details, opening hours, and business FAQs.\n\nFor most small businesses, the Growth Plan at $99/month is the best option.",
+          "createdAt": "2026-07-07T13:27:14.573Z"
+        },
+        {
+          "id": "1783430862131",
+          "role": "user",
+          "text": "what is your refund policy",
+          "createdAt": "2026-07-07T13:27:42.131Z"
+        },
+        {
+          "id": "1783430862132",
+          "role": "bot",
+          "text": "Refund requests are reviewed by our support team. Please provide your registered email, order or plan details, payment date, and reason for refund. If the service has not been used or the issue is valid, the support team may approve a refund according to business policy.",
+          "createdAt": "2026-07-07T13:27:42.131Z"
+        },
+        {
+          "id": "1783430886880",
+          "role": "user",
+          "text": "what product do you offer",
+          "createdAt": "2026-07-07T13:28:06.880Z"
+        },
+        {
+          "id": "1783430886881",
+          "role": "bot",
+          "text": "We offer AI customer support products and services:\n\n\n1. Starter Plan — $0/month\nBest for testing. Includes basic chatbot replies, lead capture, and 1,000 monthly conversations.\n\n2. Growth Plan — $99/month\nBest for small businesses. Includes 20,000 conversations, admin dashboard, analytics, conversation history, and priority support.\n\n3. Enterprise Plan — $299/month\nBest for larger businesses. Includes unlimited conversations, custom AI training, advanced support, SLA support, and white-label option.\n\n4. Custom Chatbot Setup — From $499 one-time\nIncludes chatbot setup, business FAQ training, support flow setup, and website integration.\n\n5. AI Knowledge Base Setup — From $199 one-time\nIncludes adding product details, pricing, refund policy, delivery details, opening hours, and business FAQs.\n",
+          "createdAt": "2026-07-07T13:28:06.880Z"
+        },
+        {
+          "id": "1783430912113",
+          "role": "user",
+          "text": "i need further details",
+          "createdAt": "2026-07-07T13:28:32.113Z"
+        },
+        {
+          "id": "1783430912114",
+          "role": "bot",
+          "text": "ClariBot is an AI customer support platform for business websites. It helps customers ask questions about products, prices, delivery, refunds, opening hours, and support. It includes a business landing page, account registration, ChatGPT-like chatbot UI, lead capture, conversation history, and admin dashboard.",
+          "createdAt": "2026-07-07T13:28:32.113Z"
+        },
+        {
+          "id": "1783430943776",
+          "role": "user",
+          "text": "Tell me about Enterprise Plan",
+          "createdAt": "2026-07-07T13:29:03.776Z"
+        },
+        {
+          "id": "1783430943777",
+          "role": "bot",
+          "text": "Here is our pricing:\n\n\n1. Starter Plan — $0/month\nBest for testing. Includes basic chatbot replies, lead capture, and 1,000 monthly conversations.\n\n2. Growth Plan — $99/month\nBest for small businesses. Includes 20,000 conversations, admin dashboard, analytics, conversation history, and priority support.\n\n3. Enterprise Plan — $299/month\nBest for larger businesses. Includes unlimited conversations, custom AI training, advanced support, SLA support, and white-label option.\n\n4. Custom Chatbot Setup — From $499 one-time\nIncludes chatbot setup, business FAQ training, support flow setup, and website integration.\n\n5. AI Knowledge Base Setup — From $199 one-time\nIncludes adding product details, pricing, refund policy, delivery details, opening hours, and business FAQs.\n\nFor most small businesses, the Growth Plan at $99/month is the best option.",
+          "createdAt": "2026-07-07T13:29:03.776Z"
+        },
+        {
+          "id": "1783431353088",
+          "role": "user",
+          "text": "prices",
+          "createdAt": "2026-07-07T13:35:53.088Z"
+        },
+        {
+          "id": "1783431353089",
+          "role": "bot",
+          "text": "Here is our pricing:\n\n\n1. Starter Plan — $0/month\nBest for testing. Includes basic chatbot replies, lead capture, and 1,000 monthly conversations.\n\n2. Growth Plan — $99/month\nBest for small businesses. Includes 20,000 conversations, admin dashboard, analytics, conversation history, and priority support.\n\n3. Enterprise Plan — $299/month\nBest for larger businesses. Includes unlimited conversations, custom AI training, advanced support, SLA support, and white-label option.\n\n4. Custom Chatbot Setup — From $499 one-time\nIncludes chatbot setup, business FAQ training, support flow setup, and website integration.\n\n5. AI Knowledge Base Setup — From $199 one-time\nIncludes adding product details, pricing, refund policy, delivery details, opening hours, and business FAQs.\n\nFor most small businesses, the Growth Plan at $99/month is the best option.",
+          "createdAt": "2026-07-07T13:35:53.088Z"
+        }
+      ],
+      "createdAt": "2026-07-07T11:08:24.222Z",
+      "updatedAt": "2026-07-07T13:35:53.088Z"
+    }
+  ],
+  "leads": [
+    {
+      "id": "1783345745298",
+      "email": "mukeshsapkota@gmail.com",
+      "source": "hero",
+      "createdAt": "2026-07-06T13:49:05.298Z"
+    },
+    {
+      "id": "1783346201265",
+      "email": "mukeshsapkota55@gmail.com",
+      "source": "hero",
+      "createdAt": "2026-07-06T13:56:41.265Z"
+    },
+    {
+      "id": "1783346266181",
+      "email": "mukeshsapkota55@gmail.com",
+      "source": "hero",
+      "createdAt": "2026-07-06T13:57:46.181Z"
+    },
+    {
+      "id": "1783422041468",
+      "email": "mukeshsapkota55@gmail.com",
+      "source": "hero",
+      "createdAt": "2026-07-07T11:00:41.468Z"
+    }
+  ],
+  "otps": [
+    {
+      "email": "claribotdemo@gmail.com",
+      "otp": "683804",
+      "expiresAt": 1783429366171,
+      "createdAt": "2026-07-07T12:52:46.171Z"
+    },
+    {
+      "email": "admin@claribot.com",
+      "otp": "419429",
+      "expiresAt": 1783430951809,
+      "createdAt": "2026-07-07T13:19:11.809Z"
+    },
+    {
+      "email": "tejasweebhetwal1@gmail.com",
+      "otp": "337498",
+      "expiresAt": 1783431051071,
+      "createdAt": "2026-07-07T13:20:51.071Z"
     }
   ]
 }
