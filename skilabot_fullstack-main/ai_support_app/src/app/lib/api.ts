@@ -111,17 +111,22 @@ async function request<T>(
 }
 
 export const api = {
-  // Auth
+  requestOtp: (email: string) =>
+    request<{ ok: boolean; message: string }>("/api/auth/request-otp", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    }),
+
+  signup: (name: string, email: string, password: string, otp?: string) =>
+  request<{ token: string; user: ApiUser }>("/api/auth/signup", {
+    method: "POST",
+    body: JSON.stringify({ name, email, password, otp }),
+  }),
+
   login: (email: string, password: string) =>
     request<{ token: string; user: ApiUser }>("/api/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
-    }),
-
-  signup: (name: string, email: string, password: string) =>
-    request<{ token: string; user: ApiUser }>("/api/auth/signup", {
-      method: "POST",
-      body: JSON.stringify({ name, email, password }),
     }),
 
   forgot: (email: string) =>
