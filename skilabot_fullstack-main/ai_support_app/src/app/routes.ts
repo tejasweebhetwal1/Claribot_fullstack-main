@@ -8,6 +8,12 @@ import BusinessPage from "./pages/BusinessPage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import DemoChatPage from "./pages/DemoChatPage";
+import ShopPage from "./pages/ShopPage";
+import ProductPage from "./pages/ProductPage";
+import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import ContactPage from "./pages/ContactPage";
+import OrderSuccessPage from "./pages/OrderSucessPage";
 
 export const router = createBrowserRouter([
   {
@@ -15,6 +21,13 @@ export const router = createBrowserRouter([
     Component: Root,
     children: [
       { index: true, Component: LandingPage },
+      { path: "shop", Component: ShopPage },
+      { path: "product/:id", Component: ProductPage },
+      { path: "cart", Component: CartPage },
+      { path: "checkout", Component: CheckoutPage },
+      { path: "order-success/:id", Component: OrderSuccessPage },
+      { path: "contact", Component: ContactPage },
+
       { path: "login", Component: LoginPage },
       { path: "demo-chat", Component: DemoChatPage },
       { path: "faq", Component: FaqPage },

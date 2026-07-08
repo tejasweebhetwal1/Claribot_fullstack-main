@@ -27,6 +27,7 @@ function readDB() {
   db.conversations = db.conversations || [];
   db.leads = db.leads || [];
   db.otps = db.otps || [];
+  db.orders = db.orders || [];
 
   return db;
 }
@@ -88,6 +89,41 @@ function isValidEmail(email) {
 // Business chatbot reply logic
 function getBotReply(userText) {
   const msg = (userText || "").toLowerCase();
+    if (msg.includes("honey")) {
+    return "Yes, we sell Flower Honey 1kg for $10. You can find it in the Breakfast category.";
+  }
+
+  if (msg.includes("tahini")) {
+    return "Yes, we sell Premium Pure Tahini 750g for $10.50. It is available in the Pantry category.";
+  }
+
+  if (msg.includes("sucuk") || msg.includes("meat")) {
+    return "Yes, we sell Halal Beef Sucuk 500g for $13.60.";
+  }
+
+  if (msg.includes("chocolate")) {
+    return "Yes, we sell Dubai Pistachio Chocolate for $16.15.";
+  }
+
+  if (msg.includes("halal")) {
+    return "Yes, many of our products are halal, including Halal Beef Sucuk and selected pantry items.";
+  }
+
+  if (msg.includes("delivery") || msg.includes("shipping")) {
+    return "We offer local delivery. Delivery is free for orders over $50, otherwise it is $8.99.";
+  }
+
+  if (msg.includes("payment") || msg.includes("card") || msg.includes("checkout")) {
+    return "This website uses demo checkout only. Customers can enter fake card details, but no real money is deducted.";
+  }
+
+  if (msg.includes("refund") || msg.includes("return")) {
+    return "Refunds can be requested within 7 days. Please provide your demo order number and reason for the return.";
+  }
+
+  if (msg.includes("open") || msg.includes("hours") || msg.includes("close")) {
+    return "ClariMart is open Monday to Saturday from 9:00 AM to 6:00 PM.";
+  }
 
   const products = `
 1. Starter Plan — $0/month
@@ -694,6 +730,39 @@ app.get("/api/admin/leads", (req, res) => {
   );
 
   res.json(leads);
+});
+app.post("/api/orders", (req, res) => {
+  const db = readDB();
+
+  const order = {
+    id: "DEMO-" + Date.now(),
+    customer: req.body.customer || {},
+    items: req.body.items || [],
+    subtotal: req.body.subtotal || 0,
+    delivery: req.body.delivery || 0,
+    total: req.body.total || 0,
+    paymentStatus: "Paid (Demo)",
+    orderStatus: "Received",
+    createdAt: new Date().toISOString(),
+  };
+
+  db.orders.push(order);
+  writeDB(db);
+
+  res.status(201).json({
+    ok: true,
+    order,
+  });
+});
+
+app.get("/api/admin/orders", (req, res) => {
+  const db = readDB();
+
+  const orders = (db.orders || []).sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
+
+  res.json(orders);
 });
 
 const PORT = process.env.PORT || 4000;

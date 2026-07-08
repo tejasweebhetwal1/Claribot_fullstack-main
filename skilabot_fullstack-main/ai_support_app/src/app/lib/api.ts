@@ -230,4 +230,12 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ helpful }),
     }),
+      createOrder: (order: any) =>
+    request<{ ok: boolean; order: any }>("/api/orders", {
+      method: "POST",
+      body: JSON.stringify(order),
+    }),
+
+  adminOrders: () =>
+    request<any[]>("/api/admin/orders"),
 };

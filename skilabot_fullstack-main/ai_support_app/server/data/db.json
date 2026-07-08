@@ -809,6 +809,124 @@
       ],
       "createdAt": "2026-07-07T11:08:24.222Z",
       "updatedAt": "2026-07-07T13:35:53.088Z"
+    },
+    {
+      "id": "1783475911872",
+      "userId": "guest",
+      "title": "Website customer support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1783475911872",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI customer support assistant. You can ask me about products, prices, delivery, refunds, opening hours, or account support.",
+          "createdAt": "2026-07-08T01:58:31.871Z"
+        },
+        {
+          "id": "1783475911883",
+          "role": "user",
+          "text": "can I refund?",
+          "createdAt": "2026-07-08T01:58:31.882Z"
+        },
+        {
+          "id": "1783475911884",
+          "role": "bot",
+          "text": "Refund requests are reviewed by our support team. Please provide your registered email, order or plan details, payment date, and reason for refund. If the service has not been used or the issue is valid, the support team may approve a refund according to business policy.",
+          "createdAt": "2026-07-08T01:58:31.883Z"
+        },
+        {
+          "id": "1783475922810",
+          "role": "user",
+          "text": "delivery?",
+          "createdAt": "2026-07-08T01:58:42.809Z"
+        },
+        {
+          "id": "1783475922811",
+          "role": "bot",
+          "text": "Yes, we provide digital delivery for chatbot services. After signup, the chatbot can be integrated into the business website. Setup time depends on the selected plan and business requirements.",
+          "createdAt": "2026-07-08T01:58:42.810Z"
+        },
+        {
+          "id": "1783475943515",
+          "role": "user",
+          "text": "i want to refund pure tahini",
+          "createdAt": "2026-07-08T01:59:03.515Z"
+        },
+        {
+          "id": "1783475943516",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI customer support assistant. You can ask me about products, prices, delivery, refund policy, opening hours, or account support.",
+          "createdAt": "2026-07-08T01:59:03.515Z"
+        }
+      ],
+      "createdAt": "2026-07-08T01:58:31.871Z",
+      "updatedAt": "2026-07-08T01:59:03.515Z"
+    },
+    {
+      "id": "1783482342656",
+      "userId": "guest",
+      "title": "Website customer support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1783482342656",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI customer support assistant. You can ask me about products, prices, delivery, refunds, opening hours, or account support.",
+          "createdAt": "2026-07-08T03:45:42.656Z"
+        },
+        {
+          "id": "1783482342668",
+          "role": "user",
+          "text": "hi",
+          "createdAt": "2026-07-08T03:45:42.668Z"
+        },
+        {
+          "id": "1783482342669",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI customer support assistant. You can ask me about products, prices, delivery, refund policy, opening hours, or account support.",
+          "createdAt": "2026-07-08T03:45:42.668Z"
+        },
+        {
+          "id": "1783482350631",
+          "role": "user",
+          "text": "price of Tahini?",
+          "createdAt": "2026-07-08T03:45:50.631Z"
+        },
+        {
+          "id": "1783482350632",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI customer support assistant. You can ask me about products, prices, delivery, refund policy, opening hours, or account support.",
+          "createdAt": "2026-07-08T03:45:50.631Z"
+        },
+        {
+          "id": "1783482375663",
+          "role": "user",
+          "text": "delicery",
+          "createdAt": "2026-07-08T03:46:15.663Z"
+        },
+        {
+          "id": "1783482375664",
+          "role": "bot",
+          "text": "Thanks for reaching out! I can help with products, prices, delivery, refunds, opening hours, account support, and further business details. What would you like to know?",
+          "createdAt": "2026-07-08T03:46:15.663Z"
+        },
+        {
+          "id": "1783482388679",
+          "role": "user",
+          "text": "product detail",
+          "createdAt": "2026-07-08T03:46:28.679Z"
+        },
+        {
+          "id": "1783482388680",
+          "role": "bot",
+          "text": "We offer AI customer support products and services:\n\n\n1. Starter Plan — $0/month\nBest for testing. Includes basic chatbot replies, lead capture, and 1,000 monthly conversations.\n\n2. Growth Plan — $99/month\nBest for small businesses. Includes 20,000 conversations, admin dashboard, analytics, conversation history, and priority support.\n\n3. Enterprise Plan — $299/month\nBest for larger businesses. Includes unlimited conversations, custom AI training, advanced support, SLA support, and white-label option.\n\n4. Custom Chatbot Setup — From $499 one-time\nIncludes chatbot setup, business FAQ training, support flow setup, and website integration.\n\n5. AI Knowledge Base Setup — From $199 one-time\nIncludes adding product details, pricing, refund policy, delivery details, opening hours, and business FAQs.\n",
+          "createdAt": "2026-07-08T03:46:28.679Z"
+        }
+      ],
+      "createdAt": "2026-07-08T03:45:42.656Z",
+      "updatedAt": "2026-07-08T03:46:28.679Z"
     }
   ],
   "leads": [
@@ -855,6 +973,94 @@
       "otp": "337498",
       "expiresAt": 1783431051071,
       "createdAt": "2026-07-07T13:20:51.071Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": "DEMO-1783475774086",
+      "customer": {
+        "name": "Tejaswee Bhetwal",
+        "email": "tejasweebhetwal1@gmail.com",
+        "phone": "0415261114",
+        "address": "U 1002 23-31 Treacy Street Hurstville NSW 2220",
+        "cardName": "Tejaswee Bhetwal",
+        "cardNumber": "4242 4242 4242 4242",
+        "expiry": "12/30",
+        "cvv": "123"
+      },
+      "items": [
+        {
+          "id": "p2",
+          "name": "Flower Honey 1kg",
+          "category": "Breakfast",
+          "price": 10,
+          "image": "🍯",
+          "description": "Natural flower honey for tea, toast and desserts.",
+          "stock": 18,
+          "halal": true,
+          "qty": 1
+        },
+        {
+          "id": "p3",
+          "name": "Rose Turkish Delight 250g",
+          "category": "Dessert",
+          "price": 5,
+          "image": "🍬",
+          "description": "Soft rose-flavoured Turkish delight.",
+          "stock": 40,
+          "halal": true,
+          "qty": 2
+        },
+        {
+          "id": "p6",
+          "name": "Dubai Pistachio Chocolate",
+          "category": "Chocolate",
+          "price": 16.15,
+          "image": "🍫",
+          "description": "Premium chocolate filled with pistachio cream.",
+          "stock": 20,
+          "halal": true,
+          "qty": 4
+        }
+      ],
+      "subtotal": 84.6,
+      "delivery": 0,
+      "total": 84.6,
+      "paymentStatus": "Paid (Demo)",
+      "orderStatus": "Received",
+      "createdAt": "2026-07-08T01:56:14.086Z"
+    },
+    {
+      "id": "DEMO-1783482323897",
+      "customer": {
+        "name": "tejaswee",
+        "email": "tejaswee1@gmail.com",
+        "phone": "0415261114",
+        "address": "hurstville",
+        "cardName": "Tejaswee Bhetwal",
+        "cardNumber": "4242 4242 4242 4242",
+        "expiry": "12/30",
+        "cvv": "123"
+      },
+      "items": [
+        {
+          "id": "p2",
+          "name": "Flower Honey 1kg",
+          "category": "Breakfast",
+          "price": 10,
+          "image": "🍯",
+          "description": "Natural flower honey for tea, toast and desserts.",
+          "stock": 18,
+          "halal": true,
+          "qty": 6
+        }
+      ],
+      "subtotal": 60,
+      "delivery": 0,
+      "total": 60,
+      "paymentStatus": "Paid (Demo)",
+      "orderStatus": "Received",
+      "createdAt": "2026-07-08T03:45:23.897Z"
     }
   ]
 }
