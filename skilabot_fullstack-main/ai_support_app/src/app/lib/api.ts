@@ -116,6 +116,7 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ email }),
     }),
+    
 
   signup: (name: string, email: string, password: string, otp?: string) =>
   request<{ token: string; user: ApiUser }>("/api/auth/signup", {
@@ -139,6 +140,7 @@ export const api = {
     request<{ token: string; user: ApiUser }>("/api/admin/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
+      
     }),
 
   // Conversations

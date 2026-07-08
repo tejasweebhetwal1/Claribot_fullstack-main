@@ -57,9 +57,9 @@ export default function LandingPage() {
 
             <div className="overflow-hidden rounded-3xl shadow-2xl">
               <img
-                src="/hero-grocery.jpg"
+                src="/hero-grocery.png"
                 alt="Grocery store banner"
-                className="h-[420px] w-full object-cover"
+                className="h-[400px] w-full object-cover md:h-[400px]"
                 onError={(e) => {
                   e.currentTarget.src =
                     "https://placehold.co/900x600?text=Grocery+Hero+Banner";

@@ -5,10 +5,12 @@ import StoreHeader from "../components/StoreHeader";
 import StoreFooter from "../components/StoreFooter";
 import ClariBotWidget from "../components/ClariBotWidget";
 import { useCart } from "../lib/cart";
+import { api } from "../lib/api";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const { cart, subtotal, delivery, total, clearCart } = useCart();
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -21,7 +23,7 @@ export default function CheckoutPage() {
     cvv: "123",
   });
 
-  function placeOrder() {
+  async function placeOrder() {
     if (!form.name || !form.email || !form.address) {
       alert("Please fill name, email and delivery address.");
       return;
@@ -32,24 +34,25 @@ export default function CheckoutPage() {
       return;
     }
 
-    const orderId = `DEMO-${Date.now()}`;
+    setLoading(true);
 
-    localStorage.setItem(
-      "clarimart_last_order",
-      JSON.stringify({
-        id: orderId,
+    try {
+      const result = await api.createOrder({
         customer: form,
         items: cart,
         subtotal,
         delivery,
         total,
-        status: "Paid (Demo)",
-        createdAt: new Date().toISOString(),
-      })
-    );
+        paymentStatus: "Paid (Demo)",
+      });
 
-    clearCart();
-    navigate(`/order-success/${orderId}`);
+      clearCart();
+      navigate(`/order-success/${result.order.id}`);
+    } catch {
+      alert("Order could not be saved. Make sure backend is running.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -61,80 +64,34 @@ export default function CheckoutPage() {
           <h1 className="mb-3 text-4xl font-black">Demo Checkout</h1>
 
           <p className="mb-6 rounded-2xl bg-yellow-100 p-4 text-sm font-semibold text-yellow-800">
-            Demo only: card details are not sent to any bank and no money is
-            deducted.
+            Demo only: fake card details are accepted and no real money is deducted.
           </p>
 
           <div className="grid gap-4">
-            <input
-              className="rounded-xl border px-4 py-3"
-              placeholder="Full name"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-            />
-
-            <input
-              className="rounded-xl border px-4 py-3"
-              placeholder="Email"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-            />
-
-            <input
-              className="rounded-xl border px-4 py-3"
-              placeholder="Phone"
-              value={form.phone}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            />
-
-            <textarea
-              className="rounded-xl border px-4 py-3"
-              placeholder="Delivery address"
-              rows={4}
-              value={form.address}
-              onChange={(e) => setForm({ ...form, address: e.target.value })}
-            />
+            <input className="rounded-xl border px-4 py-3" placeholder="Full name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            <input className="rounded-xl border px-4 py-3" placeholder="Email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+            <input className="rounded-xl border px-4 py-3" placeholder="Phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            <textarea className="rounded-xl border px-4 py-3" placeholder="Delivery address" rows={4} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
 
             <div className="mt-4 flex items-center gap-2 text-xl font-black">
               <CreditCard />
               Fake Card Details
             </div>
 
-            <input
-              className="rounded-xl border px-4 py-3"
-              placeholder="Name on card"
-              value={form.cardName}
-              onChange={(e) => setForm({ ...form, cardName: e.target.value })}
-            />
-
-            <input
-              className="rounded-xl border px-4 py-3"
-              placeholder="Card number"
-              value={form.cardNumber}
-              onChange={(e) => setForm({ ...form, cardNumber: e.target.value })}
-            />
+            <input className="rounded-xl border px-4 py-3" placeholder="Name on card" value={form.cardName} onChange={(e) => setForm({ ...form, cardName: e.target.value })} />
+            <input className="rounded-xl border px-4 py-3" placeholder="Card number" value={form.cardNumber} onChange={(e) => setForm({ ...form, cardNumber: e.target.value })} />
 
             <div className="grid grid-cols-2 gap-4">
-              <input
-                className="rounded-xl border px-4 py-3"
-                placeholder="Expiry"
-                value={form.expiry}
-                onChange={(e) => setForm({ ...form, expiry: e.target.value })}
-              />
-
-              <input
-                className="rounded-xl border px-4 py-3"
-                placeholder="CVV"
-                value={form.cvv}
-                onChange={(e) => setForm({ ...form, cvv: e.target.value })}
-              />
+              <input className="rounded-xl border px-4 py-3" placeholder="Expiry" value={form.expiry} onChange={(e) => setForm({ ...form, expiry: e.target.value })} />
+              <input className="rounded-xl border px-4 py-3" placeholder="CVV" value={form.cvv} onChange={(e) => setForm({ ...form, cvv: e.target.value })} />
             </div>
 
             <button
               onClick={placeOrder}
-              className="rounded-full bg-green-600 py-4 font-black text-white"
+              disabled={loading}
+              className="rounded-full bg-green-600 py-4 font-black text-white disabled:opacity-60"
             >
-              Place Demo Order
+              {loading ? "Placing Order..." : "Place Demo Order"}
             </button>
           </div>
         </section>
@@ -144,29 +101,16 @@ export default function CheckoutPage() {
 
           {cart.map((item) => (
             <p key={item.id} className="mb-3 flex justify-between text-sm">
-              <span>
-                {item.name} × {item.qty}
-              </span>
+              <span>{item.name} × {item.qty}</span>
               <b>${(item.price * item.qty).toFixed(2)}</b>
             </p>
           ))}
 
           <hr className="my-5" />
 
-          <p className="flex justify-between">
-            <span>Subtotal</span>
-            <b>${subtotal.toFixed(2)}</b>
-          </p>
-
-          <p className="mt-3 flex justify-between">
-            <span>Delivery</span>
-            <b>{delivery === 0 ? "Free" : `$${delivery.toFixed(2)}`}</b>
-          </p>
-
-          <p className="mt-5 flex justify-between text-xl">
-            <span>Total</span>
-            <b>${total.toFixed(2)}</b>
-          </p>
+          <p className="flex justify-between"><span>Subtotal</span><b>${subtotal.toFixed(2)}</b></p>
+          <p className="mt-3 flex justify-between"><span>Delivery</span><b>{delivery === 0 ? "Free" : `$${delivery.toFixed(2)}`}</b></p>
+          <p className="mt-5 flex justify-between text-xl"><span>Total</span><b>${total.toFixed(2)}</b></p>
         </aside>
       </main>
 
