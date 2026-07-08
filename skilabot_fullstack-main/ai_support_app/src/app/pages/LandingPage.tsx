@@ -1,145 +1,257 @@
 import { Link } from "react-router";
-import { ArrowRight, Bot, CheckCircle, ShoppingCart, Truck } from "lucide-react";
-import { products } from "../lib/products";
-import { useCart } from "../lib/cart";
+import {
+  ArrowRight,
+  Bot,
+  CheckCircle2,
+  CreditCard,
+  Headphones,
+  ShieldCheck,
+  Truck,
+} from "lucide-react";
+import StoreHeader from "../components/StoreHeader";
+import StoreFooter from "../components/StoreFooter";
+import ProductCard from "../components/ProductCard";
 import ClariBotWidget from "../components/ClariBotWidget";
+import { categories, products } from "../lib/storeData";
 
 export default function LandingPage() {
-  const { addToCart } = useCart();
-
   return (
-    <div className="min-h-screen bg-orange-50 text-gray-900">
-      <header className="sticky top-0 z-40 border-b bg-white/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <Link to="/" className="text-2xl font-black text-orange-700">
-            ClariMart
-          </Link>
+    <div className="min-h-screen bg-white text-gray-900">
+      <StoreHeader />
 
-          <nav className="hidden gap-6 font-semibold md:flex">
-            <Link to="/shop">Shop</Link>
-            <Link to="/faq">FAQ</Link>
-            <Link to="/contact">Contact</Link>
-            <Link to="/cart">Cart</Link>
-          </nav>
-
-          <Link
-            to="/cart"
-            className="flex items-center gap-2 rounded-xl bg-orange-600 px-4 py-2 text-white"
-          >
-            <ShoppingCart size={18} />
-            Cart
-          </Link>
-        </div>
-      </header>
-
-      <section className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:grid-cols-2 md:items-center">
-        <div>
-          <p className="mb-3 font-bold text-orange-700">
-            Online grocery store demo
-          </p>
-
-          <h1 className="mb-5 text-5xl font-black leading-tight">
-            Buy groceries online with ClariBot AI customer support.
-          </h1>
-
-          <p className="mb-6 text-gray-600">
-            Customers can browse products, add items to cart, checkout with demo
-            card details, and get help from ClariBot live support.
-          </p>
-
-          <div className="flex gap-3">
-            <Link
-              to="/shop"
-              className="flex items-center gap-2 rounded-xl bg-orange-600 px-6 py-3 font-bold text-white"
-            >
-              Start Shopping
-              <ArrowRight size={18} />
-            </Link>
-
-            <Link
-              to="/contact"
-              className="rounded-xl border border-orange-300 bg-white px-6 py-3 font-bold text-orange-700"
-            >
-              Contact Us
-            </Link>
-          </div>
-
-          <div className="mt-8 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl bg-white p-4 shadow">
-              <Truck className="mb-2 text-orange-600" />
-              <b>Local Delivery</b>
-              <p className="text-sm text-gray-500">Free over $50</p>
-            </div>
-
-            <div className="rounded-2xl bg-white p-4 shadow">
-              <Bot className="mb-2 text-orange-600" />
-              <b>AI Support</b>
-              <p className="text-sm text-gray-500">ClariBot live chat</p>
-            </div>
-
-            <div className="rounded-2xl bg-white p-4 shadow">
-              <CheckCircle className="mb-2 text-orange-600" />
-              <b>Demo Payment</b>
-              <p className="text-sm text-gray-500">No real charge</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-3xl bg-white p-8 text-center shadow-xl">
-          <div className="mb-4 text-8xl">🛒</div>
-          <h2 className="mb-2 text-3xl font-black">Full Business Site</h2>
-          <p className="text-gray-600">
-            Product catalogue, shopping cart, fake checkout, order success page,
-            contact form and AI customer support.
-          </p>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-6 py-12">
-        <div className="mb-8 flex items-end justify-between">
-          <div>
-            <h2 className="text-3xl font-black">Featured Products</h2>
-            <p className="text-gray-600">Popular items from our store.</p>
-          </div>
-
-          <Link to="/shop" className="font-bold text-orange-700">
-            View all products
-          </Link>
-        </div>
-
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {products.slice(0, 3).map((product) => (
-            <div key={product.id} className="rounded-3xl bg-white p-6 shadow">
-              <div className="mb-4 text-center text-6xl">{product.image}</div>
-              <p className="text-sm font-bold text-orange-700">
-                {product.category}
-              </p>
-              <h3 className="min-h-[56px] text-xl font-black">{product.name}</h3>
-              <p className="mb-4 text-gray-600">{product.description}</p>
-              <p className="mb-4 text-2xl font-black">
-                ${product.price.toFixed(2)}
+      <main>
+        <section className="bg-sky-50">
+          <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 md:grid-cols-[1.1fr_0.9fr] md:items-center">
+            <div>
+              <p className="mb-3 inline-block rounded-full bg-white px-4 py-2 text-sm font-black text-sky-600 shadow">
+                Fresh groceries delivered Australia-wide
               </p>
 
-              <div className="flex gap-2">
-                <button
-                  onClick={() => addToCart(product)}
-                  className="flex-1 rounded-xl bg-orange-600 py-3 font-bold text-white"
+              <h1 className="mb-5 text-4xl font-black leading-tight md:text-6xl">
+                Mediterranean, Middle Eastern & Turkish groceries online.
+              </h1>
+
+              <p className="mb-8 max-w-xl text-lg text-gray-600">
+                Shop pantry essentials, halal items, sweets, drinks and everyday
+                groceries from a professional demo business website powered by
+                ClariBot AI customer support.
+              </p>
+
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  to="/shop"
+                  className="flex items-center gap-2 rounded-full bg-sky-500 px-7 py-4 font-black text-white hover:bg-sky-600"
                 >
-                  Add to Cart
-                </button>
+                  Shop Now
+                  <ArrowRight size={18} />
+                </Link>
 
                 <Link
-                  to={`/product/${product.id}`}
-                  className="rounded-xl border px-4 py-3 font-bold"
+                  to="/contact"
+                  className="rounded-full border border-sky-300 bg-white px-7 py-4 font-black text-sky-600"
                 >
-                  View
+                  Contact Store
                 </Link>
               </div>
             </div>
-          ))}
-        </div>
-      </section>
 
+            <div className="overflow-hidden rounded-3xl shadow-2xl">
+              <img
+                src="/hero-grocery.jpg"
+                alt="Grocery store banner"
+                className="h-[420px] w-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src =
+                    "https://placehold.co/900x600?text=Grocery+Hero+Banner";
+                }}
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="border-y bg-white">
+          <div className="mx-auto grid max-w-7xl gap-4 px-6 py-6 md:grid-cols-4">
+            <div className="flex items-center gap-3">
+              <Truck className="text-sky-500" />
+              <div>
+                <b>Fast Delivery</b>
+                <p className="text-sm text-gray-500">Free over $50</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <ShieldCheck className="text-sky-500" />
+              <div>
+                <b>Quality Products</b>
+                <p className="text-sm text-gray-500">Fresh & trusted items</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <CreditCard className="text-sky-500" />
+              <div>
+                <b>Demo Checkout</b>
+                <p className="text-sm text-gray-500">No real payment</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Headphones className="text-sky-500" />
+              <div>
+                <b>AI Support</b>
+                <p className="text-sm text-gray-500">ClariBot live chat</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-6 py-14">
+          <div className="mb-8 text-center">
+            <p className="font-black text-sky-600">Shop by category</p>
+            <h2 className="text-4xl font-black">Popular Categories</h2>
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {categories.map((category) => (
+              <Link
+                to="/shop"
+                key={category.id}
+                className="group overflow-hidden rounded-3xl bg-white shadow"
+              >
+                <div className="h-48 overflow-hidden bg-gray-100">
+                  <img
+                    src={category.image}
+                    alt={category.name}
+                    className="h-full w-full object-cover transition group-hover:scale-105"
+                    onError={(e) => {
+                      e.currentTarget.src =
+                        "https://placehold.co/600x400?text=Category";
+                    }}
+                  />
+                </div>
+
+                <div className="p-5">
+                  <h3 className="text-2xl font-black group-hover:text-sky-600">
+                    {category.name}
+                  </h3>
+                  <p className="mt-2 text-gray-500">{category.description}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="bg-gray-50 py-14">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+              <div>
+                <p className="font-black text-sky-600">Fresh deals</p>
+                <h2 className="text-4xl font-black">Featured Products</h2>
+              </div>
+
+              <Link to="/shop" className="font-black text-sky-600">
+                View all products →
+              </Link>
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {products.slice(0, 8).map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-6 py-14">
+          <div className="grid overflow-hidden rounded-3xl bg-sky-500 md:grid-cols-2">
+            <div className="p-10 text-white md:p-14">
+              <p className="mb-3 font-black">Weekly Specials</p>
+              <h2 className="mb-4 text-4xl font-black">
+                Save on pantry, sweets and halal grocery favourites.
+              </h2>
+              <p className="mb-6 text-sky-50">
+                This section makes the site feel like a real online store with
+                seasonal promotions and product offers.
+              </p>
+              <Link
+                to="/shop"
+                className="inline-block rounded-full bg-white px-7 py-4 font-black text-sky-600"
+              >
+                Browse Specials
+              </Link>
+            </div>
+
+            <img
+              src="/offer-banner.jpg"
+              alt="Special offers"
+              className="h-full min-h-[320px] w-full object-cover"
+              onError={(e) => {
+                e.currentTarget.src =
+                  "https://placehold.co/900x600?text=Weekly+Specials";
+              }}
+            />
+          </div>
+        </section>
+
+        <section className="bg-gray-50 py-14">
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="mb-8 text-center">
+              <p className="font-black text-sky-600">Why choose us</p>
+              <h2 className="text-4xl font-black">A Complete Business Website</h2>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-3">
+              <div className="rounded-3xl bg-white p-8 shadow">
+                <CheckCircle2 className="mb-4 text-sky-500" size={36} />
+                <h3 className="mb-2 text-xl font-black">Real Store Layout</h3>
+                <p className="text-gray-500">
+                  Includes homepage, categories, product cards, promotions,
+                  support and footer.
+                </p>
+              </div>
+
+              <div className="rounded-3xl bg-white p-8 shadow">
+                <CreditCard className="mb-4 text-sky-500" size={36} />
+                <h3 className="mb-2 text-xl font-black">Fake Checkout</h3>
+                <p className="text-gray-500">
+                  Customers can place a demo order using fake card details with
+                  no real payment.
+                </p>
+              </div>
+
+              <div className="rounded-3xl bg-white p-8 shadow">
+                <Bot className="mb-4 text-sky-500" size={36} />
+                <h3 className="mb-2 text-xl font-black">ClariBot Support</h3>
+                <p className="text-gray-500">
+                  Your chatbot becomes live AI customer support instead of being
+                  the whole website.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-6 py-14">
+          <div className="rounded-3xl bg-gray-900 p-10 text-center text-white">
+            <h2 className="mb-3 text-4xl font-black">Join our newsletter</h2>
+            <p className="mb-6 text-gray-300">
+              Get weekly grocery offers, new arrivals and delivery updates.
+            </p>
+
+            <div className="mx-auto flex max-w-xl flex-col gap-3 sm:flex-row">
+              <input
+                placeholder="Enter your email"
+                className="flex-1 rounded-full px-5 py-4 text-gray-900 outline-none"
+              />
+              <button className="rounded-full bg-sky-500 px-7 py-4 font-black">
+                Subscribe
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <StoreFooter />
       <ClariBotWidget />
     </div>
   );

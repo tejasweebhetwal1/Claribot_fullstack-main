@@ -12,8 +12,7 @@ import ShopPage from "./pages/ShopPage";
 import ProductPage from "./pages/ProductPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
-import ContactPage from "./pages/ContactPage";
-import OrderSuccessPage from "./pages/OrderSucessPage";
+import OrderSuccessPage from "./pages/OrderSuccessPage";
 
 export const router = createBrowserRouter([
   {
@@ -26,15 +25,14 @@ export const router = createBrowserRouter([
       { path: "cart", Component: CartPage },
       { path: "checkout", Component: CheckoutPage },
       { path: "order-success/:id", Component: OrderSuccessPage },
-      { path: "contact", Component: ContactPage },
 
       { path: "login", Component: LoginPage },
       { path: "demo-chat", Component: DemoChatPage },
       { path: "faq", Component: FaqPage },
       { path: "chat", Component: ChatPage },
       { path: "business", Component: BusinessPage },
-      { path: "admin", Component: AdminDashboard },
       { path: "admin-login", Component: AdminLogin },
+      { path: "admin", Component: AdminDashboard },
       { path: "admin-dashboard", Component: AdminDashboard },
     ],
   },

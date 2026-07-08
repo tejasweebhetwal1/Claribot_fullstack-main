@@ -1,9 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import type { Product } from "./products";
+import type { Product } from "./storeData";
 
-export type CartItem = Product & {
-  qty: number;
-};
+export type CartItem = Product & { qty: number };
 
 type CartContextType = {
   cart: CartItem[];
@@ -33,9 +31,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   function addToCart(product: Product) {
     setCart((prev) => {
-      const found = prev.find((item) => item.id === product.id);
+      const existing = prev.find((item) => item.id === product.id);
 
-      if (found) {
+      if (existing) {
         return prev.map((item) =>
           item.id === product.id ? { ...item, qty: item.qty + 1 } : item
         );
