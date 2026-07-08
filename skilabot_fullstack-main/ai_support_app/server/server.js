@@ -43,6 +43,7 @@ function createToken(user) {
     { expiresIn: "1d" }
   );
 }
+
 async function sendOtpEmail(toEmail, otp) {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     throw new Error("Email sender is not configured");
@@ -86,199 +87,288 @@ function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-// Business chatbot reply logic
+// ClariMart shopping assistant chatbot reply logic
 function getBotReply(userText) {
-  const msg = (userText || "").toLowerCase();
-    if (msg.includes("honey")) {
-    return "Yes, we sell Flower Honey 1kg for $10. You can find it in the Breakfast category.";
+  const msg = String(userText || "").toLowerCase();
+
+  const products = [
+    {
+      name: "Premium Pure Tahini 750g",
+      category: "Pantry",
+      price: 10.5,
+      oldPrice: "$12.50",
+      displayPrice: "$10.50",
+      stock: 25,
+      description:
+        "Smooth sesame tahini, perfect for hummus, dips, sauces, salad dressing and healthy breakfast bowls.",
+      speciality:
+        "This is one of our best Mediterranean pantry products because it is healthy, creamy and useful in many dishes.",
+      offer: "Special offer: reduced from $12.50 to $10.50.",
+      keywords: ["tahini", "sesame", "premium pure tahini", "dip", "sauce", "hummus"],
+    },
+    {
+      name: "Flower Honey 1kg",
+      category: "Breakfast",
+      price: 10.0,
+      oldPrice: "",
+      displayPrice: "$10.00",
+      stock: 18,
+      description: "Natural flower honey for tea, toast, desserts and breakfast.",
+      speciality:
+        "A family-size 1kg honey jar, good for breakfast, drinks and desserts.",
+      offer: "Popular breakfast product with great value for a 1kg pack.",
+      keywords: ["honey", "flower honey", "breakfast", "tea", "toast"],
+    },
+    {
+      name: "Rose Turkish Delight 250g",
+      category: "Sweets",
+      price: 5.0,
+      oldPrice: "",
+      displayPrice: "$5.00",
+      stock: 40,
+      description:
+        "Soft rose-flavoured Turkish delight, good for dessert or gifting.",
+      speciality:
+        "A traditional Mediterranean sweet with soft texture and rose flavour.",
+      offer: "Budget-friendly sweet item at only $5.00.",
+      keywords: ["turkish delight", "rose", "sweet", "sweets", "dessert"],
+    },
+    {
+      name: "Turkish Style Yogurt 2kg",
+      category: "Dairy",
+      price: 7.0,
+      oldPrice: "",
+      displayPrice: "$7.00",
+      stock: 12,
+      description:
+        "Thick Turkish-style yogurt for breakfast, cooking, dips and sauces.",
+      speciality:
+        "A large 2kg family pack, useful for breakfast and Mediterranean cooking.",
+      offer: "Family-size 2kg pack for only $7.00.",
+      keywords: ["yogurt", "yoghurt", "turkish yogurt", "dairy", "breakfast"],
+    },
+    {
+      name: "Halal Beef Sucuk 500g",
+      category: "Halal Meat",
+      price: 13.6,
+      oldPrice: "",
+      displayPrice: "$13.60",
+      stock: 9,
+      description:
+        "Spiced halal beef sucuk sausage, good for breakfast, sandwiches and cooking.",
+      speciality:
+        "One of our speciality halal meat products, suitable for customers looking for halal grocery options.",
+      offer: "Speciality halal product available in limited stock.",
+      keywords: ["sucuk", "beef", "halal", "meat", "sausage"],
+    },
+    {
+      name: "Dubai Chocolate",
+      category: "Sweets",
+      price: 10.0,
+      oldPrice: "",
+      displayPrice: "$10.00",
+      stock: 15,
+      description: "Premium chocolate dessert with rich creamy flavour.",
+      speciality:
+        "A premium sweet item for customers who want a modern dessert product.",
+      offer: "New sweet item, perfect for dessert lovers.",
+      keywords: ["dubai chocolate", "chocolate", "sweet", "dessert"],
+    },
+  ];
+
+  function productLine(p) {
+    return `${p.name} — ${p.displayPrice} | Stock: ${p.stock} | ${p.category}`;
   }
 
-  if (msg.includes("tahini")) {
-    return "Yes, we sell Premium Pure Tahini 750g for $10.50. It is available in the Pantry category.";
+  function productList(items = products) {
+    return items.map((p, i) => `${i + 1}. ${productLine(p)}`).join("\n");
   }
 
-  if (msg.includes("sucuk") || msg.includes("meat")) {
-    return "Yes, we sell Halal Beef Sucuk 500g for $13.60.";
+  function priceList() {
+    return products.map((p) => `• ${p.name}: ${p.displayPrice}`).join("\n");
   }
 
-  if (msg.includes("chocolate")) {
-    return "Yes, we sell Dubai Pistachio Chocolate for $16.15.";
+  function stockList() {
+    return products.map((p) => `• ${p.name}: ${p.stock} available`).join("\n");
   }
 
-  if (msg.includes("halal")) {
-    return "Yes, many of our products are halal, including Halal Beef Sucuk and selected pantry items.";
-  }
+  const matchedProduct = products.find((product) =>
+    product.keywords.some((keyword) => msg.includes(keyword))
+  );
 
-  if (msg.includes("delivery") || msg.includes("shipping")) {
-    return "We offer local delivery. Delivery is free for orders over $50, otherwise it is $8.99.";
-  }
-
-  if (msg.includes("payment") || msg.includes("card") || msg.includes("checkout")) {
-    return "This website uses demo checkout only. Customers can enter fake card details, but no real money is deducted.";
-  }
-
-  if (msg.includes("refund") || msg.includes("return")) {
-    return "Refunds can be requested within 7 days. Please provide your demo order number and reason for the return.";
-  }
-
-  if (msg.includes("open") || msg.includes("hours") || msg.includes("close")) {
-    return "ClariMart is open Monday to Saturday from 9:00 AM to 6:00 PM.";
-  }
-
-  const products = `
-1. Starter Plan — $0/month
-Best for testing. Includes basic chatbot replies, lead capture, and 1,000 monthly conversations.
-
-2. Growth Plan — $99/month
-Best for small businesses. Includes 20,000 conversations, admin dashboard, analytics, conversation history, and priority support.
-
-3. Enterprise Plan — $299/month
-Best for larger businesses. Includes unlimited conversations, custom AI training, advanced support, SLA support, and white-label option.
-
-4. Custom Chatbot Setup — From $499 one-time
-Includes chatbot setup, business FAQ training, support flow setup, and website integration.
-
-5. AI Knowledge Base Setup — From $199 one-time
-Includes adding product details, pricing, refund policy, delivery details, opening hours, and business FAQs.
-`;
-
-  // Greetings
   if (msg.includes("hello") || msg.includes("hi") || msg.includes("hey")) {
-    return "Hello! 👋 I’m ClariBot, your AI customer support assistant. You can ask me about products, prices, delivery, refund policy, opening hours, or account support.";
+    return "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. I can help you find products, check prices, explain offers, suggest items, check stock, and guide you with delivery, cart, checkout and refunds.";
   }
 
-  // Specific plan answers FIRST
-  if (msg.includes("starter")) {
-    return "The **Starter Plan** costs **$0/month**. It is best for testing or small demo use. It includes basic chatbot replies, lead capture, and 1,000 monthly conversations.";
-  }
-
-  if (msg.includes("growth")) {
-    return "The **Growth Plan** costs **$99/month**. It is best for small businesses. It includes 20,000 monthly conversations, admin dashboard, analytics, conversation history, and priority support.";
-  }
-
-  if (msg.includes("enterprise")) {
-    return "The **Enterprise Plan** costs **$299/month**. It is best for larger businesses. It includes unlimited conversations, custom AI training, advanced support, SLA support, and white-label option.";
-  }
-
-  // Best plan recommendation
   if (
-    msg.includes("best") ||
-    msg.includes("recommend") ||
-    msg.includes("which plan") ||
-    msg.includes("small business")
+    msg.includes("offer") ||
+    msg.includes("offers") ||
+    msg.includes("discount") ||
+    msg.includes("sale") ||
+    msg.includes("special deal") ||
+    msg.includes("promotion")
   ) {
-    return "For most small businesses, I recommend the **Growth Plan** at **$99/month**. It includes 20,000 monthly conversations, admin dashboard, analytics, conversation history, and priority support. If you only want to test the chatbot, the Starter Plan is enough.";
+    return `Current ClariMart offers:\n\n• Free delivery on orders over $50\n• Premium Pure Tahini 750g is on sale from $12.50 to $10.50\n• Rose Turkish Delight 250g is only $5.00, a budget-friendly sweet option\n• Turkish Style Yogurt 2kg is a family-size dairy item for only $7.00\n• Halal Beef Sucuk 500g is one of our speciality halal products\n\nYou can ask me about any product, and I can explain its price, speciality, best use and stock.`;
   }
 
-  // Product/service list
+  if (
+    msg.includes("speciality") ||
+    msg.includes("specialty") ||
+    msg.includes("special about") ||
+    msg.includes("why special") ||
+    msg.includes("what is special")
+  ) {
+    if (matchedProduct) {
+      return `${matchedProduct.name} is special because ${matchedProduct.speciality}\n\nPrice: ${matchedProduct.displayPrice}\nStock: ${matchedProduct.stock}\nOffer: ${matchedProduct.offer}`;
+    }
+
+    return "ClariMart specialises in Mediterranean grocery products such as tahini, honey, Turkish delight, Turkish yogurt, halal sucuk and Dubai chocolate. Our speciality is helping customers find breakfast items, halal meat, sweets, pantry products and family grocery options.";
+  }
+
+  if (matchedProduct) {
+    return `Yes, we have ${matchedProduct.name}.\n\nCategory: ${matchedProduct.category}\nPrice: ${matchedProduct.displayPrice}\nStock available: ${matchedProduct.stock}\n\nSpeciality: ${matchedProduct.speciality}\n\nOffer: ${matchedProduct.offer}\n\n${matchedProduct.description}\n\nYou can click Add to Cart on the product card to buy it.`;
+  }
+
   if (
     msg.includes("product") ||
     msg.includes("products") ||
-    msg.includes("service") ||
-    msg.includes("services") ||
-    msg.includes("offer") ||
-    msg.includes("what do you sell")
+    msg.includes("items") ||
+    msg.includes("what do you sell") ||
+    msg.includes("what do you have") ||
+    msg.includes("available")
   ) {
-    return `We offer AI customer support products and services:\n\n${products}`;
+    return `Here are our available ClariMart products:\n\n${productList()}\n\nToday’s highlight: Tahini is on sale from $12.50 to $10.50, and delivery is free for orders over $50.`;
   }
 
-  // Generic pricing
   if (
     msg.includes("price") ||
-    msg.includes("pricing") ||
     msg.includes("cost") ||
-    msg.includes("fee") ||
     msg.includes("how much") ||
-    msg.includes("plans")
+    msg.includes("rate")
   ) {
-    return `Here is our pricing:\n\n${products}\nFor most small businesses, the **Growth Plan** at **$99/month** is the best option.`;
+    return `Here is the current product price list:\n\n${priceList()}\n\nBest value today: Premium Pure Tahini 750g is on sale for $10.50.`;
   }
 
-  // Opening hours
   if (
-    msg.includes("opening") ||
-    msg.includes("opening time") ||
-    msg.includes("opening hours") ||
-    msg.includes("business hours") ||
-    msg.includes("open time") ||
-    msg.includes("what time") ||
-    msg.includes("close") ||
-    msg.includes("closing") ||
-    msg.includes("hours")
+    msg.includes("stock") ||
+    msg.includes("quantity") ||
+    msg.includes("in stock") ||
+    msg.includes("available stock")
   ) {
-    return "Our opening hours are **Monday to Friday, 9:00 AM to 5:00 PM**. We are closed on weekends and public holidays. The chatbot is available 24/7 for basic support.";
+    return `Here is the current stock information:\n\n${stockList()}`;
   }
 
-  // Delivery
+  if (
+    msg.includes("cheap") ||
+    msg.includes("cheapest") ||
+    msg.includes("lowest price") ||
+    msg.includes("budget")
+  ) {
+    const cheapest = [...products].sort((a, b) => a.price - b.price)[0];
+
+    return `The cheapest product is ${cheapest.name} at ${cheapest.displayPrice}.\n\nIt is a ${cheapest.category} item, and we currently have ${cheapest.stock} in stock. It is a good budget-friendly option.`;
+  }
+
+  if (
+    msg.includes("expensive") ||
+    msg.includes("highest price") ||
+    msg.includes("premium")
+  ) {
+    const highest = [...products].sort((a, b) => b.price - a.price)[0];
+
+    return `The highest priced product is ${highest.name} at ${highest.displayPrice}.\n\nIt is a ${highest.category} item, and we currently have ${highest.stock} in stock.`;
+  }
+
+  if (msg.includes("halal")) {
+    const halalItems = products.filter(
+      (p) =>
+        p.category.toLowerCase().includes("halal") ||
+        p.keywords.includes("halal")
+    );
+
+    return `Yes, we have halal products:\n\n${productList(halalItems)}\n\nOur speciality halal item is Halal Beef Sucuk 500g.`;
+  }
+
+  if (
+    msg.includes("dairy") ||
+    msg.includes("milk") ||
+    msg.includes("yogurt") ||
+    msg.includes("yoghurt")
+  ) {
+    const dairyItems = products.filter((p) => p.category === "Dairy");
+
+    return `Here are our dairy products:\n\n${productList(dairyItems)}\n\nTurkish Style Yogurt 2kg is good for breakfast, cooking, dips and sauces.`;
+  }
+
+  if (
+    msg.includes("sweet") ||
+    msg.includes("sweets") ||
+    msg.includes("dessert") ||
+    msg.includes("chocolate")
+  ) {
+    const sweetItems = products.filter(
+      (p) => p.category === "Sweets" || p.keywords.includes("dessert")
+    );
+
+    return `Here are our sweets and dessert products:\n\n${productList(sweetItems)}\n\nRose Turkish Delight is a budget-friendly sweet, while Dubai Chocolate is a premium dessert option.`;
+  }
+
+  if (msg.includes("breakfast")) {
+    return `For breakfast, I recommend:\n\n1. Flower Honey 1kg — $10.00\nGood for tea, toast and breakfast.\n\n2. Turkish Style Yogurt 2kg — $7.00\nGood for breakfast bowls and cooking.\n\n3. Premium Pure Tahini 750g — $10.50\nGood for healthy Mediterranean-style breakfast, dips and sauces.`;
+  }
+
+  if (
+    msg.includes("recommend") ||
+    msg.includes("suggest") ||
+    msg.includes("best")
+  ) {
+    return `My recommendations:\n\n• For breakfast: Flower Honey 1kg and Turkish Style Yogurt 2kg\n• For cooking: Premium Pure Tahini and Halal Beef Sucuk\n• For dessert: Rose Turkish Delight or Dubai Chocolate\n• For best value: Premium Pure Tahini is currently on sale\n• For halal option: Halal Beef Sucuk 500g\n\nTell me your category, and I can suggest better.`;
+  }
+
   if (
     msg.includes("delivery") ||
-    msg.includes("deliver") ||
     msg.includes("shipping") ||
-    msg.includes("ship")
+    msg.includes("deliver")
   ) {
-    return "Yes, we provide digital delivery for chatbot services. After signup, the chatbot can be integrated into the business website. Setup time depends on the selected plan and business requirements.";
+    return "ClariMart offers delivery for grocery orders. Delivery is free for orders over $50. Otherwise, delivery is $8.99. Delivery time may depend on the customer location and order size.";
   }
 
-  // Refund
+  if (
+    msg.includes("cart") ||
+    msg.includes("add to cart") ||
+    msg.includes("checkout") ||
+    msg.includes("order")
+  ) {
+    return "To order, choose a product and click Add to Cart. Then open the Cart page, review your items, and continue to demo checkout. No real payment is deducted in this demo website.";
+  }
+
   if (
     msg.includes("refund") ||
     msg.includes("return") ||
-    msg.includes("money back") ||
-    msg.includes("cancel") ||
-    msg.includes("cancellation")
+    msg.includes("cancel")
   ) {
-    return "Refund requests are reviewed by our support team. Please provide your registered email, order or plan details, payment date, and reason for refund. If the service has not been used or the issue is valid, the support team may approve a refund according to business policy.";
+    return "Refund and return requests are reviewed by the store team. Customers should provide the order number, product name, purchase date and reason for return. Opened or perishable food items may only be refunded if there is a quality issue.";
   }
 
-  // Further details
   if (
-    msg.includes("further") ||
-    msg.includes("detail") ||
-    msg.includes("details") ||
-    msg.includes("more information") ||
-    msg.includes("explain") ||
-    msg.includes("tell me more")
+    msg.includes("opening") ||
+    msg.includes("hours") ||
+    msg.includes("open") ||
+    msg.includes("close")
   ) {
-    return "ClariBot is an AI customer support platform for business websites. It helps customers ask questions about products, prices, delivery, refunds, opening hours, and support. It includes a business landing page, account registration, ChatGPT-like chatbot UI, lead capture, conversation history, OTP verification, and admin dashboard.";
+    return "ClariMart is open Monday to Saturday, 9:00 AM to 6:00 PM. Online product browsing and ClariBot support are available anytime.";
   }
 
-  // Contact/support
   if (
     msg.includes("contact") ||
-    msg.includes("phone") ||
-    msg.includes("call") ||
-    msg.includes("email") ||
     msg.includes("support") ||
-    msg.includes("help")
+    msg.includes("phone") ||
+    msg.includes("email")
   ) {
-    return "You can contact our support team by email at **support@claribot.com**. Business support is available Monday to Friday, 9:00 AM to 5:00 PM. You can also continue asking questions here.";
+    return "You can contact ClariMart support at support@claribot.com. You can also ask me here about products, prices, stock, offers, delivery, refunds and checkout help.";
   }
 
-  // Payment/billing
-  if (
-    msg.includes("payment") ||
-    msg.includes("pay") ||
-    msg.includes("invoice") ||
-    msg.includes("billing")
-  ) {
-    return "For billing and payments, customers can choose a monthly plan and receive invoice details through their business account. If you need billing help, please provide your registered email and plan name.";
-  }
-
-  // Admin/dashboard
-  if (
-    msg.includes("admin") ||
-    msg.includes("dashboard") ||
-    msg.includes("analytics")
-  ) {
-    return "The admin dashboard allows business staff to view users, leads, conversations, chatbot activity, and customer support performance.";
-  }
-
-  // Thanks
-  if (msg.includes("thank") || msg.includes("thanks")) {
-    return "You’re welcome! I’m happy to help.";
-  }
-
-  return "Thanks for reaching out! I can help with products, prices, delivery, refunds, opening hours, account support, and further business details. What would you like to know?";
+  return "I’m ClariBot, your ClariMart shopping assistant. I can help with product details, prices, offers, stock, halal items, dairy, sweets, breakfast recommendations, delivery, cart, checkout, refunds and opening hours.";
 }
 
 app.get("/", (req, res) => {
@@ -543,7 +633,7 @@ app.post("/api/conversations", (req, res) => {
       {
         id: Date.now().toString(),
         role: "bot",
-        text: "Hello! 👋 I’m ClariBot, your AI customer support assistant. You can ask me about products, prices, delivery, refunds, opening hours, or account support.",
+        text: "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. Ask me about products, prices, offers, special items, delivery, checkout, refunds or opening hours.",
         createdAt: nowTime,
       },
     ],
@@ -731,6 +821,8 @@ app.get("/api/admin/leads", (req, res) => {
 
   res.json(leads);
 });
+
+// Create demo order
 app.post("/api/orders", (req, res) => {
   const db = readDB();
 
@@ -755,6 +847,7 @@ app.post("/api/orders", (req, res) => {
   });
 });
 
+// Admin orders
 app.get("/api/admin/orders", (req, res) => {
   const db = readDB();
 

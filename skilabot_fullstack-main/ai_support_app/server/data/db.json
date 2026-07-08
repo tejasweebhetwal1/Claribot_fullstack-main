@@ -923,10 +923,299 @@
           "role": "bot",
           "text": "We offer AI customer support products and services:\n\n\n1. Starter Plan — $0/month\nBest for testing. Includes basic chatbot replies, lead capture, and 1,000 monthly conversations.\n\n2. Growth Plan — $99/month\nBest for small businesses. Includes 20,000 conversations, admin dashboard, analytics, conversation history, and priority support.\n\n3. Enterprise Plan — $299/month\nBest for larger businesses. Includes unlimited conversations, custom AI training, advanced support, SLA support, and white-label option.\n\n4. Custom Chatbot Setup — From $499 one-time\nIncludes chatbot setup, business FAQ training, support flow setup, and website integration.\n\n5. AI Knowledge Base Setup — From $199 one-time\nIncludes adding product details, pricing, refund policy, delivery details, opening hours, and business FAQs.\n",
           "createdAt": "2026-07-08T03:46:28.679Z"
+        },
+        {
+          "id": "1783486828466",
+          "role": "user",
+          "text": "meat",
+          "createdAt": "2026-07-08T05:00:28.466Z"
+        },
+        {
+          "id": "1783486828467",
+          "role": "bot",
+          "text": "Yes, we sell Halal Beef Sucuk 500g for $13.60.",
+          "createdAt": "2026-07-08T05:00:28.466Z"
         }
       ],
       "createdAt": "2026-07-08T03:45:42.656Z",
-      "updatedAt": "2026-07-08T03:46:28.679Z"
+      "updatedAt": "2026-07-08T05:00:28.466Z"
+    },
+    {
+      "id": "1783486993736",
+      "userId": "guest",
+      "title": "Website customer support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1783486993736",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI customer support assistant. You can ask me about products, prices, delivery, refunds, opening hours, or account support.",
+          "createdAt": "2026-07-08T05:03:13.736Z"
+        },
+        {
+          "id": "1783486993747",
+          "role": "user",
+          "text": "how to add product",
+          "createdAt": "2026-07-08T05:03:13.747Z"
+        },
+        {
+          "id": "1783486993748",
+          "role": "bot",
+          "text": "We offer AI customer support products and services:\n\n\n1. Starter Plan — $0/month\nBest for testing. Includes basic chatbot replies, lead capture, and 1,000 monthly conversations.\n\n2. Growth Plan — $99/month\nBest for small businesses. Includes 20,000 conversations, admin dashboard, analytics, conversation history, and priority support.\n\n3. Enterprise Plan — $299/month\nBest for larger businesses. Includes unlimited conversations, custom AI training, advanced support, SLA support, and white-label option.\n\n4. Custom Chatbot Setup — From $499 one-time\nIncludes chatbot setup, business FAQ training, support flow setup, and website integration.\n\n5. AI Knowledge Base Setup — From $199 one-time\nIncludes adding product details, pricing, refund policy, delivery details, opening hours, and business FAQs.\n",
+          "createdAt": "2026-07-08T05:03:13.747Z"
+        },
+        {
+          "id": "1783487012549",
+          "role": "user",
+          "text": "how to use",
+          "createdAt": "2026-07-08T05:03:32.549Z"
+        },
+        {
+          "id": "1783487012550",
+          "role": "bot",
+          "text": "Thanks for reaching out! I can help with products, prices, delivery, refunds, opening hours, account support, and further business details. What would you like to know?",
+          "createdAt": "2026-07-08T05:03:32.549Z"
+        },
+        {
+          "id": "1783487023144",
+          "role": "user",
+          "text": "refund",
+          "createdAt": "2026-07-08T05:03:43.144Z"
+        },
+        {
+          "id": "1783487023145",
+          "role": "bot",
+          "text": "Refunds can be requested within 7 days. Please provide your demo order number and reason for the return.",
+          "createdAt": "2026-07-08T05:03:43.145Z"
+        },
+        {
+          "id": "1783487037971",
+          "role": "user",
+          "text": "opening",
+          "createdAt": "2026-07-08T05:03:57.971Z"
+        },
+        {
+          "id": "1783487037972",
+          "role": "bot",
+          "text": "ClariMart is open Monday to Saturday from 9:00 AM to 6:00 PM.",
+          "createdAt": "2026-07-08T05:03:57.971Z"
+        }
+      ],
+      "createdAt": "2026-07-08T05:03:13.736Z",
+      "updatedAt": "2026-07-08T05:03:57.971Z"
+    },
+    {
+      "id": "1783488078874",
+      "userId": "guest",
+      "title": "Website customer support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1783488078874",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI customer support assistant. You can ask me about products, prices, delivery, refunds, opening hours, or account support.",
+          "createdAt": "2026-07-08T05:21:18.874Z"
+        },
+        {
+          "id": "1783488078885",
+          "role": "user",
+          "text": "opening",
+          "createdAt": "2026-07-08T05:21:18.885Z"
+        },
+        {
+          "id": "1783488078886",
+          "role": "bot",
+          "text": "ClariMart is open Monday to Saturday from 9:00 AM to 6:00 PM.",
+          "createdAt": "2026-07-08T05:21:18.885Z"
+        },
+        {
+          "id": "1783488085903",
+          "role": "user",
+          "text": "refund",
+          "createdAt": "2026-07-08T05:21:25.903Z"
+        },
+        {
+          "id": "1783488085904",
+          "role": "bot",
+          "text": "Refunds can be requested within 7 days. Please provide your demo order number and reason for the return.",
+          "createdAt": "2026-07-08T05:21:25.903Z"
+        },
+        {
+          "id": "1783488100834",
+          "role": "user",
+          "text": "I need to refund an items",
+          "createdAt": "2026-07-08T05:21:40.834Z"
+        },
+        {
+          "id": "1783488100835",
+          "role": "bot",
+          "text": "Refunds can be requested within 7 days. Please provide your demo order number and reason for the return.",
+          "createdAt": "2026-07-08T05:21:40.834Z"
+        },
+        {
+          "id": "1783488131500",
+          "role": "user",
+          "text": "what about refund money",
+          "createdAt": "2026-07-08T05:22:11.500Z"
+        },
+        {
+          "id": "1783488131501",
+          "role": "bot",
+          "text": "Refunds can be requested within 7 days. Please provide your demo order number and reason for the return.",
+          "createdAt": "2026-07-08T05:22:11.500Z"
+        }
+      ],
+      "createdAt": "2026-07-08T05:21:18.874Z",
+      "updatedAt": "2026-07-08T05:22:11.500Z"
+    },
+    {
+      "id": "1783490796886",
+      "userId": "guest",
+      "title": "Website customer support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1783490796886",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI customer support assistant. You can ask me about products, prices, delivery, refunds, opening hours, or account support.",
+          "createdAt": "2026-07-08T06:06:36.886Z"
+        },
+        {
+          "id": "1783490796896",
+          "role": "user",
+          "text": "delivery",
+          "createdAt": "2026-07-08T06:06:36.896Z"
+        },
+        {
+          "id": "1783490796897",
+          "role": "bot",
+          "text": "We offer local delivery. Delivery is free for orders over $50, otherwise it is $8.99.",
+          "createdAt": "2026-07-08T06:06:36.896Z"
+        },
+        {
+          "id": "1783490804270",
+          "role": "user",
+          "text": "refund",
+          "createdAt": "2026-07-08T06:06:44.270Z"
+        },
+        {
+          "id": "1783490804271",
+          "role": "bot",
+          "text": "Refunds can be requested within 7 days. Please provide your demo order number and reason for the return.",
+          "createdAt": "2026-07-08T06:06:44.270Z"
+        }
+      ],
+      "createdAt": "2026-07-08T06:06:36.886Z",
+      "updatedAt": "2026-07-08T06:06:44.270Z"
+    },
+    {
+      "id": "1783508009409",
+      "userId": "guest",
+      "title": "Website customer support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1783508009409",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI customer support assistant. You can ask me about products, prices, delivery, refunds, opening hours, or account support.",
+          "createdAt": "2026-07-08T10:53:29.409Z"
+        },
+        {
+          "id": "1783508009420",
+          "role": "user",
+          "text": "Do you have yogurt?",
+          "createdAt": "2026-07-08T10:53:29.420Z"
+        },
+        {
+          "id": "1783508009421",
+          "role": "bot",
+          "text": "Yes, we have Turkish Style Yogurt 2kg.\n\nPrice: $7.00\nCategory: Dairy\nStock available: 12\n\nThick Turkish-style yogurt for cooking and breakfast.\n\nYou can click Add to Cart on the product card to buy it.",
+          "createdAt": "2026-07-08T10:53:29.421Z"
+        },
+        {
+          "id": "1783508022349",
+          "role": "user",
+          "text": "Do you have halal meat?",
+          "createdAt": "2026-07-08T10:53:42.348Z"
+        },
+        {
+          "id": "1783508022350",
+          "role": "bot",
+          "text": "Yes, we have Halal Beef Sucuk 500g.\n\nPrice: $13.60\nCategory: Halal Meat\nStock available: 9\n\nSpiced halal beef sucuk sausage.\n\nYou can click Add to Cart on the product card to buy it.",
+          "createdAt": "2026-07-08T10:53:42.349Z"
+        }
+      ],
+      "createdAt": "2026-07-08T10:53:29.409Z",
+      "updatedAt": "2026-07-08T10:53:42.349Z"
+    },
+    {
+      "id": "1783510455808",
+      "userId": "guest",
+      "title": "ClariMart customer support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1783510455808",
+          "role": "bot",
+          "text": "Hello! 👋 I’m ClariBot, your AI customer support assistant. You can ask me about products, prices, delivery, refunds, opening hours, or account support.",
+          "createdAt": "2026-07-08T11:34:15.808Z"
+        },
+        {
+          "id": "1783510455814",
+          "role": "user",
+          "text": "delivery",
+          "createdAt": "2026-07-08T11:34:15.814Z"
+        },
+        {
+          "id": "1783510455815",
+          "role": "bot",
+          "text": "ClariMart offers delivery for grocery orders. Delivery is free for orders over $50. Delivery time and fee may depend on the customer location and order size.",
+          "createdAt": "2026-07-08T11:34:15.814Z"
+        },
+        {
+          "id": "1783510466620",
+          "role": "user",
+          "text": "what about product",
+          "createdAt": "2026-07-08T11:34:26.620Z"
+        },
+        {
+          "id": "1783510466621",
+          "role": "bot",
+          "text": "Here are our available ClariMart products:\n\n1. Premium Pure Tahini 750g — $10.50 | Stock: 25 | Pantry\n2. Flower Honey 1kg — $10.00 | Stock: 18 | Breakfast\n3. Rose Turkish Delight 250g — $5.00 | Stock: 40 | Sweets\n4. Turkish Style Yogurt 2kg — $7.00 | Stock: 12 | Dairy\n5. Halal Beef Sucuk 500g — $13.60 | Stock: 9 | Halal Meat\n6. Dubai Chocolate — $10.00 | Stock: 15 | Sweets\n\nYou can ask me about any product name, price, category or stock.",
+          "createdAt": "2026-07-08T11:34:26.624Z"
+        },
+        {
+          "id": "1783510531084",
+          "role": "user",
+          "text": "What offers do you have?",
+          "createdAt": "2026-07-08T11:35:31.084Z"
+        },
+        {
+          "id": "1783510531085",
+          "role": "bot",
+          "text": "I can help you as a ClariMart shopping assistant. You can ask about product details, prices, stock, halal items, dairy, sweets, breakfast recommendations, delivery, cart, checkout, refunds and opening hours.",
+          "createdAt": "2026-07-08T11:35:31.084Z"
+        },
+        {
+          "id": "1783511004632",
+          "role": "user",
+          "text": "What offers do you have?",
+          "createdAt": "2026-07-08T11:43:24.632Z"
+        },
+        {
+          "id": "1783511004634",
+          "role": "bot",
+          "text": "Current ClariMart offers:\n\n• Free delivery on orders over $50\n• Premium Pure Tahini 750g is on sale from $12.50 to $10.50\n• Rose Turkish Delight 250g is only $5.00, a budget-friendly sweet option\n• Turkish Style Yogurt 2kg is a family-size dairy item for only $7.00\n• Halal Beef Sucuk 500g is one of our speciality halal products\n\nYou can ask me about any product, and I can explain its price, speciality, best use and stock.",
+          "createdAt": "2026-07-08T11:43:24.633Z"
+        }
+      ],
+      "createdAt": "2026-07-08T11:34:15.808Z",
+      "updatedAt": "2026-07-08T11:43:24.633Z"
     }
   ],
   "leads": [
@@ -970,9 +1259,9 @@
     },
     {
       "email": "tejasweebhetwal1@gmail.com",
-      "otp": "337498",
-      "expiresAt": 1783431051071,
-      "createdAt": "2026-07-07T13:20:51.071Z"
+      "otp": "776798",
+      "expiresAt": 1783491037813,
+      "createdAt": "2026-07-08T06:00:37.813Z"
     }
   ],
   "orders": [

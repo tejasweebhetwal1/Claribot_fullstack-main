@@ -1,23 +1,27 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import {
-  Bot,
   Eye,
   EyeOff,
   ArrowRight,
   Lock,
   Mail,
-  Sparkles,
   ShieldCheck,
   User,
   Crown,
   CheckCircle,
   KeyRound,
+  ShoppingCart,
+  Store,
+  PackageCheck,
+  Truck,
+  ArrowLeft,
 } from "lucide-react";
 import { api, saveSession } from "../lib/api";
 
 type Mode = "login" | "signup";
 type LoginType = "customer" | "admin";
+type SignupStep = "details" | "otp";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -34,6 +38,8 @@ export default function LoginPage() {
   const [loginType, setLoginType] = useState<LoginType>(
     forcedType === "admin" ? "admin" : "customer"
   );
+
+  const [signupStep, setSignupStep] = useState<SignupStep>("details");
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -55,39 +61,26 @@ export default function LoginPage() {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   }
 
-  function validateCustomerSignup() {
-    if (!name.trim()) {
-      return "Full name is required.";
-    }
+  function resetFormMessages() {
+    setError("");
+    setSuccess("");
+  }
 
-    if (!email.trim()) {
-      return "Email address is required.";
-    }
-
-    if (!isValidEmail(email)) {
-      return "Please enter a valid email address.";
-    }
-
-    if (password.length < 6) {
-      return "Password must be at least 6 characters.";
-    }
-
+  function validateSignupDetails() {
+    if (!name.trim()) return "Full name is required.";
+    if (!email.trim()) return "Email address is required.";
+    if (!isValidEmail(email)) return "Please enter a valid email address.";
+    if (password.length < 6) return "Password must be at least 6 characters.";
     if (password !== confirmPassword) {
       return "Password and confirm password do not match.";
     }
+    return "";
+  }
 
-    if (!otpSent) {
-      return "Please click Send OTP before creating your account.";
-    }
-
-    if (!otp.trim()) {
-      return "Please enter the 6-digit OTP.";
-    }
-
-    if (otp.trim().length !== 6) {
-      return "OTP must be 6 digits.";
-    }
-
+  function validateOtpStep() {
+    if (!otpSent) return "Please send OTP first.";
+    if (!otp.trim()) return "Please enter the 6-digit OTP.";
+    if (otp.trim().length !== 6) return "OTP must be 6 digits.";
     return "";
   }
 
@@ -95,28 +88,9 @@ export default function LoginPage() {
     setError("");
     setSuccess("");
 
-    if (!name.trim()) {
-      setError("Full name is required before sending OTP.");
-      return;
-    }
-
-    if (!email.trim()) {
-      setError("Email address is required before sending OTP.");
-      return;
-    }
-
-    if (!isValidEmail(email)) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters before sending OTP.");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Password and confirm password do not match.");
+    const validationError = validateSignupDetails();
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
@@ -126,7 +100,8 @@ export default function LoginPage() {
       await api.requestOtp(email.trim().toLowerCase());
       setOtpSent(true);
       setOtp("");
-      setSuccess("OTP generated successfully. For local demo, check the backend terminal.");
+      setSignupStep("otp");
+      setSuccess("OTP sent successfully. Please check your email inbox.");
     } catch (err: any) {
       setError(err.message || "Failed to send OTP.");
     } finally {
@@ -136,14 +111,19 @@ export default function LoginPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
     setError("");
     setSuccess("");
 
     if (loginType === "customer" && mode === "signup") {
-      const validationError = validateCustomerSignup();
+      if (signupStep === "details") {
+        await handleSendOtp();
+        return;
+      }
 
-      if (validationError) {
-        setError(validationError);
+      const otpError = validateOtpStep();
+      if (otpError) {
+        setError(otpError);
         return;
       }
     }
@@ -155,7 +135,10 @@ export default function LoginPage() {
         const res = await fetch("http://localhost:4000/api/admin/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
+          body: JSON.stringify({
+            email: email.trim().toLowerCase(),
+            password,
+          }),
         });
 
         const data = await res.json();
@@ -180,7 +163,7 @@ export default function LoginPage() {
           : await api.login(email.trim().toLowerCase(), password);
 
       saveSession(session.token, session.user);
-      navigate("/chat");
+      navigate("/shop");
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
     } finally {
@@ -188,14 +171,10 @@ export default function LoginPage() {
     }
   }
 
-  function resetFormMessages() {
-    setError("");
-    setSuccess("");
-  }
-
   function switchToCustomer() {
     setLoginType("customer");
     setMode("login");
+    setSignupStep("details");
     setPassword("");
     setConfirmPassword("");
     setOtp("");
@@ -206,6 +185,7 @@ export default function LoginPage() {
   function switchToAdmin() {
     setLoginType("admin");
     setMode("login");
+    setSignupStep("details");
     setPassword("");
     setConfirmPassword("");
     setOtp("");
@@ -215,6 +195,7 @@ export default function LoginPage() {
 
   function toggleMode() {
     setMode(mode === "login" ? "signup" : "login");
+    setSignupStep("details");
     setPassword("");
     setConfirmPassword("");
     setOtp("");
@@ -223,127 +204,152 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#fff5f1]">
-      <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-pink-300/40 blur-3xl" />
-      <div className="absolute right-0 top-20 h-96 w-96 rounded-full bg-purple-400/30 blur-3xl" />
-      <div className="absolute bottom-0 left-1/2 h-96 w-96 rounded-full bg-orange-300/40 blur-3xl" />
+    <div className="relative min-h-screen overflow-hidden bg-[#f7fbff]">
+      <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-sky-300/40 blur-3xl" />
+      <div className="absolute right-0 top-20 h-96 w-96 rounded-full bg-cyan-300/30 blur-3xl" />
+      <div className="absolute bottom-0 left-1/2 h-96 w-96 rounded-full bg-blue-300/30 blur-3xl" />
 
-      <div className="relative grid min-h-screen lg:grid-cols-2">
-        {/* LEFT SIDE */}
-        <div className="hidden flex-col justify-between p-12 lg:flex">
-          <button
-            type="button"
-            onClick={() => navigate("/")}
-            className="flex w-fit items-center gap-3"
-          >
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-400 to-pink-500 shadow-lg">
-              <Bot size={24} color="#fff" />
+      <div className="relative z-10 bg-[#09a9e8] px-6 py-3 text-center text-sm font-bold text-white">
+        Free delivery over $50 | Secure ClariMart customer account
+      </div>
+
+      <div className="relative z-10 flex items-center justify-between border-b border-slate-100 bg-white/85 px-6 py-5 backdrop-blur-xl lg:px-20">
+        <button
+          type="button"
+          onClick={() => navigate("/shop")}
+          className="flex items-center gap-3"
+        >
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#09a9e8] shadow-lg">
+            <Store size={25} color="#fff" />
+          </div>
+
+          <div className="text-left">
+            <h1 className="text-2xl font-black text-[#0b1230]">ClariMart</h1>
+            <p className="text-xs font-medium text-slate-500">
+              Mediterranean Grocery Store
+            </p>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => navigate("/shop")}
+          className="hidden rounded-full bg-[#09a9e8] px-5 py-3 text-sm font-black text-white shadow-lg md:block"
+        >
+          Back to Shop
+        </button>
+      </div>
+
+      <div className="relative z-10 grid min-h-[calc(100vh-120px)] lg:grid-cols-2">
+        <div className="hidden flex-col justify-center p-12 lg:flex xl:p-20">
+          <div className="max-w-xl">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-[#09a9e8] shadow">
+              <ShieldCheck size={16} />
+              Secure customer account
             </div>
 
-            <span className="text-3xl font-black text-[#151525]">
-              Clari<span className="text-pink-500">Bot</span>
-            </span>
-          </button>
-
-          <div className="max-w-lg">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm font-semibold text-pink-600 shadow">
-              <Sparkles size={15} />
-              OTP verified account registration
-            </div>
-
-            <h1 className="mb-6 text-6xl font-black leading-tight text-[#151525]">
-              Secure access for <br />
-              <span className="bg-gradient-to-r from-orange-400 to-pink-500 bg-clip-text text-transparent">
-                customers & admins
+            <h2 className="mb-6 text-6xl font-black leading-tight text-[#0b1230]">
+              Continue{" "}
+              <span className="bg-gradient-to-r from-[#09a9e8] to-[#1f7df2] bg-clip-text text-transparent">
+                shopping smarter
               </span>
-            </h1>
+            </h2>
 
-            <p className="mb-8 text-lg text-gray-600">
-              Customers must verify their email using a 6-digit OTP before the
-              account is created. This prevents users from registering with
-              random or fake email addresses.
+            <p className="mb-8 text-lg leading-8 text-slate-600">
+              Create a ClariMart account to continue shopping, add products to
+              your cart, manage orders, and use ClariBot support for product
+              prices, stock, delivery and refund questions.
             </p>
 
             <div className="grid grid-cols-3 gap-4">
-              <div className="rounded-2xl bg-white/80 p-5 shadow">
-                <p className="text-2xl font-black text-pink-500">OTP</p>
-                <p className="text-xs text-gray-500">Verification</p>
+              <div className="rounded-3xl bg-white p-5 shadow">
+                <ShoppingCart className="mb-3 text-[#09a9e8]" size={26} />
+                <p className="font-black text-[#0b1230]">Shop</p>
+                <p className="text-xs text-slate-500">Browse products</p>
               </div>
 
-              <div className="rounded-2xl bg-white/80 p-5 shadow">
-                <p className="text-2xl font-black text-orange-400">AI</p>
-                <p className="text-xs text-gray-500">Support</p>
+              <div className="rounded-3xl bg-white p-5 shadow">
+                <KeyRound className="mb-3 text-[#09a9e8]" size={26} />
+                <p className="font-black text-[#0b1230]">OTP</p>
+                <p className="text-xs text-slate-500">Email verification</p>
               </div>
 
-              <div className="rounded-2xl bg-white/80 p-5 shadow">
-                <p className="text-2xl font-black text-purple-500">Admin</p>
-                <p className="text-xs text-gray-500">Control</p>
+              <div className="rounded-3xl bg-white p-5 shadow">
+                <Truck className="mb-3 text-[#09a9e8]" size={26} />
+                <p className="font-black text-[#0b1230]">Delivery</p>
+                <p className="text-xs text-slate-500">Order support</p>
               </div>
             </div>
 
-            <div className="mt-8 rounded-2xl bg-white/70 p-5 shadow">
-              <p className="mb-3 flex items-center gap-2 text-sm font-bold text-[#151525]">
-                <CheckCircle size={16} className="text-green-500" />
-                Registration features
+            <div className="mt-8 rounded-3xl bg-white p-6 shadow">
+              <p className="mb-4 flex items-center gap-2 text-base font-black text-[#0b1230]">
+                <CheckCircle size={18} className="text-green-500" />
+                Account features
               </p>
 
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li>• Full name, email, password and confirm password</li>
-                <li>• Password match validation</li>
-                <li>• 6-digit OTP verification before account creation</li>
-                <li>• Customer and admin access separation</li>
-                <li>• Secure backend login and signup API connection</li>
+              <ul className="space-y-3 text-sm text-slate-600">
+                <li>• Customer signup with email OTP verification</li>
+                <li>• OTP appears as a separate second step</li>
+                <li>• Continue shopping after login or signup</li>
+                <li>• Chatbot support for product details and delivery</li>
+                <li>• Admin access for store management</li>
               </ul>
             </div>
           </div>
-
-          <p className="text-xs text-gray-400">© 2026 ClariBot.</p>
         </div>
 
-        {/* RIGHT SIDE FORM */}
         <div className="flex items-center justify-center p-6 lg:p-12">
-          <div className="w-full max-w-md rounded-[2rem] border border-white/60 bg-white/80 p-8 shadow-2xl backdrop-blur-xl">
+          <div className="w-full max-w-md rounded-[2rem] border border-white bg-white/90 p-8 shadow-2xl backdrop-blur-xl">
             <div className="mb-8 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-orange-400 to-pink-500 shadow-lg">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-[#09a9e8] shadow-lg">
                 {loginType === "admin" ? (
                   <Crown size={28} color="#fff" />
+                ) : mode === "signup" && signupStep === "otp" ? (
+                  <KeyRound size={28} color="#fff" />
                 ) : (
-                  <Bot size={28} color="#fff" />
+                  <User size={28} color="#fff" />
                 )}
               </div>
 
-              <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-pink-100 px-3 py-1 text-xs font-bold text-pink-600">
+              <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-sky-100 px-3 py-1 text-xs font-black text-[#09a9e8]">
                 <ShieldCheck size={13} />
-                Secure Access
+                {loginType === "admin"
+                  ? "Admin Access"
+                  : mode === "signup" && signupStep === "otp"
+                  ? "Email Verification"
+                  : "Customer Access"}
               </p>
 
-              <h1 className="text-3xl font-black text-[#151525]">
+              <h1 className="text-3xl font-black text-[#0b1230]">
                 {loginType === "admin"
                   ? "Admin Login"
+                  : mode === "signup" && signupStep === "otp"
+                  ? "Enter Verification Code"
                   : mode === "signup"
-                  ? "Create Customer Account"
+                  ? "Create ClariMart Account"
                   : "Customer Login"}
               </h1>
 
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-slate-500">
                 {loginType === "admin"
-                  ? "Login to manage ClariBot from the admin dashboard."
+                  ? "Login to manage ClariMart products, users and support."
+                  : mode === "signup" && signupStep === "otp"
+                  ? `We sent a 6-digit OTP to ${email || "your email"}.`
                   : mode === "signup"
-                  ? "Verify your email with OTP before creating your account."
-                  : "Sign in to continue using the chatbot."}
+                  ? "Enter your details first. OTP verification comes next."
+                  : "Sign in to continue shopping."}
               </p>
             </div>
 
-            {/* CUSTOMER / ADMIN SWITCH */}
-            {!isCustomerOnly && (
-              <div className="mb-6 grid grid-cols-2 gap-3 rounded-2xl bg-[#fff5f1] p-2">
+            {!isCustomerOnly && signupStep === "details" && (
+              <div className="mb-6 grid grid-cols-2 gap-3 rounded-2xl bg-sky-50 p-2">
                 <button
                   type="button"
                   onClick={switchToCustomer}
-                  className={`flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold transition-all ${
+                  className={`flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-black transition-all ${
                     loginType === "customer"
-                      ? "bg-white text-pink-600 shadow"
-                      : "text-gray-500 hover:text-pink-500"
+                      ? "bg-white text-[#09a9e8] shadow"
+                      : "text-slate-500 hover:text-[#09a9e8]"
                   }`}
                 >
                   <User size={16} />
@@ -353,10 +359,10 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={switchToAdmin}
-                  className={`flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold transition-all ${
+                  className={`flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-black transition-all ${
                     loginType === "admin"
-                      ? "bg-white text-pink-600 shadow"
-                      : "text-gray-500 hover:text-pink-500"
+                      ? "bg-white text-[#09a9e8] shadow"
+                      : "text-slate-500 hover:text-[#09a9e8]"
                   }`}
                 >
                   <Crown size={16} />
@@ -365,9 +371,8 @@ export default function LoginPage() {
               </div>
             )}
 
-            {/* LOGIN / SIGNUP SWITCH */}
-            {loginType === "customer" && (
-              <p className="mb-5 text-center text-sm text-gray-600">
+            {loginType === "customer" && signupStep === "details" && (
+              <p className="mb-5 text-center text-sm text-slate-600">
                 {mode === "login"
                   ? "Don’t have an account? "
                   : "Already have an account? "}
@@ -375,167 +380,175 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={toggleMode}
-                  className="font-bold text-pink-600 hover:underline"
+                  className="font-black text-[#09a9e8] hover:underline"
                 >
-                  {mode === "login" ? "Sign up free" : "Sign in"}
+                  {mode === "login" ? "Create account" : "Sign in"}
                 </button>
               </p>
             )}
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              {/* FULL NAME */}
-              {loginType === "customer" && mode === "signup" && (
-                <div>
-                  <label className="mb-1.5 block text-sm font-bold text-[#151525]">
-                    Full name
-                  </label>
+              {loginType === "customer" &&
+                mode === "signup" &&
+                signupStep === "details" && (
+                  <div>
+                    <label className="mb-1.5 block text-sm font-black text-[#0b1230]">
+                      Full name
+                    </label>
 
-                  <div className="relative">
-                    <User
-                      size={16}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                    />
-
-                    <input
-                      value={name}
-                      onChange={(e) => {
-                        setName(e.target.value);
-                        resetFormMessages();
-                      }}
-                      placeholder="Enter your full name"
-                      className="w-full rounded-2xl border bg-white py-3 pl-11 pr-4 text-sm outline-none transition focus:border-pink-400"
-                      required
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* EMAIL */}
-              <div>
-                <label className="mb-1.5 block text-sm font-bold text-[#151525]">
-                  Email address
-                </label>
-
-                <div className="relative">
-                  <Mail
-                    size={16}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                  />
-
-                  <input
-                    value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      setOtpSent(false);
-                      setOtp("");
-                      resetFormMessages();
-                    }}
-                    type="email"
-                    placeholder={
-                      loginType === "admin"
-                        ? "admin@claribot.com"
-                        : "you@example.com"
-                    }
-                    className="w-full rounded-2xl border bg-white py-3 pl-11 pr-4 text-sm outline-none transition focus:border-pink-400"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* PASSWORD */}
-              <div>
-                <label className="mb-1.5 block text-sm font-bold text-[#151525]">
-                  Password
-                </label>
-
-                <div className="relative">
-                  <Lock
-                    size={16}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                  />
-
-                  <input
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      setOtpSent(false);
-                      setOtp("");
-                      resetFormMessages();
-                    }}
-                    type={showPass ? "text" : "password"}
-                    placeholder="Enter your password"
-                    className="w-full rounded-2xl border bg-white py-3 pl-11 pr-12 text-sm outline-none transition focus:border-pink-400"
-                    required
-                    minLength={loginType === "admin" ? 1 : 6}
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() => setShowPass((v) => !v)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-pink-500"
-                  >
-                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </button>
-                </div>
-
-                {loginType === "customer" && mode === "signup" && (
-                  <p className="mt-1 text-xs text-gray-400">
-                    Password must be at least 6 characters.
-                  </p>
-                )}
-              </div>
-
-              {/* CONFIRM PASSWORD */}
-              {loginType === "customer" && mode === "signup" && (
-                <div>
-                  <label className="mb-1.5 block text-sm font-bold text-[#151525]">
-                    Confirm password
-                  </label>
-
-                  <div className="relative">
-                    <Lock
-                      size={16}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-                    />
-
-                    <input
-                      value={confirmPassword}
-                      onChange={(e) => {
-                        setConfirmPassword(e.target.value);
-                        setOtpSent(false);
-                        setOtp("");
-                        resetFormMessages();
-                      }}
-                      type={showConfirmPass ? "text" : "password"}
-                      placeholder="Re-enter your password"
-                      className="w-full rounded-2xl border bg-white py-3 pl-11 pr-12 text-sm outline-none transition focus:border-pink-400"
-                      required
-                      minLength={6}
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPass((v) => !v)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-pink-500"
-                    >
-                      {showConfirmPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* OTP VERIFICATION */}
-              {loginType === "customer" && mode === "signup" && (
-                <div>
-                  <label className="mb-1.5 block text-sm font-bold text-[#151525]">
-                    Email OTP verification
-                  </label>
-
-                  <div className="flex gap-2">
-                    <div className="relative flex-1">
-                      <KeyRound
+                    <div className="relative">
+                      <User
                         size={16}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                      />
+
+                      <input
+                        value={name}
+                        onChange={(e) => {
+                          setName(e.target.value);
+                          resetFormMessages();
+                        }}
+                        placeholder="Enter your full name"
+                        className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm outline-none transition focus:border-[#09a9e8]"
+                        required
+                      />
+                    </div>
+                  </div>
+                )}
+
+              {signupStep === "details" && (
+                <>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-black text-[#0b1230]">
+                      Email address
+                    </label>
+
+                    <div className="relative">
+                      <Mail
+                        size={16}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                      />
+
+                      <input
+                        value={email}
+                        onChange={(e) => {
+                          setEmail(e.target.value);
+                          setOtpSent(false);
+                          setOtp("");
+                          resetFormMessages();
+                        }}
+                        type="email"
+                        placeholder={
+                          loginType === "admin"
+                            ? "admin@claribot.com"
+                            : "you@example.com"
+                        }
+                        className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm outline-none transition focus:border-[#09a9e8]"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-sm font-black text-[#0b1230]">
+                      Password
+                    </label>
+
+                    <div className="relative">
+                      <Lock
+                        size={16}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                      />
+
+                      <input
+                        value={password}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                          setOtpSent(false);
+                          setOtp("");
+                          resetFormMessages();
+                        }}
+                        type={showPass ? "text" : "password"}
+                        placeholder="Enter your password"
+                        className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-12 text-sm outline-none transition focus:border-[#09a9e8]"
+                        required
+                        minLength={loginType === "admin" ? 1 : 6}
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => setShowPass((v) => !v)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#09a9e8]"
+                      >
+                        {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
+
+                    {loginType === "customer" && mode === "signup" && (
+                      <p className="mt-1 text-xs text-slate-400">
+                        Password must be at least 6 characters.
+                      </p>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {loginType === "customer" &&
+                mode === "signup" &&
+                signupStep === "details" && (
+                  <div>
+                    <label className="mb-1.5 block text-sm font-black text-[#0b1230]">
+                      Confirm password
+                    </label>
+
+                    <div className="relative">
+                      <Lock
+                        size={16}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+                      />
+
+                      <input
+                        value={confirmPassword}
+                        onChange={(e) => {
+                          setConfirmPassword(e.target.value);
+                          setOtpSent(false);
+                          setOtp("");
+                          resetFormMessages();
+                        }}
+                        type={showConfirmPass ? "text" : "password"}
+                        placeholder="Re-enter your password"
+                        className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-12 text-sm outline-none transition focus:border-[#09a9e8]"
+                        required
+                        minLength={6}
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPass((v) => !v)}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#09a9e8]"
+                      >
+                        {showConfirmPass ? (
+                          <EyeOff size={16} />
+                        ) : (
+                          <Eye size={16} />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+              {loginType === "customer" &&
+                mode === "signup" &&
+                signupStep === "otp" && (
+                  <div>
+                    <label className="mb-1.5 block text-sm font-black text-[#0b1230]">
+                      Enter 6-digit OTP
+                    </label>
+
+                    <div className="relative">
+                      <KeyRound
+                        size={18}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
                       />
 
                       <input
@@ -544,61 +557,70 @@ export default function LoginPage() {
                           setOtp(e.target.value.replace(/\D/g, ""));
                           resetFormMessages();
                         }}
-                        placeholder="6-digit OTP"
-                        className="w-full rounded-2xl border bg-white py-3 pl-11 pr-4 text-sm outline-none transition focus:border-pink-400"
+                        placeholder="Enter code from email"
+                        className="w-full rounded-2xl border border-slate-200 bg-white py-4 pl-12 pr-4 text-center text-2xl font-black tracking-[0.4em] outline-none transition focus:border-[#09a9e8]"
                         maxLength={6}
                         inputMode="numeric"
+                        autoFocus
                         required
                       />
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={handleSendOtp}
-                      disabled={otpLoading}
-                      className="whitespace-nowrap rounded-2xl bg-[#7c3aed] px-4 py-3 text-sm font-bold text-white transition hover:opacity-90 disabled:opacity-60"
-                    >
-                      {otpLoading ? "Sending..." : otpSent ? "Resend" : "Send OTP"}
-                    </button>
+                    <p className="mt-2 text-center text-xs text-slate-500">
+                      Check your email inbox or spam folder for the verification
+                      code.
+                    </p>
+
+                    <div className="mt-4 flex gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSignupStep("details");
+                          setOtp("");
+                          resetFormMessages();
+                        }}
+                        className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-500 hover:text-[#09a9e8]"
+                      >
+                        <ArrowLeft size={16} />
+                        Back
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleSendOtp}
+                        disabled={otpLoading}
+                        className="flex-1 rounded-2xl bg-sky-100 px-4 py-3 text-sm font-black text-[#09a9e8] hover:bg-sky-200 disabled:opacity-60"
+                      >
+                        {otpLoading ? "Sending..." : "Resend OTP"}
+                      </button>
+                    </div>
                   </div>
+                )}
 
-                  <p className="mt-1 text-xs text-gray-400">
-                    Local demo: OTP appears in the backend terminal after clicking Send OTP.
-                  </p>
-                </div>
-              )}
-
-              {/* ERROR MESSAGE */}
               {error && (
-                <div
-                  className={`rounded-2xl px-4 py-3 text-sm ${
-                    error.toLowerCase().includes("otp generated")
-                      ? "bg-green-50 text-green-600"
-                      : "bg-red-50 text-red-500"
-                  }`}
-                >
+                <div className="rounded-2xl bg-red-50 px-4 py-3 text-sm font-medium text-red-500">
                   {error}
                 </div>
               )}
 
-              {/* SUCCESS MESSAGE */}
               {success && (
-                <div className="rounded-2xl bg-green-50 px-4 py-3 text-sm text-green-600">
+                <div className="rounded-2xl bg-green-50 px-4 py-3 text-sm font-medium text-green-600">
                   {success}
                 </div>
               )}
 
-              {/* SUBMIT */}
               <button
                 type="submit"
-                disabled={loading}
-                className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-orange-400 to-pink-500 py-3.5 text-sm font-black text-white shadow-lg transition hover:scale-[1.02] disabled:opacity-60"
+                disabled={loading || otpLoading}
+                className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#09a9e8] py-3.5 text-sm font-black text-white shadow-lg transition hover:scale-[1.02] hover:bg-[#078fca] disabled:opacity-60"
               >
-                {loading
+                {loading || otpLoading
                   ? "Please wait..."
                   : loginType === "admin"
                   ? "Login as Admin"
-                  : mode === "signup"
+                  : mode === "signup" && signupStep === "details"
+                  ? "Send OTP"
+                  : mode === "signup" && signupStep === "otp"
                   ? "Create Verified Account"
                   : "Login as Customer"}
 
@@ -608,14 +630,15 @@ export default function LoginPage() {
 
             <button
               type="button"
-              onClick={() => navigate("/")}
-              className="mt-6 w-full text-center text-sm font-semibold text-gray-500 hover:text-pink-500"
+              onClick={() => navigate("/shop")}
+              className="mt-6 flex w-full items-center justify-center gap-2 text-center text-sm font-black text-slate-500 hover:text-[#09a9e8]"
             >
-              ← Back to Home
+              <PackageCheck size={16} />
+              Back to Shop
             </button>
 
             {loginType === "admin" && (
-              <p className="mt-4 text-center text-xs text-gray-400">
+              <p className="mt-4 text-center text-xs text-slate-400">
                 Demo admin: admin@claribot.com / admin123
               </p>
             )}
