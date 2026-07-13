@@ -1,7 +1,26 @@
 import { Link } from "react-router";
-import { Menu, Search, ShoppingCart, UserRound } from "lucide-react";
+import {
+  Menu,
+  Search,
+  ShoppingCart,
+  UserRound,
+} from "lucide-react";
+
+import { getUser } from "../lib/api";
 
 export default function StoreHeader() {
+  const user = getUser();
+
+  const rawName =
+    user?.name ||
+    user?.email?.split("@")[0] ||
+    "Account";
+
+  const displayName =
+    rawName === "Account"
+      ? "Account"
+      : rawName.charAt(0).toUpperCase() + rawName.slice(1);
+
   return (
     <header className="sticky top-0 z-40 bg-white shadow-sm">
       <div className="bg-sky-500 px-4 py-2 text-center text-sm font-bold text-white">
@@ -9,36 +28,49 @@ export default function StoreHeader() {
       </div>
 
       <div className="mx-auto flex max-w-7xl items-center gap-5 px-6 py-4">
-        <button className="md:hidden">
+        <button
+          type="button"
+          className="md:hidden"
+          aria-label="Open navigation menu"
+        >
           <Menu />
         </button>
 
         <Link to="/" className="flex items-center gap-3">
           <img
             src="/logo.png"
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
+            alt="ClariMart logo"
+            onError={(event) => {
+              event.currentTarget.style.display = "none";
             }}
             className="h-12 w-12 rounded-full object-contain"
           />
+
           <div>
             <p className="text-2xl font-black text-sky-600">ClariMart</p>
-            <p className="text-xs text-gray-500">Mediterranean Grocery Store</p>
+            <p className="text-xs text-gray-500">
+              Mediterranean Grocery Store
+            </p>
           </div>
         </Link>
 
         <div className="hidden flex-1 items-center rounded-full border bg-gray-50 px-4 py-3 md:flex">
           <Search className="mr-2 text-gray-400" size={20} />
+
           <input
+            type="text"
             placeholder="Search groceries, sweets, dairy, halal meat..."
             className="w-full bg-transparent outline-none"
           />
         </div>
 
         <div className="ml-auto flex items-center gap-3">
-          <Link to="/login" className="hidden items-center gap-2 font-semibold md:flex">
+          <Link
+            to={user ? "/account" : "/login"}
+            className="hidden items-center gap-2 font-semibold md:flex"
+          >
             <UserRound size={20} />
-            Account
+            {displayName}
           </Link>
 
           <Link

@@ -13,6 +13,7 @@ import ProductPage from "./pages/ProductPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrderSuccessPage from "./pages/OrderSuccessPage";
+import AccountPage from "./pages/AccountPage";
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +26,8 @@ export const router = createBrowserRouter([
       { path: "cart", Component: CartPage },
       { path: "checkout", Component: CheckoutPage },
       { path: "order-success/:id", Component: OrderSuccessPage },
+
+      { path: "account", Component: AccountPage },
 
       { path: "login", Component: LoginPage },
       { path: "demo-chat", Component: DemoChatPage },
