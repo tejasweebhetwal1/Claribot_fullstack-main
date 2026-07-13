@@ -309,6 +309,71 @@
       ],
       "createdAt": "2026-07-13T04:12:28.980Z",
       "updatedAt": "2026-07-13T04:12:28.990Z"
+    },
+    {
+      "id": "1783920875181",
+      "userId": "guest",
+      "title": "ClariMart customer support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1783920875181",
+          "role": "bot",
+          "text": "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. Ask me about products, prices, offers, special items, delivery, checkout, refunds or opening hours.",
+          "createdAt": "2026-07-13T05:34:35.181Z"
+        },
+        {
+          "id": "1783920875195",
+          "role": "user",
+          "text": "I want to buy honey",
+          "createdAt": "2026-07-13T05:34:35.195Z"
+        },
+        {
+          "id": "1783920875196",
+          "role": "bot",
+          "text": "Yes, we have Flower Honey 1kg.\n\nCategory: Breakfast\nPrice: $10.00\nStock available: 18\n\nSpeciality: A family-size 1kg honey jar, good for breakfast, drinks and desserts.\n\nOffer: Popular breakfast product with great value for a 1kg pack.\n\nNatural flower honey for tea, toast, desserts and breakfast.\n\nYou can click Add to Cart on the product card to buy it.",
+          "createdAt": "2026-07-13T05:34:35.196Z"
+        },
+        {
+          "id": "1783920893555",
+          "role": "user",
+          "text": "recommend the best product",
+          "createdAt": "2026-07-13T05:34:53.555Z"
+        },
+        {
+          "id": "1783920893556",
+          "role": "bot",
+          "text": "Here are our available ClariMart products:\n\n1. Premium Pure Tahini 750g — $10.50 | Stock: 25 | Pantry\n2. Flower Honey 1kg — $10.00 | Stock: 18 | Breakfast\n3. Rose Turkish Delight 250g — $5.00 | Stock: 40 | Sweets\n4. Turkish Style Yogurt 2kg — $7.00 | Stock: 12 | Dairy\n5. Halal Beef Sucuk 500g — $13.60 | Stock: 9 | Halal Meat\n6. Dubai Chocolate — $10.00 | Stock: 15 | Sweets\n\nToday’s highlight: Tahini is on sale from $12.50 to $10.50, and delivery is free for orders over $50.",
+          "createdAt": "2026-07-13T05:34:53.555Z"
+        },
+        {
+          "id": "1783920931184",
+          "role": "user",
+          "text": "show me cheap sweet",
+          "createdAt": "2026-07-13T05:35:31.184Z"
+        },
+        {
+          "id": "1783920931185",
+          "role": "bot",
+          "text": "Yes, we have Rose Turkish Delight 250g.\n\nCategory: Sweets\nPrice: $5.00\nStock available: 40\n\nSpeciality: A traditional Mediterranean sweet with soft texture and rose flavour.\n\nOffer: Budget-friendly sweet item at only $5.00.\n\nSoft rose-flavoured Turkish delight, good for dessert or gifting.\n\nYou can click Add to Cart on the product card to buy it.",
+          "createdAt": "2026-07-13T05:35:31.184Z"
+        },
+        {
+          "id": "1783920974332",
+          "role": "user",
+          "text": "i have bought it already can i refund it",
+          "createdAt": "2026-07-13T05:36:14.332Z"
+        },
+        {
+          "id": "1783920974333",
+          "role": "bot",
+          "text": "Refund and return requests are reviewed by the store team. Customers should provide the order number, product name, purchase date and reason for return. Opened or perishable food items may only be refunded if there is a quality issue.",
+          "createdAt": "2026-07-13T05:36:14.332Z"
+        }
+      ],
+      "createdAt": "2026-07-13T05:34:35.181Z",
+      "updatedAt": "2026-07-13T05:36:14.332Z"
     }
   ],
   "leads": [
