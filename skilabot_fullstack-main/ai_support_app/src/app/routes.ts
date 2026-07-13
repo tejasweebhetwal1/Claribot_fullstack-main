@@ -13,6 +13,7 @@ import ProductPage from "./pages/ProductPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrderSuccessPage from "./pages/OrderSuccessPage";
+import AdminOrdersPage from "./pages/AdminOrdersPage";
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +35,7 @@ export const router = createBrowserRouter([
       { path: "admin-login", Component: AdminLogin },
       { path: "admin", Component: AdminDashboard },
       { path: "admin-dashboard", Component: AdminDashboard },
+      { path: "admin-orders", Component: AdminOrdersPage },
     ],
   },
 ]);
