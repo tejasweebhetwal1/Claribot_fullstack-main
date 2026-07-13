@@ -1,129 +1,143 @@
-import { useState } from "react";
-import { Bot, MessageCircle, Send, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import {
+  Bot,
+  ChevronRight,
+  LoaderCircle,
+  MessageCircle,
+  Send,
+  ShoppingCart,
+  Star,
+  X,
+} from "lucide-react";
+import { useNavigate } from "react-router";
+
 import { api } from "../lib/api";
+
+type RecommendedProduct = {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  oldPrice?: number | null;
+  stock: number;
+  image: string;
+  badge?: string;
+  rating?: number;
+  description?: string;
+  reason?: string;
+};
 
 type Msg = {
   role: "user" | "bot";
   text: string;
+  recommendedProducts?: RecommendedProduct[];
 };
 
-function fallbackReply(text: string) {
+function fallbackReply(text: string): Msg {
   const q = text.toLowerCase();
 
-  if (q.includes("hello") || q.includes("hi") || q.includes("hey")) {
-    return "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. I can help with products, prices, offers, delivery, checkout and refunds.";
-  }
-
-  if (q.includes("tahini")) {
-    return "Premium Pure Tahini 750g is available for $10.50. It is on sale from $12.50. Speciality: smooth sesame flavour, perfect for hummus, dips, sauces and healthy breakfast bowls.";
-  }
-
-  if (q.includes("honey")) {
-    return "Flower Honey 1kg is available for $10.00. Speciality: natural honey, perfect for tea, toast, breakfast and desserts.";
-  }
-
-  if (q.includes("yogurt") || q.includes("yoghurt")) {
-    return "Turkish Style Yogurt 2kg is available for $7.00. Speciality: thick Turkish-style yogurt, good for breakfast, cooking and sauces.";
-  }
-
-  if (q.includes("halal") || q.includes("sucuk") || q.includes("meat")) {
-    return "Yes, we have Halal Beef Sucuk 500g for $13.60. It is one of our speciality halal products and is good for breakfast, sandwiches and cooking.";
-  }
-
   if (
-    q.includes("sweet") ||
-    q.includes("dessert") ||
-    q.includes("chocolate") ||
-    q.includes("turkish delight")
+    q.includes("recommend") ||
+    q.includes("suggest") ||
+    q.includes("best")
   ) {
-    return "For sweets, we have Rose Turkish Delight 250g for $5.00 and Dubai Chocolate for $10.00. Turkish Delight is budget-friendly, while Dubai Chocolate is a premium dessert option.";
+    return {
+      role: "bot",
+      text:
+        "I can recommend breakfast products, sweets, halal products, healthy choices and budget-friendly items. The backend is currently unavailable, so product cards could not be loaded.",
+    };
   }
 
-  if (
-    q.includes("offer") ||
-    q.includes("discount") ||
-    q.includes("sale") ||
-    q.includes("special")
-  ) {
-    return "Current ClariMart offers: free delivery on orders over $50, Premium Pure Tahini is on sale from $12.50 to $10.50, and Rose Turkish Delight is only $5.00.";
-  }
-
-  if (q.includes("recommend") || q.includes("suggest") || q.includes("best")) {
-    return "My recommendations: for breakfast, try Flower Honey and Turkish Style Yogurt. For cooking, try Tahini and Halal Beef Sucuk. For dessert, try Rose Turkish Delight or Dubai Chocolate.";
-  }
-
-  if (
-    q.includes("product") ||
-    q.includes("products") ||
-    q.includes("available")
-  ) {
-    return "We offer Premium Pure Tahini 750g, Flower Honey 1kg, Rose Turkish Delight 250g, Turkish Style Yogurt 2kg, Halal Beef Sucuk 500g and Dubai Chocolate.";
-  }
-
-  if (q.includes("delivery") || q.includes("shipping")) {
-    return "We deliver across selected local suburbs. Delivery is free for orders over $50. Otherwise, the delivery fee is $8.99.";
-  }
-
-  if (q.includes("payment") || q.includes("card") || q.includes("checkout")) {
-    return "This website uses demo checkout only. You can enter fake card details and no real money is deducted.";
-  }
-
-  if (q.includes("refund") || q.includes("return")) {
-    return "Refunds can be requested within 7 days with your order number. Opened food items may only be refunded if there is a quality issue.";
-  }
-
-  if (q.includes("open") || q.includes("hours")) {
-    return "ClariMart is open Monday to Saturday, 9:00 AM to 6:00 PM. Online browsing and ClariBot support are available anytime.";
-  }
-
-  return "I’m ClariBot, your ClariMart shopping assistant. I can help with product details, prices, offers, halal items, sweets, breakfast ideas, delivery, checkout and refunds.";
+  return {
+    role: "bot",
+    text:
+      "I’m ClariBot, your ClariMart shopping assistant. I can help with products, prices, offers, delivery, checkout and refunds.",
+  };
 }
 
 export default function ClariBotWidget() {
+  const navigate = useNavigate();
+
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [conversationId, setConversationId] = useState<string | undefined>();
+  const [typing, setTyping] = useState(false);
+  const [conversationId, setConversationId] = useState<string>();
   const [messages, setMessages] = useState<Msg[]>([
     {
       role: "bot",
-      text: "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. Ask me about products, prices, offers, special items, delivery, checkout or refunds.",
+      text:
+        "Hi! 👋 I’m ClariBot. Tell me what you are shopping for and I’ll recommend the best matching ClariMart products.",
     },
   ]);
 
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [messages, typing]);
+
   async function sendMessage() {
     const text = input.trim();
-    if (!text) return;
 
-    setMessages((prev) => [...prev, { role: "user", text }]);
+    if (!text || typing) {
+      return;
+    }
+
+    setMessages((previous) => [
+      ...previous,
+      {
+        role: "user",
+        text,
+      },
+    ]);
+
     setInput("");
+    setTyping(true);
 
     try {
       let id = conversationId;
 
       if (!id) {
-        const convo = await api.newConversation("ClariMart customer support");
-        id = String(convo.id);
+        const conversation = await api.newConversation(
+          "ClariMart customer support"
+        );
+
+        id = String(conversation.id);
         setConversationId(id);
       }
 
       const result = await api.chat(text, id);
 
-      setMessages((prev) => [
-        ...prev,
+      await new Promise((resolve) => setTimeout(resolve, 700));
+
+      setMessages((previous) => [
+        ...previous,
         {
           role: "bot",
-          text: result.reply?.text || fallbackReply(text),
+          text:
+            result.reply?.text ||
+            "Here are the products I recommend.",
+          recommendedProducts:
+            result.reply?.recommendedProducts || [],
         },
       ]);
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "bot",
-          text: fallbackReply(text),
-        },
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      setMessages((previous) => [
+        ...previous,
+        fallbackReply(text),
       ]);
+    } finally {
+      setTyping(false);
     }
+  }
+
+  function viewProduct(productId: string) {
+    setOpen(false);
+    navigate(`/product/${productId}`);
   }
 
   if (!open) {
@@ -131,7 +145,8 @@ export default function ClariBotWidget() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-5 right-5 z-50 rounded-full bg-orange-600 p-4 text-white shadow-xl transition hover:scale-105"
+        aria-label="Open ClariBot"
+        className="fixed bottom-5 right-5 z-50 rounded-full bg-orange-600 p-4 text-white shadow-xl transition hover:scale-105 hover:bg-orange-700"
       >
         <MessageCircle />
       </button>
@@ -139,57 +154,179 @@ export default function ClariBotWidget() {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 w-80 overflow-hidden rounded-3xl border bg-white shadow-2xl">
+    <div className="fixed bottom-5 right-5 z-50 flex h-[600px] w-[390px] max-w-[calc(100vw-24px)] flex-col overflow-hidden rounded-3xl border border-orange-100 bg-white shadow-2xl">
       <div className="flex items-center justify-between bg-orange-600 p-4 text-white">
         <div className="flex items-center gap-2">
           <Bot />
+
           <div>
             <p className="font-black">ClariBot Support</p>
-            <p className="text-xs text-white/80">AI live customer support</p>
+            <p className="text-xs text-white/80">
+              AI shopping assistant
+            </p>
           </div>
         </div>
 
-        <button type="button" onClick={() => setOpen(false)}>
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          aria-label="Close ClariBot"
+        >
           <X size={18} />
         </button>
       </div>
 
-      <div className="h-80 space-y-3 overflow-y-auto bg-orange-50 p-4">
-        {messages.map((msg, index) => (
+      <div className="flex-1 space-y-4 overflow-y-auto bg-orange-50 p-4">
+        {messages.map((message, messageIndex) => (
           <div
-            key={index}
+            key={`${message.role}-${messageIndex}`}
             className={`flex ${
-              msg.role === "user" ? "justify-end" : "justify-start"
+              message.role === "user"
+                ? "justify-end"
+                : "justify-start"
             }`}
           >
             <div
-              className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm ${
-                msg.role === "user"
-                  ? "bg-orange-600 text-white"
-                  : "bg-white shadow"
-              }`}
+              className={
+                message.role === "user"
+                  ? "max-w-[82%] rounded-2xl bg-orange-600 px-4 py-2 text-sm text-white"
+                  : "w-full"
+              }
             >
-              {msg.text}
+              {message.role === "bot" && (
+                <div className="max-w-[88%] whitespace-pre-line rounded-2xl bg-white px-4 py-3 text-sm shadow-sm">
+                  {message.text}
+                </div>
+              )}
+
+              {message.role === "user" && message.text}
+
+              {message.role === "bot" &&
+                message.recommendedProducts &&
+                message.recommendedProducts.length > 0 && (
+                  <div className="mt-3 flex gap-3 overflow-x-auto pb-3">
+                    {message.recommendedProducts.map(
+                      (product) => (
+                        <article
+                          key={product.id}
+                          className="min-w-[220px] max-w-[220px] overflow-hidden rounded-2xl border border-orange-100 bg-white shadow-sm"
+                        >
+                          <div className="relative h-32 bg-slate-50">
+                            <img
+                              src={product.image}
+                              alt={product.name}
+                              className="h-full w-full object-contain p-2"
+                              onError={(event) => {
+                                event.currentTarget.style.display =
+                                  "none";
+                              }}
+                            />
+
+                            {product.badge && (
+                              <span className="absolute left-2 top-2 rounded-full bg-orange-600 px-2 py-1 text-[10px] font-bold text-white">
+                                {product.badge}
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="p-3">
+                            <p className="text-xs font-bold text-sky-600">
+                              {product.category}
+                            </p>
+
+                            <h3 className="mt-1 min-h-10 text-sm font-black leading-5 text-slate-950">
+                              {product.name}
+                            </h3>
+
+                            {product.rating && (
+                              <div className="mt-2 flex items-center gap-1 text-xs font-semibold text-amber-600">
+                                <Star
+                                  size={14}
+                                  fill="currentColor"
+                                />
+                                {product.rating.toFixed(1)}
+                              </div>
+                            )}
+
+                            <p className="mt-2 min-h-12 text-xs leading-4 text-slate-500">
+                              {product.reason ||
+                                product.description}
+                            </p>
+
+                            <div className="mt-3 flex items-end gap-2">
+                              <p className="text-xl font-black">
+                                ${product.price.toFixed(2)}
+                              </p>
+
+                              {product.oldPrice && (
+                                <p className="pb-1 text-xs text-slate-400 line-through">
+                                  $
+                                  {product.oldPrice.toFixed(2)}
+                                </p>
+                              )}
+                            </div>
+
+                            <p className="mt-1 text-xs font-semibold text-green-700">
+                              {product.stock} in stock
+                            </p>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                viewProduct(product.id)
+                              }
+                              className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-sky-500 px-3 py-2 text-sm font-bold text-white transition hover:bg-sky-600"
+                            >
+                              <ShoppingCart size={15} />
+                              View & Add
+                              <ChevronRight size={15} />
+                            </button>
+                          </div>
+                        </article>
+                      )
+                    )}
+                  </div>
+                )}
             </div>
           </div>
         ))}
+
+        {typing && (
+          <div className="flex justify-start">
+            <div className="flex items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm text-slate-500 shadow-sm">
+              <LoaderCircle
+                className="animate-spin"
+                size={16}
+              />
+              ClariBot is finding the best products...
+            </div>
+          </div>
+        )}
+
+        <div ref={messagesEndRef} />
       </div>
 
-      <div className="flex gap-2 border-t p-3">
+      <div className="flex gap-2 border-t bg-white p-3">
         <input
           value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") sendMessage();
+          disabled={typing}
+          onChange={(event) =>
+            setInput(event.target.value)
+          }
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              void sendMessage();
+            }
           }}
-          placeholder="Ask ClariBot..."
-          className="flex-1 rounded-xl border px-3 py-2 text-sm outline-none focus:border-orange-500"
+          placeholder="Ask for product recommendations..."
+          className="min-w-0 flex-1 rounded-xl border px-3 py-2 text-sm outline-none focus:border-orange-500 disabled:bg-slate-100"
         />
 
         <button
           type="button"
-          onClick={sendMessage}
-          className="rounded-xl bg-orange-600 px-3 text-white"
+          disabled={typing || !input.trim()}
+          onClick={() => void sendMessage()}
+          className="rounded-xl bg-orange-600 px-3 text-white transition hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Send size={16} />
         </button>

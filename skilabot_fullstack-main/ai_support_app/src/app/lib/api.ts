@@ -8,11 +8,26 @@ export type ApiUser = {
   role: string;
 };
 
+export type RecommendedProduct = {
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  oldPrice?: number | null;
+  stock: number;
+  image: string;
+  badge?: string;
+  rating?: number;
+  description?: string;
+  reason?: string;
+};
+
 export type ApiMessage = {
   id: string;
   role: "user" | "bot";
   text: string;
   createdAt: string;
+  recommendedProducts?: RecommendedProduct[];
 };
 
 export type ApiConversation = {

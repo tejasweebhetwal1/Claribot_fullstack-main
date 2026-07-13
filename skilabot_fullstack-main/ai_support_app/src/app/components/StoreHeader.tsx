@@ -7,9 +7,16 @@ import {
 } from "lucide-react";
 
 import { getUser } from "../lib/api";
+import { useCart } from "../lib/cart";
 
 export default function StoreHeader() {
   const user = getUser();
+  const { cart } = useCart();
+
+  const cartItemCount = cart.reduce(
+    (total, item) => total + item.qty,
+    0
+  );
 
   const rawName =
     user?.name ||
@@ -47,7 +54,10 @@ export default function StoreHeader() {
           />
 
           <div>
-            <p className="text-2xl font-black text-sky-600">ClariMart</p>
+            <p className="text-2xl font-black text-sky-600">
+              ClariMart
+            </p>
+
             <p className="text-xs text-gray-500">
               Mediterranean Grocery Store
             </p>
@@ -55,7 +65,10 @@ export default function StoreHeader() {
         </Link>
 
         <div className="hidden flex-1 items-center rounded-full border bg-gray-50 px-4 py-3 md:flex">
-          <Search className="mr-2 text-gray-400" size={20} />
+          <Search
+            className="mr-2 text-gray-400"
+            size={20}
+          />
 
           <input
             type="text"
@@ -75,10 +88,17 @@ export default function StoreHeader() {
 
           <Link
             to="/cart"
-            className="flex items-center gap-2 rounded-full bg-sky-500 px-5 py-3 font-bold text-white"
+            aria-label={`Open cart with ${cartItemCount} items`}
+            className="relative flex items-center gap-2 rounded-full bg-sky-500 px-5 py-3 font-bold text-white transition hover:bg-sky-600"
           >
             <ShoppingCart size={20} />
             Cart
+
+            {cartItemCount > 0 && (
+              <span className="absolute -right-2 -top-2 flex h-6 min-w-6 items-center justify-center rounded-full border-2 border-white bg-red-500 px-1 text-xs font-black text-white shadow-md">
+                {cartItemCount > 99 ? "99+" : cartItemCount}
+              </span>
+            )}
           </Link>
         </div>
       </div>
