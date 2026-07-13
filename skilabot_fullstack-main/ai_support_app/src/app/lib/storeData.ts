@@ -71,7 +71,7 @@ export const products = [
   {
     id: "honey",
     name: "Flower Honey 1kg",
-    category: "Breakfast",
+    category: "Pantry",
     price: 10,
     image: "/products/Honey.webp",
     badge: "Popular",
