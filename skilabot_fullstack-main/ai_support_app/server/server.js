@@ -20,6 +20,10 @@ app.use(express.json());
 
 const DB_PATH = path.join(__dirname, "data", "db.json");
 
+/* =========================================================
+   DATABASE HELPERS
+========================================================= */
+
 function readDB() {
   const db = JSON.parse(fs.readFileSync(DB_PATH, "utf-8"));
 
@@ -36,13 +40,35 @@ function writeDB(data) {
   fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
 }
 
+/* =========================================================
+   AUTHENTICATION HELPERS
+========================================================= */
+
 function createToken(user) {
   return jwt.sign(
-    { id: user.id, email: user.email, role: user.role },
+    {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    },
     process.env.JWT_SECRET || "claribot_secret_key",
-    { expiresIn: "1d" }
+    {
+      expiresIn: "1d",
+    }
   );
 }
+
+function normalizeEmail(email) {
+  return String(email || "").toLowerCase().trim();
+}
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+/* =========================================================
+   EMAIL OTP
+========================================================= */
 
 async function sendOtpEmail(toEmail, otp) {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
@@ -63,241 +89,266 @@ async function sendOtpEmail(toEmail, otp) {
     subject: "Your ClariBot Verification Code",
     text: `Your ClariBot OTP is ${otp}. This code is valid for 10 minutes.`,
     html: `
-      <div style="font-family: Arial, sans-serif; background:#f7f2ff; padding:24px;">
-        <div style="max-width:520px; margin:auto; background:white; border-radius:16px; padding:28px;">
+      <div style="font-family:Arial,sans-serif;background:#f7f2ff;padding:24px;">
+        <div style="max-width:520px;margin:auto;background:white;border-radius:16px;padding:28px;">
           <h2 style="color:#7c3aed;">ClariBot Email Verification</h2>
-          <p>Use this verification code to complete your account registration:</p>
-          <div style="font-size:32px; font-weight:bold; letter-spacing:8px; color:#7c3aed; background:#f3e8ff; padding:16px; border-radius:12px; text-align:center;">
+
+          <p>
+            Use this verification code to complete your account registration:
+          </p>
+
+          <div
+            style="
+              font-size:32px;
+              font-weight:bold;
+              letter-spacing:8px;
+              color:#7c3aed;
+              background:#f3e8ff;
+              padding:16px;
+              border-radius:12px;
+              text-align:center;
+            "
+          >
             ${otp}
           </div>
+
           <p>This OTP is valid for 10 minutes.</p>
-          <p>If you did not request this code, please ignore this email.</p>
-          <p>Regards,<br/>ClariBot Support Team</p>
+
+          <p>
+            If you did not request this code, please ignore this email.
+          </p>
+
+          <p>
+            Regards,<br />
+            ClariBot Support Team
+          </p>
         </div>
       </div>
     `,
   });
 }
 
-function normalizeEmail(email) {
-  return String(email || "").toLowerCase().trim();
+/* =========================================================
+   CLARIMART PRODUCT DATA
+========================================================= */
+
+const CLARIMART_PRODUCTS = [
+  {
+    id: "1",
+    name: "Premium Pure Tahini 750g",
+    category: "Pantry",
+    price: 10.5,
+    oldPrice: 12.5,
+    displayPrice: "$10.50",
+    stock: 25,
+    image: "/products/tahini.png",
+    badge: "Best Value",
+    rating: 4.9,
+    description:
+      "Smooth sesame tahini for hummus, dips, sauces, salad dressing and breakfast bowls.",
+    reason:
+      "One of our best-value Mediterranean pantry products and currently on sale.",
+    speciality:
+      "Healthy, creamy and useful in many Mediterranean meals.",
+    offer: "Reduced from $12.50 to $10.50.",
+    keywords: [
+      "tahini",
+      "sesame",
+      "hummus",
+      "dip",
+      "sauce",
+      "healthy",
+      "breakfast",
+      "cooking",
+    ],
+  },
+  {
+    id: "2",
+    name: "Flower Honey 1kg",
+    category: "Pantry",
+    price: 10,
+    oldPrice: null,
+    displayPrice: "$10.00",
+    stock: 18,
+    image: "/products/honey.png",
+    badge: "Popular",
+    rating: 4.8,
+    description:
+      "Natural flower honey for tea, toast, desserts and breakfast.",
+    reason:
+      "A popular family-size breakfast product with excellent value.",
+    speciality:
+      "A natural sweetener suitable for breakfast, tea and desserts.",
+    offer: "Popular breakfast product with great value for a 1kg pack.",
+    keywords: [
+      "honey",
+      "flower honey",
+      "tea",
+      "toast",
+      "breakfast",
+      "natural",
+      "sweetener",
+    ],
+  },
+  {
+    id: "3",
+    name: "Rose Turkish Delight 250g",
+    category: "Sweets",
+    price: 5,
+    oldPrice: null,
+    displayPrice: "$5.00",
+    stock: 40,
+    image: "/products/turkish-delight.png",
+    badge: "Budget Pick",
+    rating: 4.7,
+    description:
+      "Traditional soft rose-flavoured Turkish delight for dessert or gifting.",
+    reason:
+      "Our most affordable traditional sweet and a great gifting option.",
+    speciality:
+      "A traditional Mediterranean sweet with soft texture and rose flavour.",
+    offer: "Budget-friendly sweet item at only $5.00.",
+    keywords: [
+      "turkish delight",
+      "rose",
+      "sweet",
+      "sweets",
+      "dessert",
+      "gift",
+      "cheap",
+      "budget",
+    ],
+  },
+  {
+    id: "4",
+    name: "Turkish Style Yogurt 2kg",
+    category: "Dairy",
+    price: 7,
+    oldPrice: null,
+    displayPrice: "$7.00",
+    stock: 12,
+    image: "/products/yogurt.png",
+    badge: "Family Choice",
+    rating: 4.8,
+    description:
+      "Thick Turkish-style yogurt for breakfast, cooking, dips and sauces.",
+    reason:
+      "A large family-size pack suitable for breakfast and Mediterranean cooking.",
+    speciality:
+      "A large 2kg family pack useful for breakfast and cooking.",
+    offer: "Family-size 2kg pack for only $7.00.",
+    keywords: [
+      "yogurt",
+      "yoghurt",
+      "turkish yogurt",
+      "dairy",
+      "breakfast",
+      "family",
+      "healthy",
+    ],
+  },
+  {
+    id: "5",
+    name: "Halal Beef Sucuk 500g",
+    category: "Halal Meat",
+    price: 13.6,
+    oldPrice: null,
+    displayPrice: "$13.60",
+    stock: 9,
+    image: "/products/sucuk.png",
+    badge: "Halal Choice",
+    rating: 4.9,
+    description:
+      "Spiced halal beef sucuk for breakfast, sandwiches and cooking.",
+    reason:
+      "A speciality halal meat product with rich Mediterranean flavour.",
+    speciality:
+      "One of our speciality halal products for breakfast and cooking.",
+    offer: "Speciality halal product available in limited stock.",
+    keywords: [
+      "sucuk",
+      "beef",
+      "halal",
+      "meat",
+      "sausage",
+      "sandwich",
+      "cooking",
+    ],
+  },
+  {
+    id: "6",
+    name: "Dubai Chocolate",
+    category: "Sweets",
+    price: 10,
+    oldPrice: null,
+    displayPrice: "$10.00",
+    stock: 15,
+    image: "/products/dubai-chocolate.png",
+    badge: "Premium Pick",
+    rating: 4.9,
+    description:
+      "Premium chocolate dessert with a rich and creamy flavour.",
+    reason:
+      "A premium modern dessert option for chocolate lovers.",
+    speciality:
+      "A premium sweet item for customers who want a modern dessert.",
+    offer: "New sweet item, perfect for dessert lovers.",
+    keywords: [
+      "dubai chocolate",
+      "chocolate",
+      "dessert",
+      "sweet",
+      "premium",
+    ],
+  },
+];
+
+/* =========================================================
+   CHATBOT HELPERS
+========================================================= */
+
+function createBotResponse(text, recommendedProducts = []) {
+  return {
+    text,
+    recommendedProducts,
+  };
 }
 
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+function getProductsByIds(ids) {
+  return CLARIMART_PRODUCTS.filter((product) =>
+    ids.includes(product.id)
+  );
 }
 
-// ClariMart shopping assistant chatbot reply logic
 function getBotReply(userText) {
-  const msg = String(userText || "").toLowerCase();
-
-  const products = [
-    {
-      name: "Premium Pure Tahini 750g",
-      category: "Pantry",
-      price: 10.5,
-      oldPrice: "$12.50",
-      displayPrice: "$10.50",
-      stock: 25,
-      description:
-        "Smooth sesame tahini, perfect for hummus, dips, sauces, salad dressing and healthy breakfast bowls.",
-      speciality:
-        "This is one of our best Mediterranean pantry products because it is healthy, creamy and useful in many dishes.",
-      offer: "Special offer: reduced from $12.50 to $10.50.",
-      keywords: ["tahini", "sesame", "premium pure tahini", "dip", "sauce", "hummus"],
-    },
-    {
-      name: "Flower Honey 1kg",
-      category: "Breakfast",
-      price: 10.0,
-      oldPrice: "",
-      displayPrice: "$10.00",
-      stock: 18,
-      description: "Natural flower honey for tea, toast, desserts and breakfast.",
-      speciality:
-        "A family-size 1kg honey jar, good for breakfast, drinks and desserts.",
-      offer: "Popular breakfast product with great value for a 1kg pack.",
-      keywords: ["honey", "flower honey", "breakfast", "tea", "toast"],
-    },
-    {
-      name: "Rose Turkish Delight 250g",
-      category: "Sweets",
-      price: 5.0,
-      oldPrice: "",
-      displayPrice: "$5.00",
-      stock: 40,
-      description:
-        "Soft rose-flavoured Turkish delight, good for dessert or gifting.",
-      speciality:
-        "A traditional Mediterranean sweet with soft texture and rose flavour.",
-      offer: "Budget-friendly sweet item at only $5.00.",
-      keywords: ["turkish delight", "rose", "sweet", "sweets", "dessert"],
-    },
-    {
-      name: "Turkish Style Yogurt 2kg",
-      category: "Dairy",
-      price: 7.0,
-      oldPrice: "",
-      displayPrice: "$7.00",
-      stock: 12,
-      description:
-        "Thick Turkish-style yogurt for breakfast, cooking, dips and sauces.",
-      speciality:
-        "A large 2kg family pack, useful for breakfast and Mediterranean cooking.",
-      offer: "Family-size 2kg pack for only $7.00.",
-      keywords: ["yogurt", "yoghurt", "turkish yogurt", "dairy", "breakfast"],
-    },
-    {
-      name: "Halal Beef Sucuk 500g",
-      category: "Halal Meat",
-      price: 13.6,
-      oldPrice: "",
-      displayPrice: "$13.60",
-      stock: 9,
-      description:
-        "Spiced halal beef sucuk sausage, good for breakfast, sandwiches and cooking.",
-      speciality:
-        "One of our speciality halal meat products, suitable for customers looking for halal grocery options.",
-      offer: "Speciality halal product available in limited stock.",
-      keywords: ["sucuk", "beef", "halal", "meat", "sausage"],
-    },
-    {
-      name: "Dubai Chocolate",
-      category: "Sweets",
-      price: 10.0,
-      oldPrice: "",
-      displayPrice: "$10.00",
-      stock: 15,
-      description: "Premium chocolate dessert with rich creamy flavour.",
-      speciality:
-        "A premium sweet item for customers who want a modern dessert product.",
-      offer: "New sweet item, perfect for dessert lovers.",
-      keywords: ["dubai chocolate", "chocolate", "sweet", "dessert"],
-    },
-  ];
-
-  function productLine(p) {
-    return `${p.name} — ${p.displayPrice} | Stock: ${p.stock} | ${p.category}`;
-  }
-
-  function productList(items = products) {
-    return items.map((p, i) => `${i + 1}. ${productLine(p)}`).join("\n");
-  }
-
-  function priceList() {
-    return products.map((p) => `• ${p.name}: ${p.displayPrice}`).join("\n");
-  }
-
-  function stockList() {
-    return products.map((p) => `• ${p.name}: ${p.stock} available`).join("\n");
-  }
+  const msg = String(userText || "").toLowerCase().trim();
+  const products = CLARIMART_PRODUCTS;
 
   const matchedProduct = products.find((product) =>
     product.keywords.some((keyword) => msg.includes(keyword))
   );
 
-  if (msg.includes("hello") || msg.includes("hi") || msg.includes("hey")) {
-    return "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. I can help you find products, check prices, explain offers, suggest items, check stock, and guide you with delivery, cart, checkout and refunds.";
-  }
-
   if (
-    msg.includes("offer") ||
-    msg.includes("offers") ||
-    msg.includes("discount") ||
-    msg.includes("sale") ||
-    msg.includes("special deal") ||
-    msg.includes("promotion")
+    msg === "hi" ||
+    msg === "hello" ||
+    msg === "hey" ||
+    msg.includes("hello ") ||
+    msg.includes("hi ") ||
+    msg.includes("hey ")
   ) {
-    return `Current ClariMart offers:\n\n• Free delivery on orders over $50\n• Premium Pure Tahini 750g is on sale from $12.50 to $10.50\n• Rose Turkish Delight 250g is only $5.00, a budget-friendly sweet option\n• Turkish Style Yogurt 2kg is a family-size dairy item for only $7.00\n• Halal Beef Sucuk 500g is one of our speciality halal products\n\nYou can ask me about any product, and I can explain its price, speciality, best use and stock.`;
-  }
-
-  if (
-    msg.includes("speciality") ||
-    msg.includes("specialty") ||
-    msg.includes("special about") ||
-    msg.includes("why special") ||
-    msg.includes("what is special")
-  ) {
-    if (matchedProduct) {
-      return `${matchedProduct.name} is special because ${matchedProduct.speciality}\n\nPrice: ${matchedProduct.displayPrice}\nStock: ${matchedProduct.stock}\nOffer: ${matchedProduct.offer}`;
-    }
-
-    return "ClariMart specialises in Mediterranean grocery products such as tahini, honey, Turkish delight, Turkish yogurt, halal sucuk and Dubai chocolate. Our speciality is helping customers find breakfast items, halal meat, sweets, pantry products and family grocery options.";
-  }
-
-  if (matchedProduct) {
-    return `Yes, we have ${matchedProduct.name}.\n\nCategory: ${matchedProduct.category}\nPrice: ${matchedProduct.displayPrice}\nStock available: ${matchedProduct.stock}\n\nSpeciality: ${matchedProduct.speciality}\n\nOffer: ${matchedProduct.offer}\n\n${matchedProduct.description}\n\nYou can click Add to Cart on the product card to buy it.`;
-  }
-
-  if (
-    msg.includes("product") ||
-    msg.includes("products") ||
-    msg.includes("items") ||
-    msg.includes("what do you sell") ||
-    msg.includes("what do you have") ||
-    msg.includes("available")
-  ) {
-    return `Here are our available ClariMart products:\n\n${productList()}\n\nToday’s highlight: Tahini is on sale from $12.50 to $10.50, and delivery is free for orders over $50.`;
-  }
-
-  if (
-    msg.includes("price") ||
-    msg.includes("cost") ||
-    msg.includes("how much") ||
-    msg.includes("rate")
-  ) {
-    return `Here is the current product price list:\n\n${priceList()}\n\nBest value today: Premium Pure Tahini 750g is on sale for $10.50.`;
-  }
-
-  if (
-    msg.includes("stock") ||
-    msg.includes("quantity") ||
-    msg.includes("in stock") ||
-    msg.includes("available stock")
-  ) {
-    return `Here is the current stock information:\n\n${stockList()}`;
-  }
-
-  if (
-    msg.includes("cheap") ||
-    msg.includes("cheapest") ||
-    msg.includes("lowest price") ||
-    msg.includes("budget")
-  ) {
-    const cheapest = [...products].sort((a, b) => a.price - b.price)[0];
-
-    return `The cheapest product is ${cheapest.name} at ${cheapest.displayPrice}.\n\nIt is a ${cheapest.category} item, and we currently have ${cheapest.stock} in stock. It is a good budget-friendly option.`;
-  }
-
-  if (
-    msg.includes("expensive") ||
-    msg.includes("highest price") ||
-    msg.includes("premium")
-  ) {
-    const highest = [...products].sort((a, b) => b.price - a.price)[0];
-
-    return `The highest priced product is ${highest.name} at ${highest.displayPrice}.\n\nIt is a ${highest.category} item, and we currently have ${highest.stock} in stock.`;
-  }
-
-  if (msg.includes("halal")) {
-    const halalItems = products.filter(
-      (p) =>
-        p.category.toLowerCase().includes("halal") ||
-        p.keywords.includes("halal")
+    return createBotResponse(
+      "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. Tell me what you are shopping for and I’ll recommend the best matching products."
     );
-
-    return `Yes, we have halal products:\n\n${productList(halalItems)}\n\nOur speciality halal item is Halal Beef Sucuk 500g.`;
   }
 
   if (
-    msg.includes("dairy") ||
-    msg.includes("milk") ||
-    msg.includes("yogurt") ||
-    msg.includes("yoghurt")
+    msg.includes("breakfast") ||
+    msg.includes("morning")
   ) {
-    const dairyItems = products.filter((p) => p.category === "Dairy");
-
-    return `Here are our dairy products:\n\n${productList(dairyItems)}\n\nTurkish Style Yogurt 2kg is good for breakfast, cooking, dips and sauces.`;
+    return createBotResponse(
+      "For a balanced Mediterranean-style breakfast, I recommend honey, yogurt and tahini. These products work well for toast, breakfast bowls, dips and healthy meals.",
+      getProductsByIds(["2", "4", "1"])
+    );
   }
 
   if (
@@ -306,23 +357,154 @@ function getBotReply(userText) {
     msg.includes("dessert") ||
     msg.includes("chocolate")
   ) {
-    const sweetItems = products.filter(
-      (p) => p.category === "Sweets" || p.keywords.includes("dessert")
+    return createBotResponse(
+      "Here are my best sweet recommendations. Turkish Delight is the budget choice, Dubai Chocolate is the premium choice, and Flower Honey is a natural sweet option.",
+      getProductsByIds(["3", "6", "2"])
     );
-
-    return `Here are our sweets and dessert products:\n\n${productList(sweetItems)}\n\nRose Turkish Delight is a budget-friendly sweet, while Dubai Chocolate is a premium dessert option.`;
   }
 
-  if (msg.includes("breakfast")) {
-    return `For breakfast, I recommend:\n\n1. Flower Honey 1kg — $10.00\nGood for tea, toast and breakfast.\n\n2. Turkish Style Yogurt 2kg — $7.00\nGood for breakfast bowls and cooking.\n\n3. Premium Pure Tahini 750g — $10.50\nGood for healthy Mediterranean-style breakfast, dips and sauces.`;
+  if (
+    msg.includes("halal") ||
+    msg.includes("meat") ||
+    msg.includes("sausage") ||
+    msg.includes("sucuk")
+  ) {
+    return createBotResponse(
+      "My recommended halal product is Halal Beef Sucuk. It is suitable for breakfast, sandwiches and Mediterranean cooking.",
+      getProductsByIds(["5"])
+    );
+  }
+
+  if (
+    msg.includes("cheap") ||
+    msg.includes("cheapest") ||
+    msg.includes("budget") ||
+    msg.includes("lowest price") ||
+    msg.includes("low price")
+  ) {
+    const recommendations = [...products]
+      .sort((a, b) => a.price - b.price)
+      .slice(0, 3);
+
+    return createBotResponse(
+      "These are the best budget-friendly choices, arranged from the lowest price.",
+      recommendations
+    );
+  }
+
+  if (
+    msg.includes("sale") ||
+    msg.includes("offer") ||
+    msg.includes("offers") ||
+    msg.includes("discount") ||
+    msg.includes("special") ||
+    msg.includes("promotion")
+  ) {
+    return createBotResponse(
+      "Here are today’s best-value products. Tahini has a reduced price, Turkish Delight is only $5, and the 2kg yogurt is excellent family value. Delivery is free for orders over $50.",
+      getProductsByIds(["1", "3", "4"])
+    );
+  }
+
+  if (
+    msg.includes("healthy") ||
+    msg.includes("health")
+  ) {
+    return createBotResponse(
+      "For healthier choices, I recommend tahini, natural flower honey and Turkish-style yogurt. They are versatile options for breakfast and home cooking.",
+      getProductsByIds(["1", "2", "4"])
+    );
+  }
+
+  if (
+    msg.includes("hummus") ||
+    msg.includes("make hummus")
+  ) {
+    return createBotResponse(
+      "Tahini is the main ClariMart product I recommend for hummus. You may also need chickpeas, lemon juice, garlic and olive oil.",
+      getProductsByIds(["1"])
+    );
+  }
+
+  if (
+    msg.includes("cooking") ||
+    msg.includes("cook") ||
+    msg.includes("meal")
+  ) {
+    return createBotResponse(
+      "For cooking, my top recommendations are tahini for sauces and dressings, yogurt for dips and marinades, and halal beef sucuk for savoury meals.",
+      getProductsByIds(["1", "4", "5"])
+    );
   }
 
   if (
     msg.includes("recommend") ||
     msg.includes("suggest") ||
-    msg.includes("best")
+    msg.includes("best") ||
+    msg.includes("items") ||
+    msg.includes("products") ||
+    msg.includes("available")
   ) {
-    return `My recommendations:\n\n• For breakfast: Flower Honey 1kg and Turkish Style Yogurt 2kg\n• For cooking: Premium Pure Tahini and Halal Beef Sucuk\n• For dessert: Rose Turkish Delight or Dubai Chocolate\n• For best value: Premium Pure Tahini is currently on sale\n• For halal option: Halal Beef Sucuk 500g\n\nTell me your category, and I can suggest better.`;
+    return createBotResponse(
+      "Here are my top ClariMart recommendations based on value, popularity and variety. Tell me whether you prefer breakfast, sweets, halal food, cooking products or budget items for a more personalised suggestion.",
+      getProductsByIds(["1", "2", "4", "6"])
+    );
+  }
+
+  if (
+    msg.includes("price") ||
+    msg.includes("cost") ||
+    msg.includes("how much")
+  ) {
+    const priceList = products
+      .map(
+        (product) =>
+          `• ${product.name}: ${product.displayPrice}`
+      )
+      .join("\n");
+
+    return createBotResponse(
+      `Here is the current product price list:\n\n${priceList}`
+    );
+  }
+
+  if (
+    msg.includes("stock") ||
+    msg.includes("quantity") ||
+    msg.includes("in stock")
+  ) {
+    const stockList = products
+      .map(
+        (product) =>
+          `• ${product.name}: ${product.stock} available`
+      )
+      .join("\n");
+
+    return createBotResponse(
+      `Here is the current stock information:\n\n${stockList}`
+    );
+  }
+
+  if (
+    msg.includes("premium") ||
+    msg.includes("expensive") ||
+    msg.includes("highest price")
+  ) {
+    const highest = [...products].sort(
+      (a, b) => b.price - a.price
+    )[0];
+
+    return createBotResponse(
+      `${highest.name} is our highest-priced speciality product at ${highest.displayPrice}.`,
+      [highest]
+    );
+  }
+
+  if (matchedProduct) {
+    return createBotResponse(
+      `${matchedProduct.name} is available for ${matchedProduct.displayPrice}. ${matchedProduct.reason}`,
+      [matchedProduct]
+    );
   }
 
   if (
@@ -330,16 +512,21 @@ function getBotReply(userText) {
     msg.includes("shipping") ||
     msg.includes("deliver")
   ) {
-    return "ClariMart offers delivery for grocery orders. Delivery is free for orders over $50. Otherwise, delivery is $8.99. Delivery time may depend on the customer location and order size.";
+    return createBotResponse(
+      "Delivery is free for orders over $50. For orders below $50, the delivery fee is $8.99."
+    );
   }
 
   if (
     msg.includes("cart") ||
-    msg.includes("add to cart") ||
     msg.includes("checkout") ||
+    msg.includes("payment") ||
+    msg.includes("card") ||
     msg.includes("order")
   ) {
-    return "To order, choose a product and click Add to Cart. Then open the Cart page, review your items, and continue to demo checkout. No real payment is deducted in this demo website.";
+    return createBotResponse(
+      "Choose a product and click Add to Cart. Then open the Cart page, review your items and continue to demo checkout. No real money is deducted."
+    );
   }
 
   if (
@@ -347,7 +534,9 @@ function getBotReply(userText) {
     msg.includes("return") ||
     msg.includes("cancel")
   ) {
-    return "Refund and return requests are reviewed by the store team. Customers should provide the order number, product name, purchase date and reason for return. Opened or perishable food items may only be refunded if there is a quality issue.";
+    return createBotResponse(
+      "Refund requests should include the order number, product name and reason. Opened or perishable items may only be refunded where there is a quality issue."
+    );
   }
 
   if (
@@ -356,7 +545,9 @@ function getBotReply(userText) {
     msg.includes("open") ||
     msg.includes("close")
   ) {
-    return "ClariMart is open Monday to Saturday, 9:00 AM to 6:00 PM. Online product browsing and ClariBot support are available anytime.";
+    return createBotResponse(
+      "ClariMart is open Monday to Saturday from 9:00 AM to 6:00 PM. Online shopping and ClariBot support are available anytime."
+    );
   }
 
   if (
@@ -365,22 +556,38 @@ function getBotReply(userText) {
     msg.includes("phone") ||
     msg.includes("email")
   ) {
-    return "You can contact ClariMart support at support@claribot.com. You can also ask me here about products, prices, stock, offers, delivery, refunds and checkout help.";
+    return createBotResponse(
+      "You can contact ClariMart support at support@claribot.com. You can also ask me about products, prices, stock, offers, delivery and checkout."
+    );
   }
 
-  return "I’m ClariBot, your ClariMart shopping assistant. I can help with product details, prices, offers, stock, halal items, dairy, sweets, breakfast recommendations, delivery, cart, checkout, refunds and opening hours.";
+  return createBotResponse(
+    "I can recommend products by category, price, meal type or preference. Try asking: “best breakfast products”, “cheap sweets”, “halal products”, “healthy items” or “what is on sale?”"
+  );
 }
+
+/* =========================================================
+   BASIC TEST ROUTE
+========================================================= */
 
 app.get("/", (req, res) => {
   res.send("ClariBot backend is running");
 });
 
-// Admin login
+/* =========================================================
+   ADMIN LOGIN
+========================================================= */
+
 app.post("/api/admin/login", (req, res) => {
   const { email, password } = req.body;
 
-  if (email !== "admin@claribot.com" || password !== "admin123") {
-    return res.status(401).json({ message: "Invalid admin credentials" });
+  if (
+    email !== "admin@claribot.com" ||
+    password !== "admin123"
+  ) {
+    return res.status(401).json({
+      message: "Invalid admin credentials",
+    });
   }
 
   const admin = {
@@ -397,22 +604,31 @@ app.post("/api/admin/login", (req, res) => {
   });
 });
 
-// Request OTP for customer signup
+/* =========================================================
+   REQUEST CUSTOMER OTP
+========================================================= */
+
 app.post("/api/auth/request-otp", async (req, res) => {
   try {
     const db = readDB();
     const email = normalizeEmail(req.body.email);
 
     if (!email) {
-      return res.status(400).json({ message: "Email is required" });
+      return res.status(400).json({
+        message: "Email is required",
+      });
     }
 
     if (!isValidEmail(email)) {
-      return res.status(400).json({ message: "Please enter a valid email address" });
+      return res.status(400).json({
+        message: "Please enter a valid email address",
+      });
     }
 
     const existingUser = db.users.find(
-      (u) => normalizeEmail(u.email) === email && u.role === "customer"
+      (user) =>
+        normalizeEmail(user.email) === email &&
+        user.role === "customer"
     );
 
     if (existingUser) {
@@ -421,10 +637,13 @@ app.post("/api/auth/request-otp", async (req, res) => {
       });
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
 
-    db.otps = db.otps || [];
-    db.otps = db.otps.filter((item) => item.email !== email);
+    db.otps = db.otps.filter(
+      (item) => item.email !== email
+    );
 
     db.otps.push({
       email,
@@ -453,13 +672,17 @@ app.post("/api/auth/request-otp", async (req, res) => {
 
     res.status(500).json({
       ok: false,
-      message: "Failed to send OTP email. Please check email configuration.",
+      message:
+        "Failed to send OTP email. Please check email configuration.",
       error: error.message,
     });
   }
 });
 
-// Customer signup with OTP
+/* =========================================================
+   CUSTOMER SIGNUP
+========================================================= */
+
 app.post("/api/auth/signup", async (req, res) => {
   try {
     const db = readDB();
@@ -471,12 +694,15 @@ app.post("/api/auth/signup", async (req, res) => {
 
     if (!name || !email || !password || !otp) {
       return res.status(400).json({
-        message: "Full name, email, password and OTP are required",
+        message:
+          "Full name, email, password and OTP are required",
       });
     }
 
     if (!isValidEmail(email)) {
-      return res.status(400).json({ message: "Please enter a valid email address" });
+      return res.status(400).json({
+        message: "Please enter a valid email address",
+      });
     }
 
     if (password.length < 6) {
@@ -486,31 +712,46 @@ app.post("/api/auth/signup", async (req, res) => {
     }
 
     const existingUser = db.users.find(
-      (u) => normalizeEmail(u.email) === email && u.role === "customer"
+      (user) =>
+        normalizeEmail(user.email) === email &&
+        user.role === "customer"
     );
 
     if (existingUser) {
-      return res.status(409).json({ message: "User already exists" });
-    }
-
-    const otpRecord = db.otps.find(
-      (item) => item.email === email && item.otp === otp
-    );
-
-    if (!otpRecord) {
-      return res.status(400).json({ message: "Invalid OTP" });
-    }
-
-    if (Date.now() > otpRecord.expiresAt) {
-      db.otps = db.otps.filter((item) => item.email !== email);
-      writeDB(db);
-
-      return res.status(400).json({
-        message: "OTP has expired. Please request a new OTP.",
+      return res.status(409).json({
+        message: "User already exists",
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const otpRecord = db.otps.find(
+      (item) =>
+        item.email === email &&
+        item.otp === otp
+    );
+
+    if (!otpRecord) {
+      return res.status(400).json({
+        message: "Invalid OTP",
+      });
+    }
+
+    if (Date.now() > otpRecord.expiresAt) {
+      db.otps = db.otps.filter(
+        (item) => item.email !== email
+      );
+
+      writeDB(db);
+
+      return res.status(400).json({
+        message:
+          "OTP has expired. Please request a new OTP.",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(
+      password,
+      10
+    );
 
     const user = {
       id: Date.now().toString(),
@@ -523,7 +764,10 @@ app.post("/api/auth/signup", async (req, res) => {
     };
 
     db.users.push(user);
-    db.otps = db.otps.filter((item) => item.email !== email);
+
+    db.otps = db.otps.filter(
+      (item) => item.email !== email
+    );
 
     writeDB(db);
 
@@ -540,47 +784,71 @@ app.post("/api/auth/signup", async (req, res) => {
     });
   } catch (error) {
     console.error("Signup error:", error);
+
     res.status(500).json({
       message: "Signup failed",
     });
   }
 });
 
-// Customer login
+/* =========================================================
+   CUSTOMER LOGIN
+========================================================= */
+
 app.post("/api/auth/login", async (req, res) => {
-  const email = normalizeEmail(req.body.email);
-  const password = String(req.body.password || "");
+  try {
+    const email = normalizeEmail(req.body.email);
+    const password = String(req.body.password || "");
 
-  const db = readDB();
+    const db = readDB();
 
-  const user = db.users.find(
-    (u) => normalizeEmail(u.email) === email && u.role === "customer"
-  );
+    const user = db.users.find(
+      (item) =>
+        normalizeEmail(item.email) === email &&
+        item.role === "customer"
+    );
 
-  if (!user) {
-    return res.status(401).json({ message: "Invalid email or password" });
+    if (!user) {
+      return res.status(401).json({
+        message: "Invalid email or password",
+      });
+    }
+
+    const passwordMatch = await bcrypt.compare(
+      password,
+      user.password
+    );
+
+    if (!passwordMatch) {
+      return res.status(401).json({
+        message: "Invalid email or password",
+      });
+    }
+
+    res.json({
+      message: "Login successful",
+      token: createToken(user),
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        emailVerified: user.emailVerified || false,
+      },
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+
+    res.status(500).json({
+      message: "Login failed",
+    });
   }
-
-  const passwordMatch = await bcrypt.compare(password, user.password);
-
-  if (!passwordMatch) {
-    return res.status(401).json({ message: "Invalid email or password" });
-  }
-
-  res.json({
-    message: "Login successful",
-    token: createToken(user),
-    user: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      emailVerified: user.emailVerified || false,
-    },
-  });
 });
 
-// Admin summary
+/* =========================================================
+   ADMIN SUMMARY
+========================================================= */
+
 app.get("/api/admin/summary", (req, res) => {
   const db = readDB();
 
@@ -594,7 +862,10 @@ app.get("/api/admin/summary", (req, res) => {
   });
 });
 
-// Admin settings
+/* =========================================================
+   ADMIN SETTINGS
+========================================================= */
+
 app.get("/api/admin/settings", (req, res) => {
   res.json({
     botName: "ClariBot",
@@ -603,37 +874,48 @@ app.get("/api/admin/settings", (req, res) => {
   });
 });
 
-// Get all customer conversations
+/* =========================================================
+   CUSTOMER CONVERSATIONS
+========================================================= */
+
 app.get("/api/conversations", (req, res) => {
   const db = readDB();
 
   const conversations = db.conversations
-    .map((c) => ({
-      ...c,
-      updatedAt: c.updatedAt || c.createdAt,
+    .map((conversation) => ({
+      ...conversation,
+      updatedAt:
+        conversation.updatedAt ||
+        conversation.createdAt,
     }))
-    .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    .sort(
+      (a, b) =>
+        new Date(b.updatedAt) -
+        new Date(a.updatedAt)
+    );
 
   res.json(conversations);
 });
 
-// Create new conversation
 app.post("/api/conversations", (req, res) => {
   const db = readDB();
-
   const nowTime = new Date().toISOString();
 
   const conversation = {
     id: Date.now().toString(),
     userId: req.body.userId || "guest",
-    title: req.body.title || "New conversation",
+    title:
+      req.body.title ||
+      "New conversation",
     status: "open",
     sentiment: "neutral",
     messages: [
       {
         id: Date.now().toString(),
         role: "bot",
-        text: "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. Ask me about products, prices, offers, special items, delivery, checkout, refunds or opening hours.",
+        text:
+          "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. Ask me about products, prices, recommendations, delivery, checkout or refunds.",
+        recommendedProducts: [],
         createdAt: nowTime,
       },
     ],
@@ -647,127 +929,219 @@ app.post("/api/conversations", (req, res) => {
   res.status(201).json(conversation);
 });
 
-// Send message to conversation
-app.post("/api/conversations/:id/messages", (req, res) => {
-  const db = readDB();
+/* =========================================================
+   SEND CHAT MESSAGE
+========================================================= */
 
-  const conversation = db.conversations.find((c) => c.id === req.params.id);
+app.post(
+  "/api/conversations/:id/messages",
+  (req, res) => {
+    const db = readDB();
 
-  if (!conversation) {
-    return res.status(404).json({ message: "Conversation not found" });
+    const conversation = db.conversations.find(
+      (item) => item.id === req.params.id
+    );
+
+    if (!conversation) {
+      return res.status(404).json({
+        message: "Conversation not found",
+      });
+    }
+
+    const text = String(req.body.text || "");
+    const nowTime = new Date().toISOString();
+
+    const userMessage = {
+      id: Date.now().toString(),
+      role: "user",
+      text,
+      createdAt: nowTime,
+    };
+
+    // IMPORTANT:
+    // getBotReply returns an object containing:
+    // {
+    //   text: string,
+    //   recommendedProducts: array
+    // }
+
+    const botReply = getBotReply(text);
+
+    const botMessage = {
+      id: (Date.now() + 1).toString(),
+      role: "bot",
+
+      // React must receive a normal string here
+      text: botReply.text,
+
+      // Product cards are stored separately
+      recommendedProducts:
+        botReply.recommendedProducts || [],
+
+      createdAt: new Date().toISOString(),
+    };
+
+    conversation.messages.push(
+      userMessage,
+      botMessage
+    );
+
+    conversation.updatedAt =
+      new Date().toISOString();
+
+    if (
+      conversation.title === "New conversation" &&
+      text.trim()
+    ) {
+      conversation.title =
+        text.length > 28
+          ? `${text.slice(0, 28)}...`
+          : text;
+    }
+
+    writeDB(db);
+
+    res.json({
+      userMessage,
+      botMessage,
+      reply: botMessage,
+      conversation,
+    });
   }
+);
 
-  const text = req.body.text || "";
-  const nowTime = new Date().toISOString();
+/* =========================================================
+   ADMIN CONVERSATIONS
+========================================================= */
 
-  const userMessage = {
-    id: Date.now().toString(),
-    role: "user",
-    text,
-    createdAt: nowTime,
-  };
+app.get(
+  "/api/admin/conversations",
+  (req, res) => {
+    const db = readDB();
 
-  const botMessage = {
-    id: (Date.now() + 1).toString(),
-    role: "bot",
-    text: getBotReply(text),
-    createdAt: new Date().toISOString(),
-  };
+    const conversations = db.conversations
+      .map((conversation) => ({
+        ...conversation,
+        sentiment:
+          conversation.sentiment || "neutral",
+        status:
+          conversation.status || "open",
+        messageCount:
+          conversation.messages?.length || 0,
+        updatedAt:
+          conversation.updatedAt ||
+          conversation.createdAt,
+      }))
+      .sort(
+        (a, b) =>
+          new Date(b.updatedAt) -
+          new Date(a.updatedAt)
+      );
 
-  conversation.messages.push(userMessage, botMessage);
-  conversation.updatedAt = new Date().toISOString();
-
-  if (conversation.title === "New conversation" && text.trim()) {
-    conversation.title =
-      text.length > 28 ? text.slice(0, 28) + "..." : text;
+    res.json(conversations);
   }
+);
 
-  writeDB(db);
+app.get(
+  "/api/admin/chat-logs",
+  (req, res) => {
+    const db = readDB();
 
-  res.json({
-    userMessage,
-    botMessage,
-    reply: botMessage,
-    conversation,
-  });
-});
+    const logs = db.conversations
+      .map((conversation) => ({
+        ...conversation,
+        sentiment:
+          conversation.sentiment || "neutral",
+        status:
+          conversation.status || "open",
+        messageCount:
+          conversation.messages?.length || 0,
+        updatedAt:
+          conversation.updatedAt ||
+          conversation.createdAt,
+      }))
+      .sort(
+        (a, b) =>
+          new Date(b.updatedAt) -
+          new Date(a.updatedAt)
+      );
 
-// Admin get all conversations
-app.get("/api/admin/conversations", (req, res) => {
-  const db = readDB();
-
-  const conversations = db.conversations
-    .map((c) => ({
-      ...c,
-      sentiment: c.sentiment || "neutral",
-      status: c.status || "open",
-      messageCount: c.messages ? c.messages.length : 0,
-      updatedAt: c.updatedAt || c.createdAt,
-    }))
-    .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-
-  res.json(conversations);
-});
-
-// Admin chat logs
-app.get("/api/admin/chat-logs", (req, res) => {
-  const db = readDB();
-
-  const logs = db.conversations
-    .map((c) => ({
-      ...c,
-      sentiment: c.sentiment || "neutral",
-      status: c.status || "open",
-      messageCount: c.messages ? c.messages.length : 0,
-      updatedAt: c.updatedAt || c.createdAt,
-    }))
-    .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-
-  res.json(logs);
-});
-
-// Admin get single conversation
-app.get("/api/admin/conversations/:id", (req, res) => {
-  const db = readDB();
-
-  const conversation = db.conversations.find((c) => c.id === req.params.id);
-
-  if (!conversation) {
-    return res.status(404).json({ message: "Conversation not found" });
+    res.json(logs);
   }
+);
 
-  res.json({
-    ...conversation,
-    sentiment: conversation.sentiment || "neutral",
-    status: conversation.status || "open",
-    messageCount: conversation.messages ? conversation.messages.length : 0,
-    updatedAt: conversation.updatedAt || conversation.createdAt,
-  });
-});
+app.get(
+  "/api/admin/conversations/:id",
+  (req, res) => {
+    const db = readDB();
 
-// Admin delete conversation
-app.delete("/api/admin/conversations/:id", (req, res) => {
-  const db = readDB();
+    const conversation = db.conversations.find(
+      (item) => item.id === req.params.id
+    );
 
-  db.conversations = db.conversations.filter((c) => c.id !== req.params.id);
+    if (!conversation) {
+      return res.status(404).json({
+        message: "Conversation not found",
+      });
+    }
 
-  writeDB(db);
+    res.json({
+      ...conversation,
+      sentiment:
+        conversation.sentiment || "neutral",
+      status:
+        conversation.status || "open",
+      messageCount:
+        conversation.messages?.length || 0,
+      updatedAt:
+        conversation.updatedAt ||
+        conversation.createdAt,
+    });
+  }
+);
 
-  res.json({ ok: true });
-});
+app.delete(
+  "/api/admin/conversations/:id",
+  (req, res) => {
+    const db = readDB();
 
-// Customer delete conversation
-app.delete("/api/conversations/:id", (req, res) => {
-  const db = readDB();
+    db.conversations =
+      db.conversations.filter(
+        (conversation) =>
+          conversation.id !== req.params.id
+      );
 
-  db.conversations = db.conversations.filter((c) => c.id !== req.params.id);
+    writeDB(db);
 
-  writeDB(db);
+    res.json({
+      ok: true,
+    });
+  }
+);
 
-  res.json({ ok: true });
-});
+app.delete(
+  "/api/conversations/:id",
+  (req, res) => {
+    const db = readDB();
 
-// Create lead from landing page / free trial / contact form
+    db.conversations =
+      db.conversations.filter(
+        (conversation) =>
+          conversation.id !== req.params.id
+      );
+
+    writeDB(db);
+
+    res.json({
+      ok: true,
+    });
+  }
+);
+
+/* =========================================================
+   LEADS
+========================================================= */
+
 app.post("/api/leads", (req, res) => {
   const db = readDB();
 
@@ -782,7 +1156,9 @@ app.post("/api/leads", (req, res) => {
   };
 
   if (!lead.email) {
-    return res.status(400).json({ message: "Email is required" });
+    return res.status(400).json({
+      message: "Email is required",
+    });
   }
 
   db.leads.push(lead);
@@ -795,39 +1171,51 @@ app.post("/api/leads", (req, res) => {
   });
 });
 
-// Admin users
+/* =========================================================
+   ADMIN USERS
+========================================================= */
+
 app.get("/api/admin/users", (req, res) => {
   const db = readDB();
 
-  const users = db.users.map((u) => ({
-    id: u.id,
-    name: u.name,
-    email: u.email,
-    role: u.role,
-    emailVerified: u.emailVerified || false,
-    createdAt: u.createdAt,
+  const users = db.users.map((user) => ({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    emailVerified:
+      user.emailVerified || false,
+    createdAt: user.createdAt,
   }));
 
   res.json(users);
 });
 
-// Admin leads
+/* =========================================================
+   ADMIN LEADS
+========================================================= */
+
 app.get("/api/admin/leads", (req, res) => {
   const db = readDB();
 
-  const leads = db.leads.sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  const leads = [...db.leads].sort(
+    (a, b) =>
+      new Date(b.createdAt) -
+      new Date(a.createdAt)
   );
 
   res.json(leads);
 });
 
-// Create demo order
+/* =========================================================
+   ORDERS
+========================================================= */
+
 app.post("/api/orders", (req, res) => {
   const db = readDB();
 
   const order = {
-    id: "DEMO-" + Date.now(),
+    id: `DEMO-${Date.now()}`,
     customer: req.body.customer || {},
     items: req.body.items || [],
     subtotal: req.body.subtotal || 0,
@@ -847,19 +1235,26 @@ app.post("/api/orders", (req, res) => {
   });
 });
 
-// Admin orders
 app.get("/api/admin/orders", (req, res) => {
   const db = readDB();
 
-  const orders = (db.orders || []).sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  const orders = [...(db.orders || [])].sort(
+    (a, b) =>
+      new Date(b.createdAt) -
+      new Date(a.createdAt)
   );
 
   res.json(orders);
 });
 
+/* =========================================================
+   START SERVER
+========================================================= */
+
 const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {
-  console.log(`ClariBot API running on http://localhost:${PORT}`);
+  console.log(
+    `ClariBot API running on http://localhost:${PORT}`
+  );
 });
