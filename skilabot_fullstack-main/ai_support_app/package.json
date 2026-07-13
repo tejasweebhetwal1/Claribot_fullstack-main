@@ -69,6 +69,8 @@
   "devDependencies": {
     "@tailwindcss/vite": "4.1.12",
     "@vitejs/plugin-react": "4.7.0",
+    "browserslist": "^4.28.6",
+    "caniuse-lite": "^1.0.30001805",
     "concurrently": "^10.0.3",
     "tailwindcss": "4.1.12",
     "vite": "6.3.5"

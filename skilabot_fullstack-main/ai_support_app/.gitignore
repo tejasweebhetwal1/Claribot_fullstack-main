@@ -3,3 +3,8 @@ node_modules/
 server/node_modules/
 server/.env
 server_old*/
+
+node_modules/
+server/node_modules/
+.env
+server/.env
