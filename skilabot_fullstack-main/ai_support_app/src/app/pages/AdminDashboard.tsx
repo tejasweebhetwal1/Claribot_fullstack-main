@@ -261,7 +261,7 @@ export default function AdminDashboard() {
 
   // Settings state
   const [settings, setSettings] = useState<ApiSettings>({
-    businessName: "ClariBot Demo",
+    businessName: "ClariBot",
     escalationEmail: "admin@yourcompany.com",
     botTone: "Friendly and concise",
     retentionDays: 90,

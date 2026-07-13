@@ -639,7 +639,7 @@ export default function LoginPage() {
 
             {loginType === "admin" && (
               <p className="mt-4 text-center text-xs text-slate-400">
-                Demo admin: admin@claribot.com / admin123
+                 admin: admin@claribot.com / admin123
               </p>
             )}
           </div>

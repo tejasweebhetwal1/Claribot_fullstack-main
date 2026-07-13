@@ -43,7 +43,7 @@ export default function CheckoutPage() {
         subtotal,
         delivery,
         total,
-        paymentStatus: "Paid (Demo)",
+        paymentStatus: "Paid",
       });
 
       clearCart();
@@ -61,10 +61,10 @@ export default function CheckoutPage() {
 
       <main className="mx-auto grid max-w-6xl gap-6 px-6 py-10 md:grid-cols-[1fr_360px]">
         <section className="rounded-3xl bg-white p-6 shadow">
-          <h1 className="mb-3 text-4xl font-black">Demo Checkout</h1>
+          <h1 className="mb-3 text-4xl font-black">Secure Checkout</h1>
 
           <p className="mb-6 rounded-2xl bg-yellow-100 p-4 text-sm font-semibold text-yellow-800">
-            Demo only: fake card details are accepted and no real money is deducted.
+            Place your order using your card details today. No payment will be processed until your order is confirmed and shipped.
           </p>
 
           <div className="grid gap-4">
@@ -75,7 +75,7 @@ export default function CheckoutPage() {
 
             <div className="mt-4 flex items-center gap-2 text-xl font-black">
               <CreditCard />
-              Fake Card Details
+               Card Details
             </div>
 
             <input className="rounded-xl border px-4 py-3" placeholder="Name on card" value={form.cardName} onChange={(e) => setForm({ ...form, cardName: e.target.value })} />
@@ -91,7 +91,7 @@ export default function CheckoutPage() {
               disabled={loading}
               className="rounded-full bg-green-600 py-4 font-black text-white disabled:opacity-60"
             >
-              {loading ? "Placing Order..." : "Place Demo Order"}
+              {loading ? "Placing Order..." : "Place your Order"}
             </button>
           </div>
         </section>

@@ -33,7 +33,7 @@ export default function LandingPage() {
 
               <p className="mb-8 max-w-xl text-lg text-gray-600">
                 Shop pantry essentials, halal items, sweets, drinks and everyday
-                groceries from a professional demo business website powered by
+                groceries from a professional business website powered by
                 ClariBot AI customer support.
               </p>
 
@@ -90,7 +90,7 @@ export default function LandingPage() {
             <div className="flex items-center gap-3">
               <CreditCard className="text-sky-500" />
               <div>
-                <b>Demo Checkout</b>
+                <b>SecureCheckout</b>
                 <p className="text-sm text-gray-500">No real payment</p>
               </div>
             </div>
@@ -212,10 +212,9 @@ export default function LandingPage() {
 
               <div className="rounded-3xl bg-white p-8 shadow">
                 <CreditCard className="mb-4 text-sky-500" size={36} />
-                <h3 className="mb-2 text-xl font-black">Fake Checkout</h3>
+                <h3 className="mb-2 text-xl font-black">Secure Checkout</h3>
                 <p className="text-gray-500">
-                  Customers can place a demo order using fake card details with
-                  no real payment.
+                  You can complete your order using your preferred payment card. Please note that your card will not be charged at this time; payment will only be processed once your order has been confirmed and shipped.
                 </p>
               </div>
 

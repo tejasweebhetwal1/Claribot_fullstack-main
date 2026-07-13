@@ -1216,6 +1216,47 @@
       ],
       "createdAt": "2026-07-08T11:34:15.808Z",
       "updatedAt": "2026-07-08T11:43:24.633Z"
+    },
+    {
+      "id": "1783909764942",
+      "userId": "guest",
+      "title": "ClariMart customer support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1783909764942",
+          "role": "bot",
+          "text": "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. Ask me about products, prices, offers, special items, delivery, checkout, refunds or opening hours.",
+          "createdAt": "2026-07-13T02:29:24.942Z"
+        },
+        {
+          "id": "1783909764952",
+          "role": "user",
+          "text": "I want to refund an item",
+          "createdAt": "2026-07-13T02:29:24.952Z"
+        },
+        {
+          "id": "1783909764953",
+          "role": "bot",
+          "text": "Refund and return requests are reviewed by the store team. Customers should provide the order number, product name, purchase date and reason for return. Opened or perishable food items may only be refunded if there is a quality issue.",
+          "createdAt": "2026-07-13T02:29:24.952Z"
+        },
+        {
+          "id": "1783909772061",
+          "role": "user",
+          "text": "1783909750657",
+          "createdAt": "2026-07-13T02:29:32.061Z"
+        },
+        {
+          "id": "1783909772062",
+          "role": "bot",
+          "text": "I’m ClariBot, your ClariMart shopping assistant. I can help with product details, prices, offers, stock, halal items, dairy, sweets, breakfast recommendations, delivery, cart, checkout, refunds and opening hours.",
+          "createdAt": "2026-07-13T02:29:32.061Z"
+        }
+      ],
+      "createdAt": "2026-07-13T02:29:24.942Z",
+      "updatedAt": "2026-07-13T02:29:32.061Z"
     }
   ],
   "leads": [
@@ -1350,6 +1391,37 @@
       "paymentStatus": "Paid (Demo)",
       "orderStatus": "Received",
       "createdAt": "2026-07-08T03:45:23.897Z"
+    },
+    {
+      "id": "DEMO-1783909750657",
+      "customer": {
+        "name": "tejaswee",
+        "email": "tejasweebhetwal1@gmail.com",
+        "phone": "0415261114",
+        "address": "hurstville",
+        "cardName": "Tejaswee",
+        "cardNumber": "4242 4242 4242 4242",
+        "expiry": "12/30",
+        "cvv": "123"
+      },
+      "items": [
+        {
+          "id": "cheese",
+          "name": "Mediterranean Cheese",
+          "category": "Dairy",
+          "price": 9.99,
+          "image": "/products/Cheese.png",
+          "description": "Fresh cheese for breakfast and cooking.",
+          "stock": 15,
+          "qty": 1
+        }
+      ],
+      "subtotal": 9.99,
+      "delivery": 8.99,
+      "total": 18.98,
+      "paymentStatus": "Paid (Demo)",
+      "orderStatus": "Received",
+      "createdAt": "2026-07-13T02:29:10.657Z"
     }
   ]
 }

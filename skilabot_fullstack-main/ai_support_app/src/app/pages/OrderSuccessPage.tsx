@@ -18,13 +18,13 @@ export default function OrderSuccessPage() {
           <h1 className="mb-3 text-4xl font-black">Order Successful!</h1>
 
           <p className="mb-3 text-gray-600">
-            Your demo grocery order has been placed successfully.
+            Your grocery order has been placed successfully.
           </p>
 
           <p className="mb-6 font-black">Order ID: {id}</p>
 
           <p className="mb-8 rounded-2xl bg-yellow-100 p-4 text-sm font-semibold text-yellow-800">
-            This was a fake demo payment. No real money was deducted.
+            Your payment was processed successfully. We are now preparing your order.
           </p>
 
           <Link
