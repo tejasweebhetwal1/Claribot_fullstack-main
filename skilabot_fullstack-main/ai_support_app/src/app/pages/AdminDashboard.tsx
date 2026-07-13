@@ -7,7 +7,7 @@ import {
 import {
   Link,
   useNavigate,
-} from "react-router";
+} from "react-router-dom";
 import {
   AlertTriangle,
   ArrowUpRight,

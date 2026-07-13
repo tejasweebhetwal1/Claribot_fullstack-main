@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { api, getToken, clearSession, type ApiConversation } from "../lib/api";
 import {
   Bot,

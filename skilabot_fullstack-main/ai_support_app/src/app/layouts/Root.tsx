@@ -4,7 +4,7 @@ import {
   Outlet,
   useLocation,
   useNavigate,
-} from "react-router";
+} from "react-router-dom";
 import {
   Bot,
   Briefcase,
