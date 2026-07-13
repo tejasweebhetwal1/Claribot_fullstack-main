@@ -157,6 +157,33 @@ export const api = {
       body: JSON.stringify({ email, password }),
       
     }),
+      getReturnItems: (orderId: string) =>
+    request<{
+      ok: boolean;
+      order: {
+        id: string;
+        orderStatus?: string;
+        customer?: any;
+        items: any[];
+      };
+    }>(`/api/orders/${encodeURIComponent(orderId)}/return-items`),
+
+  createReturn: (data: {
+    orderId: string;
+    productId: string;
+    reason: string;
+  }) =>
+    request<{
+      ok: boolean;
+      message: string;
+      returnRequest: any;
+    }>("/api/returns", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  adminReturns: () =>
+    request<any[]>("/api/admin/returns"),
 
   // Conversations
   conversations: () =>

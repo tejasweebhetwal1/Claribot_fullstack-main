@@ -21,12 +21,21 @@ type QuickAction = {
   value: string;
 };
 
+type ReturnItem = {
+  id: string;
+  name: string;
+  price: number;
+  qty: number;
+  image?: string;
+};
+
 type ChatMessage = {
   id: string;
   role: "user" | "bot";
   text?: string;
   actions?: QuickAction[];
   products?: Product[];
+  returnItems?: ReturnItem[];
 };
 
 const mainMenuActions: QuickAction[] = [
@@ -60,6 +69,13 @@ export default function ClariBotWidget() {
   const [loading, setLoading] = useState(false);
   const [listening, setListening] = useState(false);
   const [voicePanelOpen, setVoicePanelOpen] = useState(false);
+  const [returnStep, setReturnStep] = useState<
+  "none" | "order-id" | "item" | "reason"
+>("none");
+
+const [returnOrderId, setReturnOrderId] = useState("");
+const [selectedReturnItem, setSelectedReturnItem] =
+  useState<ReturnItem | null>(null);
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -208,16 +224,16 @@ export default function ClariBotWidget() {
     }
 
     if (action.value === "returns") {
-      addBotMessage({
-        text: "Returns and refund requests can be made within 7 days. Please keep your demo order ID and tell support which item you want to return.",
-        actions: [
-          { label: "Track Order", value: "track-order" },
-          { label: "Talk to Human", value: "human-support" },
-          { label: "Main Menu", value: "main-menu" },
-        ],
-      });
-      return;
-    }
+  setReturnStep("order-id");
+  setReturnOrderId("");
+  setSelectedReturnItem(null);
+
+  addBotMessage({
+    text: "Please enter the demo order ID containing the product you want to return.",
+  });
+
+  return;
+}
 
     if (action.value === "delivery") {
       addBotMessage({

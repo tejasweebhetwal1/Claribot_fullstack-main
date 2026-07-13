@@ -32,6 +32,7 @@ function readDB() {
   db.leads = db.leads || [];
   db.otps = db.otps || [];
   db.orders = db.orders || [];
+  db.returns = db.returns || [];
 
   return db;
 }
@@ -1243,6 +1244,117 @@ app.get("/api/admin/orders", (req, res) => {
   );
 
   res.json(orders);
+});
+app.get("/api/orders/:id/return-items", (req, res) => {
+  const db = readDB();
+
+  const order = (db.orders || []).find(
+    (item) =>
+      String(item.id).toLowerCase() ===
+      String(req.params.id).toLowerCase()
+  );
+
+  if (!order) {
+    return res.status(404).json({
+      ok: false,
+      message: "Order not found",
+    });
+  }
+
+  res.json({
+    ok: true,
+    order: {
+      id: order.id,
+      orderStatus: order.orderStatus,
+      customer: order.customer,
+      items: order.items || [],
+    },
+  });
+});
+
+app.post("/api/returns", (req, res) => {
+  const db = readDB();
+
+  const orderId = String(req.body.orderId || "").trim();
+  const productId = String(req.body.productId || "").trim();
+  const reason = String(req.body.reason || "").trim();
+
+  if (!orderId || !productId || !reason) {
+    return res.status(400).json({
+      ok: false,
+      message: "Order ID, product and return reason are required",
+    });
+  }
+
+  const order = (db.orders || []).find(
+    (item) =>
+      String(item.id).toLowerCase() === orderId.toLowerCase()
+  );
+
+  if (!order) {
+    return res.status(404).json({
+      ok: false,
+      message: "Order not found",
+    });
+  }
+
+  const product = (order.items || []).find(
+    (item) => String(item.id) === productId
+  );
+
+  if (!product) {
+    return res.status(404).json({
+      ok: false,
+      message: "That product was not found in this order",
+    });
+  }
+
+  const existingReturn = (db.returns || []).find(
+    (item) =>
+      item.orderId === order.id &&
+      item.productId === product.id &&
+      item.status !== "Rejected"
+  );
+
+  if (existingReturn) {
+    return res.status(409).json({
+      ok: false,
+      message: "A return request already exists for this product",
+      returnRequest: existingReturn,
+    });
+  }
+
+  const returnRequest = {
+    id: "RETURN-" + Date.now(),
+    orderId: order.id,
+    productId: product.id,
+    productName: product.name,
+    quantity: product.qty || 1,
+    price: product.price || 0,
+    reason,
+    customer: order.customer || {},
+    status: "Requested",
+    createdAt: new Date().toISOString(),
+  };
+
+  db.returns.push(returnRequest);
+  writeDB(db);
+
+  res.status(201).json({
+    ok: true,
+    message: "Return request created",
+    returnRequest,
+  });
+});
+
+app.get("/api/admin/returns", (req, res) => {
+  const db = readDB();
+
+  const returns = (db.returns || []).sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
+
+  res.json(returns);
 });
 
 /* =========================================================

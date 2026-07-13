@@ -374,6 +374,64 @@
       ],
       "createdAt": "2026-07-13T05:34:35.181Z",
       "updatedAt": "2026-07-13T05:36:14.332Z"
+    },
+    {
+      "id": "1783922580931",
+      "userId": "guest",
+      "title": "ClariMart website support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1783922580931",
+          "role": "bot",
+          "text": "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. Ask me about products, prices, offers, special items, delivery, checkout, refunds or opening hours.",
+          "createdAt": "2026-07-13T06:03:00.931Z"
+        },
+        {
+          "id": "1783922580940",
+          "role": "user",
+          "text": "I want to refund",
+          "createdAt": "2026-07-13T06:03:00.940Z"
+        },
+        {
+          "id": "1783922580941",
+          "role": "bot",
+          "text": "Refund and return requests are reviewed by the store team. Customers should provide the order number, product name, purchase date and reason for return. Opened or perishable food items may only be refunded if there is a quality issue.",
+          "createdAt": "2026-07-13T06:03:00.940Z"
+        }
+      ],
+      "createdAt": "2026-07-13T06:03:00.931Z",
+      "updatedAt": "2026-07-13T06:03:00.940Z"
+    },
+    {
+      "id": "1783922587427",
+      "userId": "guest",
+      "title": "ClariMart website support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1783922587427",
+          "role": "bot",
+          "text": "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. Ask me about products, prices, offers, special items, delivery, checkout, refunds or opening hours.",
+          "createdAt": "2026-07-13T06:03:07.427Z"
+        },
+        {
+          "id": "1783922587438",
+          "role": "user",
+          "text": "DEMO-1783922549403",
+          "createdAt": "2026-07-13T06:03:07.438Z"
+        },
+        {
+          "id": "1783922587439",
+          "role": "bot",
+          "text": "I’m ClariBot, your ClariMart shopping assistant. I can help with product details, prices, offers, stock, halal items, dairy, sweets, breakfast recommendations, delivery, cart, checkout, refunds and opening hours.",
+          "createdAt": "2026-07-13T06:03:07.438Z"
+        }
+      ],
+      "createdAt": "2026-07-13T06:03:07.427Z",
+      "updatedAt": "2026-07-13T06:03:07.438Z"
     }
   ],
   "leads": [
@@ -539,6 +597,35 @@
       "paymentStatus": "Paid (Demo)",
       "orderStatus": "Received",
       "createdAt": "2026-07-13T02:29:10.657Z"
+    },
+    {
+      "id": "DEMO-1783922549403",
+      "customer": {
+        "name": "tejaswee Bhetwal",
+        "email": "tejasweebhetwal1@gmail.com",
+        "phone": "0415261114",
+        "address": "31 Treacy street, Hurstville, NSW 2220"
+      },
+      "items": [
+        {
+          "id": "tahini",
+          "name": "Premium Pure Tahini 750g",
+          "category": "Pantry",
+          "price": 10.5,
+          "oldPrice": 12.5,
+          "image": "/tahini.jpeg",
+          "badge": "Sale",
+          "description": "Smooth sesame tahini for dips, sauces and breakfast.",
+          "stock": 25,
+          "qty": 1
+        }
+      ],
+      "subtotal": 10.5,
+      "delivery": 8.99,
+      "total": 19.490000000000002,
+      "paymentStatus": "Paid (Demo)",
+      "orderStatus": "Received",
+      "createdAt": "2026-07-13T06:02:29.403Z"
     }
   ]
 }
