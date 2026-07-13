@@ -252,6 +252,10 @@ export const api = {
       method: "POST",
       body: JSON.stringify(order),
     }),
+    trackOrder: (orderId: string) =>
+    request<{ ok: boolean; order: any }>(
+      `/api/orders/${encodeURIComponent(orderId)}`
+    ),
 
   adminOrders: () =>
     request<any[]>("/api/admin/orders"),

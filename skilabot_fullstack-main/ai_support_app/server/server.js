@@ -1211,25 +1211,23 @@ app.get("/api/admin/leads", (req, res) => {
    ORDERS
 ========================================================= */
 
-app.post("/api/orders", (req, res) => {
+app.get("/api/orders/:id", (req, res) => {
   const db = readDB();
 
-  const order = {
-    id: `DEMO-${Date.now()}`,
-    customer: req.body.customer || {},
-    items: req.body.items || [],
-    subtotal: req.body.subtotal || 0,
-    delivery: req.body.delivery || 0,
-    total: req.body.total || 0,
-    paymentStatus: "Paid (Demo)",
-    orderStatus: "Received",
-    createdAt: new Date().toISOString(),
-  };
+  const order = (db.orders || []).find(
+    (item) =>
+      String(item.id).toLowerCase() ===
+      String(req.params.id).toLowerCase()
+  );
 
-  db.orders.push(order);
-  writeDB(db);
+  if (!order) {
+    return res.status(404).json({
+      ok: false,
+      message: "Order not found",
+    });
+  }
 
-  res.status(201).json({
+  res.json({
     ok: true,
     order,
   });
