@@ -16,6 +16,7 @@ import {
   Heart,
   Loader2,
   LogOut,
+  MessageCircle,
   Package,
   PackageSearch,
   RefreshCw,
@@ -35,6 +36,7 @@ import {
   api,
   clearSession,
   getUser,
+  type ApiConversation,
   type ApiOrder,
 } from "../lib/api";
 
@@ -48,15 +50,14 @@ type AccountSection =
   | "home"
   | "orders"
   | "track"
-  | "wishlist";
+  | "wishlist"
+  | "support";
 
 const WISHLIST_KEY =
   "clarimart_wishlist";
 
 function formatMoney(value?: number) {
-  return `$${Number(value || 0).toFixed(
-    2
-  )}`;
+  return `$${Number(value || 0).toFixed(2)}`;
 }
 
 function formatDate(value?: string) {
@@ -70,35 +71,26 @@ function formatDate(value?: string) {
     return "Unknown";
   }
 
-  return new Intl.DateTimeFormat(
-    "en-AU",
-    {
-      dateStyle: "medium",
-      timeStyle: "short",
-    }
-  ).format(date);
+  return new Intl.DateTimeFormat("en-AU", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
 }
 
 function getSavedWishlist(): Product[] {
   try {
     const stored =
-      localStorage.getItem(
-        WISHLIST_KEY
-      );
+      localStorage.getItem(WISHLIST_KEY);
 
     if (!stored) {
       return [];
     }
 
-    const parsed = JSON.parse(
-      stored
-    );
+    const parsed = JSON.parse(stored);
 
-    if (!Array.isArray(parsed)) {
-      return [];
-    }
-
-    return parsed;
+    return Array.isArray(parsed)
+      ? parsed
+      : [];
   } catch {
     return [];
   }
@@ -132,42 +124,30 @@ function OrderStatus({
     "bg-sky-100 text-sky-700";
 
   if (
-    normalised.includes(
-      "preparing"
-    )
+    normalised.includes("preparing")
   ) {
     classes =
       "bg-amber-100 text-amber-700";
   }
 
   if (
-    normalised.includes(
-      "delivery"
-    ) ||
-    normalised.includes(
-      "dispatched"
-    )
+    normalised.includes("delivery") ||
+    normalised.includes("dispatched")
   ) {
     classes =
       "bg-purple-100 text-purple-700";
   }
 
   if (
-    normalised.includes(
-      "delivered"
-    ) ||
-    normalised.includes(
-      "completed"
-    )
+    normalised.includes("delivered") ||
+    normalised.includes("completed")
   ) {
     classes =
       "bg-green-100 text-green-700";
   }
 
   if (
-    normalised.includes(
-      "cancelled"
-    )
+    normalised.includes("cancelled")
   ) {
     classes =
       "bg-red-100 text-red-700";
@@ -185,7 +165,6 @@ function OrderStatus({
 export default function CustomerAccountPage() {
   const navigate = useNavigate();
   const user = getUser();
-
   const { addToCart } = useCart();
 
   const [section, setSection] =
@@ -194,11 +173,15 @@ export default function CustomerAccountPage() {
   const [orders, setOrders] =
     useState<ApiOrder[]>([]);
 
-  const [loadingOrders, setLoadingOrders] =
-    useState(true);
+  const [
+    loadingOrders,
+    setLoadingOrders,
+  ] = useState(true);
 
-  const [ordersError, setOrdersError] =
-    useState("");
+  const [
+    ordersError,
+    setOrdersError,
+  ] = useState("");
 
   const [
     selectedOrder,
@@ -229,6 +212,34 @@ export default function CustomerAccountPage() {
 
   const [wishlist, setWishlist] =
     useState<Product[]>([]);
+
+  const [
+    conversations,
+    setConversations,
+  ] = useState<ApiConversation[]>([]);
+
+  const [
+    loadingConversations,
+    setLoadingConversations,
+  ] = useState(false);
+
+  const [
+    conversationsError,
+    setConversationsError,
+  ] = useState("");
+
+  const [
+    conversationSearch,
+    setConversationSearch,
+  ] = useState("");
+
+  const [
+    selectedConversation,
+    setSelectedConversation,
+  ] =
+    useState<ApiConversation | null>(
+      null
+    );
 
   const [toast, setToast] =
     useState("");
@@ -278,12 +289,11 @@ export default function CustomerAccountPage() {
   useEffect(() => {
     if (user?.email) {
       loadCustomerOrders();
+      loadConversations();
     }
   }, [user?.email]);
 
-  function showToast(
-    message: string
-  ) {
+  function showToast(message: string) {
     setToast(message);
 
     window.setTimeout(() => {
@@ -321,6 +331,42 @@ export default function CustomerAccountPage() {
     }
   }
 
+  async function loadConversations() {
+    setLoadingConversations(true);
+    setConversationsError("");
+
+    try {
+      const result =
+        await api.conversations();
+
+      const sorted = [...result].sort(
+        (a, b) =>
+          new Date(
+            b.updatedAt ||
+              b.createdAt
+          ).getTime() -
+          new Date(
+            a.updatedAt ||
+              a.createdAt
+          ).getTime()
+      );
+
+      setConversations(sorted);
+    } catch (error: any) {
+      console.error(
+        "Conversation history error:",
+        error
+      );
+
+      setConversationsError(
+        error?.message ||
+          "Your ClariBot conversations could not be loaded."
+      );
+    } finally {
+      setLoadingConversations(false);
+    }
+  }
+
   async function handleTrackOrder() {
     const orderId =
       trackingId.trim();
@@ -339,9 +385,7 @@ export default function CustomerAccountPage() {
 
     try {
       const result =
-        await api.trackOrder(
-          orderId
-        );
+        await api.trackOrder(orderId);
 
       const accountEmail =
         String(user?.email || "")
@@ -384,29 +428,21 @@ export default function CustomerAccountPage() {
     }
   }
 
-  function reorder(
-    order: ApiOrder
-  ) {
+  function reorder(order: ApiOrder) {
     order.items.forEach(
       (orderItem) => {
         const matchingProduct =
           products.find(
             (product) =>
-              String(
-                product.id
-              ) ===
-              String(
-                orderItem.id
-              )
+              String(product.id) ===
+              String(orderItem.id)
           );
 
         if (matchingProduct) {
           for (
             let count = 0;
             count <
-            Number(
-              orderItem.qty || 1
-            );
+            Number(orderItem.qty || 1);
             count += 1
           ) {
             addToCart(
@@ -438,8 +474,7 @@ export default function CustomerAccountPage() {
     const updated =
       wishlist.filter(
         (product) =>
-          product.id !==
-          productId
+          product.id !== productId
       );
 
     setWishlist(updated);
@@ -465,6 +500,38 @@ export default function CustomerAccountPage() {
       ),
     [orders]
   );
+
+  const filteredConversations =
+    useMemo(() => {
+      const query =
+        conversationSearch
+          .trim()
+          .toLowerCase();
+
+      if (!query) {
+        return conversations;
+      }
+
+      return conversations.filter(
+        (conversation) =>
+          [
+            conversation.title,
+            conversation.status,
+            conversation.sentiment,
+            ...(conversation.messages || []).map(
+              (message) =>
+                message.text
+            ),
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase()
+            .includes(query)
+      );
+    }, [
+      conversations,
+      conversationSearch,
+    ]);
 
   if (!user) {
     return null;
@@ -494,8 +561,8 @@ export default function CustomerAccountPage() {
 
               <p className="mt-3 text-sky-100">
                 Manage your orders,
-                deliveries and saved
-                products.
+                saved products and
+                ClariBot support history.
               </p>
             </div>
 
@@ -554,19 +621,35 @@ export default function CustomerAccountPage() {
               setSection("wishlist")
             }
             className={`rounded-full px-5 py-3 font-black ${
-              section ===
-              "wishlist"
+              section === "wishlist"
                 ? "bg-sky-600 text-white"
                 : "bg-white text-gray-700"
             }`}
           >
             Wishlist ({wishlist.length})
           </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setSection("support");
+              loadConversations();
+            }}
+            className={`flex items-center gap-2 rounded-full px-5 py-3 font-black ${
+              section === "support"
+                ? "bg-sky-600 text-white"
+                : "bg-white text-gray-700"
+            }`}
+          >
+            <MessageCircle size={18} />
+            Live Support (
+            {conversations.length})
+          </button>
         </div>
 
         {section === "home" && (
           <>
-            <section className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <section className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
               <div className="rounded-3xl bg-white p-6 shadow-sm">
                 <Package className="text-sky-600" />
 
@@ -587,9 +670,7 @@ export default function CustomerAccountPage() {
                 </p>
 
                 <p className="mt-1 text-4xl font-black">
-                  {formatMoney(
-                    totalSpent
-                  )}
+                  {formatMoney(totalSpent)}
                 </p>
               </div>
 
@@ -606,10 +687,22 @@ export default function CustomerAccountPage() {
               </div>
 
               <div className="rounded-3xl bg-white p-6 shadow-sm">
-                <Bot className="text-purple-600" />
+                <MessageCircle className="text-purple-600" />
 
                 <p className="mt-4 text-sm font-bold text-gray-500">
-                  AI Support
+                  Support Chats
+                </p>
+
+                <p className="mt-1 text-4xl font-black">
+                  {conversations.length}
+                </p>
+              </div>
+
+              <div className="rounded-3xl bg-white p-6 shadow-sm">
+                <Bot className="text-sky-600" />
+
+                <p className="mt-4 text-sm font-bold text-gray-500">
+                  ClariBot
                 </p>
 
                 <p className="mt-1 text-xl font-black">
@@ -618,13 +711,11 @@ export default function CustomerAccountPage() {
               </div>
             </section>
 
-            <section className="mt-8 grid gap-6 md:grid-cols-3">
+            <section className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
               <button
                 type="button"
                 onClick={() =>
-                  setSection(
-                    "orders"
-                  )
+                  setSection("orders")
                 }
                 className="rounded-3xl bg-white p-7 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
               >
@@ -638,8 +729,7 @@ export default function CustomerAccountPage() {
                 </h2>
 
                 <p className="mt-2 text-gray-500">
-                  View previous purchases
-                  and buy them again.
+                  View previous purchases.
                 </p>
               </button>
 
@@ -660,17 +750,14 @@ export default function CustomerAccountPage() {
                 </h2>
 
                 <p className="mt-2 text-gray-500">
-                  Enter your exact
-                  DEMO order ID.
+                  Track your demo order.
                 </p>
               </button>
 
               <button
                 type="button"
                 onClick={() =>
-                  setSection(
-                    "wishlist"
-                  )
+                  setSection("wishlist")
                 }
                 className="rounded-3xl bg-white p-7 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
               >
@@ -684,8 +771,30 @@ export default function CustomerAccountPage() {
                 </h2>
 
                 <p className="mt-2 text-gray-500">
-                  View products saved
-                  for later.
+                  View saved products.
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSection("support");
+                  loadConversations();
+                }}
+                className="rounded-3xl bg-white p-7 text-left shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+              >
+                <MessageCircle
+                  size={43}
+                  className="text-purple-600"
+                />
+
+                <h2 className="mt-6 text-2xl font-black">
+                  Live Support
+                </h2>
+
+                <p className="mt-2 text-gray-500">
+                  View your ClariBot
+                  conversation history.
                 </p>
               </button>
             </section>
@@ -748,8 +857,7 @@ export default function CustomerAccountPage() {
                 </h2>
 
                 <p className="mt-1 text-gray-500">
-                  Orders placed using
-                  {" "}
+                  Orders placed using{" "}
                   <b>{user.email}</b>
                 </p>
               </div>
@@ -759,9 +867,7 @@ export default function CustomerAccountPage() {
                 onClick={
                   loadCustomerOrders
                 }
-                disabled={
-                  loadingOrders
-                }
+                disabled={loadingOrders}
                 className="flex items-center gap-2 rounded-full border px-5 py-3 font-black"
               >
                 <RefreshCw
@@ -806,12 +912,6 @@ export default function CustomerAccountPage() {
                     No orders found
                   </h3>
 
-                  <p className="mt-2 text-gray-500">
-                    Place a new order
-                    using the same email
-                    as your account.
-                  </p>
-
                   <Link
                     to="/shop"
                     className="mt-6 inline-flex items-center gap-2 rounded-full bg-sky-600 px-7 py-3 font-black text-white"
@@ -825,7 +925,6 @@ export default function CustomerAccountPage() {
               )}
 
             {!loadingOrders &&
-              !ordersError &&
               orders.length > 0 && (
                 <div className="mt-7 space-y-5">
                   {orders.map(
@@ -867,46 +966,6 @@ export default function CustomerAccountPage() {
                         </div>
 
                         <div className="mt-5 flex flex-wrap gap-3">
-                          {order.items.map(
-                            (item) => (
-                              <div
-                                key={
-                                  item.id
-                                }
-                                className="flex items-center gap-3 rounded-2xl bg-gray-50 p-3"
-                              >
-                                {item.image && (
-                                  <img
-                                    src={
-                                      item.image
-                                    }
-                                    alt={
-                                      item.name
-                                    }
-                                    className="h-12 w-12 rounded-xl object-contain"
-                                  />
-                                )}
-
-                                <div>
-                                  <p className="text-sm font-black">
-                                    {
-                                      item.name
-                                    }
-                                  </p>
-
-                                  <p className="text-xs text-gray-500">
-                                    Qty:{" "}
-                                    {
-                                      item.qty
-                                    }
-                                  </p>
-                                </div>
-                              </div>
-                            )
-                          )}
-                        </div>
-
-                        <div className="mt-5 flex flex-wrap gap-3">
                           <button
                             type="button"
                             onClick={() =>
@@ -916,9 +975,7 @@ export default function CustomerAccountPage() {
                             }
                             className="flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 font-black text-white"
                           >
-                            <Eye
-                              size={17}
-                            />
+                            <Eye size={17} />
                             View Order
                           </button>
 
@@ -949,9 +1006,7 @@ export default function CustomerAccountPage() {
                           <button
                             type="button"
                             onClick={() =>
-                              reorder(
-                                order
-                              )
+                              reorder(order)
                             }
                             className="flex items-center gap-2 rounded-full border border-sky-600 px-5 py-3 font-black text-sky-600"
                           >
@@ -980,12 +1035,6 @@ export default function CustomerAccountPage() {
                 Track Your Order
               </h2>
 
-              <p className="mt-2 text-gray-500">
-                Enter the complete
-                order ID shown on the
-                success page.
-              </p>
-
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <div className="relative flex-1">
                   <Search
@@ -997,8 +1046,7 @@ export default function CustomerAccountPage() {
                     value={trackingId}
                     onChange={(event) =>
                       setTrackingId(
-                        event.target
-                          .value
+                        event.target.value
                       )
                     }
                     onKeyDown={(
@@ -1024,7 +1072,7 @@ export default function CustomerAccountPage() {
                   disabled={
                     trackingLoading
                   }
-                  className="flex items-center justify-center gap-2 rounded-full bg-sky-600 px-7 py-4 font-black text-white disabled:opacity-60"
+                  className="flex items-center justify-center gap-2 rounded-full bg-sky-600 px-7 py-4 font-black text-white"
                 >
                   {trackingLoading ? (
                     <Loader2
@@ -1050,19 +1098,11 @@ export default function CustomerAccountPage() {
               {trackingOrder && (
                 <div className="mt-8 overflow-hidden rounded-3xl border">
                   <div className="bg-slate-900 p-6 text-white">
-                    <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                      <div>
-                        <p className="text-sm text-slate-300">
-                          Order
-                        </p>
+                    <h3 className="text-2xl font-black">
+                      {trackingOrder.id}
+                    </h3>
 
-                        <h3 className="text-2xl font-black">
-                          {
-                            trackingOrder.id
-                          }
-                        </h3>
-                      </div>
-
+                    <div className="mt-3">
                       <OrderStatus
                         status={
                           trackingOrder.orderStatus
@@ -1072,49 +1112,37 @@ export default function CustomerAccountPage() {
                   </div>
 
                   <div className="p-6">
-                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                    <div className="grid gap-5 sm:grid-cols-3">
                       <div>
-                        <p className="text-sm font-bold text-gray-500">
+                        <p className="text-sm text-gray-500">
                           Payment
                         </p>
 
-                        <p className="mt-1 font-black">
+                        <p className="font-black">
                           {trackingOrder.paymentStatus ||
                             "Paid (Demo)"}
                         </p>
                       </div>
 
                       <div>
-                        <p className="text-sm font-bold text-gray-500">
+                        <p className="text-sm text-gray-500">
                           Delivery
                         </p>
 
-                        <p className="mt-1 font-black capitalize">
+                        <p className="font-black capitalize">
                           {trackingOrder.deliveryMethod ||
                             "Standard"}
                         </p>
                       </div>
 
                       <div>
-                        <p className="text-sm font-bold text-gray-500">
+                        <p className="text-sm text-gray-500">
                           Total
                         </p>
 
-                        <p className="mt-1 font-black">
+                        <p className="font-black">
                           {formatMoney(
                             trackingOrder.total
-                          )}
-                        </p>
-                      </div>
-
-                      <div>
-                        <p className="text-sm font-bold text-gray-500">
-                          Created
-                        </p>
-
-                        <p className="mt-1 font-black">
-                          {formatDate(
-                            trackingOrder.createdAt
                           )}
                         </p>
                       </div>
@@ -1124,31 +1152,11 @@ export default function CustomerAccountPage() {
                       <div className="flex items-center gap-3">
                         <CheckCircle2 className="text-sky-600" />
 
-                        <div>
-                          <p className="font-black">
-                            Order received
-                          </p>
-
-                          <p className="text-sm text-gray-500">
-                            This order is
-                            saved in the
-                            ClariMart backend.
-                          </p>
-                        </div>
+                        <p className="font-black">
+                          Order received
+                        </p>
                       </div>
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setSelectedOrder(
-                          trackingOrder
-                        )
-                      }
-                      className="mt-6 rounded-full bg-slate-900 px-6 py-3 font-black text-white"
-                    >
-                      View Products
-                    </button>
                   </div>
                 </div>
               )}
@@ -1156,33 +1164,13 @@ export default function CustomerAccountPage() {
           </section>
         )}
 
-        {section ===
-          "wishlist" && (
+        {section === "wishlist" && (
           <section className="mt-8 rounded-3xl bg-white p-7 shadow-sm">
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-              <div>
-                <p className="font-black text-red-500">
-                  Saved products
-                </p>
+            <h2 className="text-3xl font-black">
+              My Wishlist
+            </h2>
 
-                <h2 className="text-3xl font-black">
-                  My Wishlist
-                </h2>
-              </div>
-
-              <Link
-                to="/shop"
-                className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-6 py-3 font-black text-white"
-              >
-                Browse Products
-                <ArrowRight
-                  size={17}
-                />
-              </Link>
-            </div>
-
-            {wishlist.length ===
-            0 ? (
+            {wishlist.length === 0 ? (
               <div className="py-20 text-center">
                 <Heart
                   size={75}
@@ -1190,51 +1178,26 @@ export default function CustomerAccountPage() {
                 />
 
                 <h3 className="mt-5 text-2xl font-black">
-                  Your wishlist is
-                  empty
+                  Your wishlist is empty
                 </h3>
-
-                <p className="mt-2 text-gray-500">
-                  Products saved using
-                  the wishlist button
-                  will appear here.
-                </p>
               </div>
             ) : (
               <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {wishlist.map(
                   (product) => (
                     <article
-                      key={
-                        product.id
-                      }
+                      key={product.id}
                       className="overflow-hidden rounded-3xl border"
                     >
-                      <Link
-                        to={`/product/${product.id}`}
-                      >
-                        <img
-                          src={
-                            product.image
-                          }
-                          alt={
-                            product.name
-                          }
-                          className="h-56 w-full bg-gray-50 object-contain p-5"
-                        />
-                      </Link>
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="h-56 w-full bg-gray-50 object-contain p-5"
+                      />
 
                       <div className="p-5">
-                        <p className="text-xs font-black uppercase text-sky-600">
-                          {
-                            product.category
-                          }
-                        </p>
-
-                        <h3 className="mt-2 text-xl font-black">
-                          {
-                            product.name
-                          }
+                        <h3 className="text-xl font-black">
+                          {product.name}
                         </h3>
 
                         <p className="mt-3 text-2xl font-black">
@@ -1250,11 +1213,8 @@ export default function CustomerAccountPage() {
                               product
                             )
                           }
-                          className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-sky-600 px-5 py-3 font-black text-white"
+                          className="mt-5 w-full rounded-full bg-sky-600 px-5 py-3 font-black text-white"
                         >
-                          <ShoppingCart
-                            size={18}
-                          />
                           Add to Cart
                         </button>
 
@@ -1277,28 +1237,266 @@ export default function CustomerAccountPage() {
             )}
           </section>
         )}
-      </main>
 
-      {selectedOrder && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 p-4">
-          <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl bg-white p-7 shadow-2xl">
-            <div className="flex items-start justify-between gap-4">
+        {section === "support" && (
+          <section className="mt-8 rounded-3xl bg-white p-7 shadow-sm">
+            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
               <div>
-                <p className="font-black text-sky-600">
-                  Order details
+                <p className="font-black text-purple-600">
+                  ClariBot history
                 </p>
 
                 <h2 className="text-3xl font-black">
-                  {selectedOrder.id}
+                  Live Support Conversations
+                </h2>
+
+                <p className="mt-2 text-gray-500">
+                  View conversations stored
+                  by ClariBot support.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={
+                  loadConversations
+                }
+                disabled={
+                  loadingConversations
+                }
+                className="flex items-center gap-2 rounded-full border px-5 py-3 font-black"
+              >
+                <RefreshCw
+                  size={17}
+                  className={
+                    loadingConversations
+                      ? "animate-spin"
+                      : ""
+                  }
+                />
+                Refresh
+              </button>
+            </div>
+
+            <div className="relative mt-6 max-w-xl">
+              <Search
+                size={18}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+              />
+
+              <input
+                value={
+                  conversationSearch
+                }
+                onChange={(event) =>
+                  setConversationSearch(
+                    event.target.value
+                  )
+                }
+                placeholder="Search conversations..."
+                className="w-full rounded-full border py-3 pl-11 pr-5 outline-none focus:border-sky-500"
+              />
+            </div>
+
+            {loadingConversations && (
+              <div className="flex justify-center py-20">
+                <Loader2
+                  size={42}
+                  className="animate-spin text-sky-600"
+                />
+              </div>
+            )}
+
+            {!loadingConversations &&
+              conversationsError && (
+                <div className="mt-6 rounded-2xl bg-red-50 p-5 font-bold text-red-700">
+                  {conversationsError}
+                </div>
+              )}
+
+            {!loadingConversations &&
+              !conversationsError &&
+              filteredConversations.length ===
+                0 && (
+                <div className="py-20 text-center">
+                  <MessageCircle
+                    size={70}
+                    className="mx-auto text-gray-300"
+                  />
+
+                  <h3 className="mt-5 text-2xl font-black">
+                    No conversations found
+                  </h3>
+
+                  <p className="mt-2 text-gray-500">
+                    Start a conversation with
+                    ClariBot and it will appear
+                    here after being saved.
+                  </p>
+                </div>
+              )}
+
+            {!loadingConversations &&
+              filteredConversations.length >
+                0 && (
+                <div className="mt-7 space-y-4">
+                  {filteredConversations.map(
+                    (conversation) => (
+                      <article
+                        key={
+                          conversation.id
+                        }
+                        className="rounded-3xl border p-5 transition hover:border-sky-300 hover:shadow-md"
+                      >
+                        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+                          <div>
+                            <div className="flex items-center gap-3">
+                              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-sky-100 text-sky-600">
+                                <Bot
+                                  size={22}
+                                />
+                              </div>
+
+                              <div>
+                                <h3 className="font-black">
+                                  {conversation.title ||
+                                    "ClariBot Support"}
+                                </h3>
+
+                                <p className="text-sm text-gray-500">
+                                  {formatDate(
+                                    conversation.updatedAt ||
+                                      conversation.createdAt
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+
+                            <p className="mt-4 line-clamp-2 text-sm text-gray-600">
+                              {conversation
+                                .messages?.[
+                                conversation
+                                  .messages
+                                  .length -
+                                  1
+                              ]?.text ||
+                                "No messages"}
+                            </p>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-black capitalize text-green-700">
+                              {conversation.status ||
+                                "open"}
+                            </span>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setSelectedConversation(
+                                  conversation
+                                )
+                              }
+                              className="flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 font-black text-white"
+                            >
+                              <Eye
+                                size={17}
+                              />
+                              Open
+                            </button>
+                          </div>
+                        </div>
+                      </article>
+                    )
+                  )}
+                </div>
+              )}
+          </section>
+        )}
+      </main>
+
+      {selectedConversation && (
+        <div className="fixed inset-0 z-[160] flex items-center justify-center bg-black/60 p-4">
+          <div className="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl">
+            <header className="flex items-center justify-between border-b p-5">
+              <div>
+                <p className="text-sm font-black text-sky-600">
+                  ClariBot Support
+                </p>
+
+                <h2 className="text-xl font-black">
+                  {selectedConversation.title}
                 </h2>
               </div>
 
               <button
                 type="button"
                 onClick={() =>
-                  setSelectedOrder(
+                  setSelectedConversation(
                     null
                   )
+                }
+                className="rounded-full bg-gray-100 p-3"
+              >
+                <X size={19} />
+              </button>
+            </header>
+
+            <div className="flex-1 space-y-4 overflow-y-auto bg-slate-100 p-6">
+              {(
+                selectedConversation.messages ||
+                []
+              ).map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${
+                    message.role === "user"
+                      ? "justify-end"
+                      : "justify-start"
+                  }`}
+                >
+                  <div
+                    className={`max-w-[82%] rounded-2xl px-4 py-3 ${
+                      message.role === "user"
+                        ? "rounded-br-md bg-sky-600 text-white"
+                        : "rounded-bl-md bg-white text-gray-800 shadow-sm"
+                    }`}
+                  >
+                    <p className="whitespace-pre-line leading-6">
+                      {message.text}
+                    </p>
+
+                    <p
+                      className={`mt-2 text-xs ${
+                        message.role === "user"
+                          ? "text-sky-100"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      {formatDate(
+                        message.createdAt
+                      )}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {selectedOrder && (
+        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 p-4">
+          <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-3xl bg-white p-7 shadow-2xl">
+            <div className="flex items-start justify-between">
+              <h2 className="text-3xl font-black">
+                {selectedOrder.id}
+              </h2>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setSelectedOrder(null)
                 }
                 className="rounded-full bg-gray-100 p-3"
               >
@@ -1315,13 +1513,9 @@ export default function CustomerAccountPage() {
                   >
                     {item.image && (
                       <img
-                        src={
-                          item.image
-                        }
-                        alt={
-                          item.name
-                        }
-                        className="h-20 w-20 rounded-xl bg-gray-50 object-contain p-2"
+                        src={item.image}
+                        alt={item.name}
+                        className="h-16 w-16 rounded-xl object-contain"
                       />
                     )}
 
@@ -1337,56 +1531,9 @@ export default function CustomerAccountPage() {
                         × {item.qty}
                       </p>
                     </div>
-
-                    <p className="font-black">
-                      {formatMoney(
-                        item.price *
-                          item.qty
-                      )}
-                    </p>
                   </div>
                 )
               )}
-            </div>
-
-            <div className="mt-6 rounded-2xl bg-slate-900 p-6 text-white">
-              <div className="flex justify-between">
-                <span>Subtotal</span>
-
-                <b>
-                  {formatMoney(
-                    selectedOrder.subtotal
-                  )}
-                </b>
-              </div>
-
-              <div className="mt-3 flex justify-between">
-                <span>Delivery</span>
-
-                <b>
-                  {Number(
-                    selectedOrder.delivery
-                  ) === 0
-                    ? "Free"
-                    : formatMoney(
-                        selectedOrder.delivery
-                      )}
-                </b>
-              </div>
-
-              <hr className="my-5 border-slate-700" />
-
-              <div className="flex justify-between text-2xl">
-                <span className="font-black">
-                  Total
-                </span>
-
-                <b>
-                  {formatMoney(
-                    selectedOrder.total
-                  )}
-                </b>
-              </div>
             </div>
           </div>
         </div>

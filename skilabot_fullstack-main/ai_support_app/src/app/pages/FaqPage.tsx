@@ -1,236 +1,590 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import { ChevronDown, Search, MessageCircle, Zap, Shield, Globe, BarChart2, CreditCard, Settings, ArrowRight } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Link } from "react-router";
+import {
+  Bot,
+  ChevronDown,
+  CircleHelp,
+  CreditCard,
+  Heart,
+  MapPin,
+  MessageCircle,
+  Package,
+  RefreshCw,
+  Search,
+  ShoppingBag,
+  Truck,
+  UserRound,
+} from "lucide-react";
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+import StoreHeader from "../components/StoreHeader";
+import StoreFooter from "../components/StoreFooter";
+import ClariBotWidget from "../components/ClariBotWidget";
 
-const CATEGORIES = [
-  { id: "all", label: "All Topics", icon: null },
-  { id: "getting-started", label: "Getting Started", icon: Zap },
-  { id: "integrations", label: "Integrations", icon: Globe },
-  { id: "ai-training", label: "AI & Training", icon: Settings },
-  { id: "analytics", label: "Analytics", icon: BarChart2 },
-  { id: "security", label: "Security", icon: Shield },
-  { id: "billing", label: "Billing", icon: CreditCard },
+type FaqCategory =
+  | "all"
+  | "shopping"
+  | "delivery"
+  | "payment"
+  | "orders"
+  | "returns"
+  | "account"
+  | "claribot"
+  | "contact";
+
+type Faq = {
+  category: Exclude<FaqCategory, "all">;
+  question: string;
+  answer: string;
+};
+
+type CategoryOption = {
+  id: FaqCategory;
+  label: string;
+  icon: any;
+};
+
+const categories: CategoryOption[] = [
+  {
+    id: "all",
+    label: "All Topics",
+    icon: CircleHelp,
+  },
+  {
+    id: "shopping",
+    label: "Shopping",
+    icon: ShoppingBag,
+  },
+  {
+    id: "delivery",
+    label: "Delivery",
+    icon: Truck,
+  },
+  {
+    id: "payment",
+    label: "Payment",
+    icon: CreditCard,
+  },
+  {
+    id: "orders",
+    label: "Orders",
+    icon: Package,
+  },
+  {
+    id: "returns",
+    label: "Returns",
+    icon: RefreshCw,
+  },
+  {
+    id: "account",
+    label: "My Account",
+    icon: UserRound,
+  },
+  {
+    id: "claribot",
+    label: "ClariBot",
+    icon: Bot,
+  },
+  {
+    id: "contact",
+    label: "Contact",
+    icon: MapPin,
+  },
 ];
 
-const FAQS = [
+const faqs: Faq[] = [
   {
-    category: "getting-started",
-    q: "How do I set up ClariBot for the first time?",
-    a: "Getting started takes about 5 minutes. After signing up, head to Settings → Channels and click 'Add Channel'. You can embed a chat widget on your website with a single line of code. Then go to AI Training → Knowledge Base to upload your FAQs or product docs. The bot is live immediately and improves over time.",
+    category: "shopping",
+    question: "How do I place an order?",
+    answer:
+      "Browse the Shop page, select the products you want, add them to your cart and continue to checkout. Enter your delivery and demo payment details, then press Place Demo Order.",
   },
   {
-    category: "getting-started",
-    q: "What languages does ClariBot support?",
-    a: "ClariBot supports 50+ languages out of the box, including English, Spanish, French, German, Portuguese, Japanese, Chinese (Simplified & Traditional), Arabic, Hindi, and more. Language detection is automatic — customers type in their language and ClariBot responds in kind.",
+    category: "shopping",
+    question: "Can I shop without creating an account?",
+    answer:
+      "Yes. You can browse products, add items to the cart and place a demo order as a guest. Creating an account lets you view your order history and manage your wishlist.",
   },
   {
-    category: "getting-started",
-    q: "Can I try ClariBot before buying?",
-    a: "Absolutely! We offer a 14-day free trial on all plans — no credit card required. You get access to all Growth plan features during the trial. After 14 days, you can choose a plan or let it expire with no charges.",
+    category: "shopping",
+    question: "What types of products does ClariMart sell?",
+    answer:
+      "ClariMart sells pantry products, dairy, halal meat, sweets, drinks and bakery items. Product availability may vary in this classroom demonstration.",
   },
   {
-    category: "integrations",
-    q: "Which channels can I connect?",
-    a: "ClariBot works with your website (embed widget), Slack, WhatsApp Business, Facebook Messenger, Instagram DMs, Intercom, Zendesk, HubSpot, and any REST API endpoint. Enterprise customers can also request custom channel builds.",
+    category: "shopping",
+    question: "What happens if a product is out of stock?",
+    answer:
+      "Products marked out of stock cannot be added to the cart. You can browse another category or ask ClariBot to recommend a similar item.",
   },
   {
-    category: "integrations",
-    q: "How do I connect Slack?",
-    a: "Go to Settings → Integrations → Slack, click 'Connect', and authorise ClariBot in your Slack workspace. You can choose which channels ClariBot monitors. The bot will reply to DMs or tagged messages automatically. Setup takes under 2 minutes.",
+    category: "shopping",
+    question: "Can I save products for later?",
+    answer:
+      "Yes. Use the heart button on a product to add it to your wishlist. You can view saved items from your customer account page.",
+  },
+
+  {
+    category: "delivery",
+    question: "How much does delivery cost?",
+    answer:
+      "Standard delivery costs $8.99 and is free for orders over $50. Express delivery costs $14.99. Store pickup is free.",
   },
   {
-    category: "integrations",
-    q: "Does ClariBot integrate with my existing CRM?",
-    a: "Yes! We have native integrations with HubSpot, Salesforce, Intercom, and Zendesk. When a conversation ends, ClariBot can automatically create or update contact records, log conversation summaries, and sync CSAT scores.",
+    category: "delivery",
+    question: "How long does delivery take?",
+    answer:
+      "Standard delivery is estimated at 2 to 4 business days. Express delivery is estimated for the next business day. These times are for demonstration purposes.",
   },
   {
-    category: "ai-training",
-    q: "How do I train ClariBot on my content?",
-    a: "Upload documents in Settings → AI Training → Knowledge Base. We accept PDF, DOCX, TXT, CSV, and web URLs. ClariBot parses the content, chunks it intelligently, and uses it to answer questions. Updates propagate within 15 minutes.",
+    category: "delivery",
+    question: "Can I collect my order from the store?",
+    answer:
+      "Yes. Choose Store Pickup during checkout. Pickup is free and the order status can be viewed through your account or ClariBot.",
   },
   {
-    category: "ai-training",
-    q: "How accurate is the AI?",
-    a: "ClariBot achieves 94–98% answer accuracy on well-documented topics. Accuracy depends on the quality of your knowledge base. The AI also knows when it doesn't know something — it will say so and offer to escalate to a human agent rather than hallucinate.",
+    category: "delivery",
+    question: "Do you deliver everywhere in Australia?",
+    answer:
+      "This is a university demonstration website, so delivery areas are simulated. In a real business system, delivery eligibility would be checked using the customer's postcode.",
+  },
+
+  {
+    category: "payment",
+    question: "What card details should I use for the demo?",
+    answer:
+      "Use card number 4242 4242 4242 4242, expiry 12/30 and CVV 123. These are demo details only.",
   },
   {
-    category: "ai-training",
-    q: "Can I control what topics the bot addresses?",
-    a: "Yes. In Settings → AI Training → Topics, you can define allowed and blocked topics. You can also create custom response templates for sensitive topics (e.g. legal disclaimers) and set hard fallback messages for anything outside the bot's scope.",
+    category: "payment",
+    question: "Will real money be deducted?",
+    answer:
+      "No. The checkout is a classroom demonstration. No bank transaction is performed and no real money is deducted.",
   },
   {
-    category: "analytics",
-    q: "What metrics does ClariBot track?",
-    a: "The analytics dashboard shows: total conversations, resolution rate, average handle time, CSAT scores, escalation rate, top unresolved topics, sentiment trends over time, peak traffic hours, and per-channel breakdowns. All data is exportable as CSV.",
+    category: "payment",
+    question: "Is my real card information stored?",
+    answer:
+      "No. You should not enter real card details. The website is designed to use only the provided demo card information.",
   },
   {
-    category: "analytics",
-    q: "Can I export my analytics data?",
-    a: "Yes. Go to Analytics → Export and choose a date range and format (CSV or JSON). You can also connect ClariBot to Looker, Tableau, or any BI tool via our Data API for real-time dashboards.",
+    category: "payment",
+    question: "What payment status will my order show?",
+    answer:
+      "A successful demo order will show the payment status Paid (Demo).",
+  },
+
+  {
+    category: "orders",
+    question: "Where can I find my order number?",
+    answer:
+      "Your order number appears on the order success page after checkout. It begins with DEMO-, for example DEMO-1234567890.",
   },
   {
-    category: "security",
-    q: "Is ClariBot SOC 2 compliant?",
-    a: "Yes. ClariBot is SOC 2 Type II certified and GDPR compliant. All conversations are encrypted in transit (TLS 1.3) and at rest (AES-256). We do not train our models on your data without explicit consent. Data residency options are available for Enterprise customers.",
+    category: "orders",
+    question: "How do I track my order?",
+    answer:
+      "Open your customer account and select Track Order, or choose Track Order in ClariBot. Enter the exact DEMO order ID shown on the order confirmation page.",
   },
   {
-    category: "security",
-    q: "How is customer data handled?",
-    a: "We retain conversation data for 90 days by default (configurable). PII can be automatically redacted in real time before storage. Enterprise customers can opt for zero-retention mode where no messages are stored after processing.",
+    category: "orders",
+    question: "Where can I see my previous orders?",
+    answer:
+      "Log in to your customer account and open My Orders. Orders appear when the checkout email matches the email used for your customer account.",
   },
   {
-    category: "billing",
-    q: "How is billing calculated?",
-    a: "Billing is based on the number of conversations per month. A conversation is defined as a continuous exchange between one user and ClariBot within a 24-hour window — regardless of the number of messages. Overage is charged at $0.005 per conversation above your plan limit.",
+    category: "orders",
+    question: "Can I buy the same order again?",
+    answer:
+      "Yes. Open My Orders in your account and use the Buy Again button. Available products from that order will be added back to your cart.",
   },
   {
-    category: "billing",
-    q: "Can I change or cancel my plan?",
-    a: "You can upgrade, downgrade, or cancel at any time from Settings → Billing. Upgrades take effect immediately (prorated). Downgrades take effect at the next billing cycle. Cancellations take effect at period end — you keep access until then.",
+    category: "orders",
+    question: "Can I cancel an order?",
+    answer:
+      "For this demo, cancellation is handled as a support request. Contact ClariBot or human support before the order is marked as dispatched.",
+  },
+
+  {
+    category: "returns",
+    question: "How do I return a product?",
+    answer:
+      "Open ClariBot and choose Returns / Refunds. Enter your exact order ID, select the specific product from that order and type your return reason.",
+  },
+  {
+    category: "returns",
+    question: "Can I return only one item from an order?",
+    answer:
+      "Yes. ClariBot loads the exact products from the selected order and lets you choose the specific item you want to return.",
+  },
+  {
+    category: "returns",
+    question: "What information is required for a return?",
+    answer:
+      "You need the demo order ID, the exact product and a reason for the return.",
+  },
+  {
+    category: "returns",
+    question: "What happens after I submit a return request?",
+    answer:
+      "A return request is created with the status Requested. The request appears in the admin dashboard, where staff can mark it Approved, Rejected or Completed.",
+  },
+  {
+    category: "returns",
+    question: "Does the website issue a real refund?",
+    answer:
+      "No. Because the payment is only a demo, the return system records a return request but does not reverse a real payment.",
+  },
+
+  {
+    category: "account",
+    question: "How do I create a customer account?",
+    answer:
+      "Open Account from the store header, choose the signup option, enter your details and complete email verification using the OTP sent to your email.",
+  },
+  {
+    category: "account",
+    question: "What can I do from my account page?",
+    answer:
+      "You can view your previous orders, track an order, manage your wishlist, view account information and access ClariBot support.",
+  },
+  {
+    category: "account",
+    question: "Why is an order not appearing in My Orders?",
+    answer:
+      "The email used during checkout must exactly match the email used for your customer account. Orders placed with another email will not appear.",
+  },
+  {
+    category: "account",
+    question: "How do I log out?",
+    answer:
+      "Open your customer account and press the red Logout button.",
+  },
+  {
+    category: "account",
+    question: "How does the wishlist work?",
+    answer:
+      "Press the heart button on a product to save it. Your wishlist is stored in the browser and can be opened from the customer account page.",
+  },
+
+  {
+    category: "claribot",
+    question: "What can ClariBot help me with?",
+    answer:
+      "ClariBot can recommend products, display product categories, add items to the cart, explain delivery, track orders, create exact-item return requests and provide contact information.",
+  },
+  {
+    category: "claribot",
+    question: "Can ClariBot add products to my cart?",
+    answer:
+      "Yes. Choose Shop Products in ClariBot, select a category and press Add to Cart on a product card.",
+  },
+  {
+    category: "claribot",
+    question: "Can ClariBot track an order?",
+    answer:
+      "Yes. Choose Track Order and enter the exact DEMO order ID. ClariBot will display the order status, payment status, delivery method and total.",
+  },
+  {
+    category: "claribot",
+    question: "Can ClariBot help with returns?",
+    answer:
+      "Yes. ClariBot can find an order, show only the products from that order, let the customer select one exact item and create a return request.",
+  },
+  {
+    category: "claribot",
+    question: "Does ClariBot support voice input?",
+    answer:
+      "Voice input may work in supported browsers. Press the voice assistant button, allow microphone access and speak your message.",
+  },
+  {
+    category: "claribot",
+    question: "How do I speak to a human?",
+    answer:
+      "Choose Talk to Human in ClariBot or open the Contact page for the demo phone number and support email.",
+  },
+
+  {
+    category: "contact",
+    question: "What are the store opening hours?",
+    answer:
+      "ClariMart is open Monday to Saturday from 9:00 AM to 6:00 PM. ClariBot support is available at any time during the website demonstration.",
+  },
+  {
+    category: "contact",
+    question: "How can I contact ClariMart?",
+    answer:
+      "Use the Contact page, email support@clarimart.com or call 02 1234 5678.",
+  },
+  {
+    category: "contact",
+    question: "Where is the store located?",
+    answer:
+      "The demonstration store address is 123 Demo Street, Sydney NSW, Australia.",
   },
 ];
 
-// ─── FAQ Item ─────────────────────────────────────────────────────────────────
-
-function FaqItem({ q, a }: { q: string; a: string }) {
+function FaqItem({
+  question,
+  answer,
+}: {
+  question: string;
+  answer: string;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div
-      className="border rounded-xl overflow-hidden transition-all duration-200"
-      style={{ borderColor: open ? "rgba(124,58,237,0.3)" : "rgba(124,58,237,0.1)", background: open ? "#fef9ff" : "#fff" }}
+    <article
+      className={`overflow-hidden rounded-2xl border bg-white transition ${
+        open
+          ? "border-sky-300 shadow-md"
+          : "border-gray-200 shadow-sm hover:border-sky-200"
+      }`}
     >
       <button
-        onClick={() => setOpen(v => !v)}
-        className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left transition-colors"
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        className="flex w-full items-center justify-between gap-5 px-5 py-5 text-left md:px-6"
+        aria-expanded={open}
       >
-        <span className="font-semibold text-sm" style={{ fontFamily: "var(--font-display)", color: "#12082a" }}>{q}</span>
+        <span className="font-black text-slate-900">
+          {question}
+        </span>
+
         <ChevronDown
-          size={18}
-          style={{ color: "#7c3aed", flexShrink: 0, transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}
+          size={20}
+          className={`shrink-0 text-sky-600 transition-transform ${
+            open ? "rotate-180" : ""
+          }`}
         />
       </button>
+
       {open && (
-        <div className="px-6 pb-5">
-          <div className="h-px mb-4" style={{ background: "rgba(124,58,237,0.1)" }} />
-          <p className="text-sm leading-relaxed" style={{ color: "#4a3060", fontFamily: "var(--font-body)" }}>{a}</p>
+        <div className="border-t bg-sky-50/50 px-5 py-5 md:px-6">
+          <p className="leading-7 text-gray-600">
+            {answer}
+          </p>
         </div>
       )}
-    </div>
+    </article>
   );
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
 export default function FaqPage() {
   const [search, setSearch] = useState("");
-  const [activeCategory, setActiveCategory] = useState("all");
-  const navigate = useNavigate();
+  const [activeCategory, setActiveCategory] =
+    useState<FaqCategory>("all");
 
-  const filtered = FAQS.filter((f) => {
-    const matchesCat = activeCategory === "all" || f.category === activeCategory;
-    const matchesSearch = !search || f.q.toLowerCase().includes(search.toLowerCase()) || f.a.toLowerCase().includes(search.toLowerCase());
-    return matchesCat && matchesSearch;
-  });
+  const filteredFaqs = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
+    return faqs.filter((faq) => {
+      const matchesCategory =
+        activeCategory === "all" ||
+        faq.category === activeCategory;
+
+      const matchesSearch =
+        !query ||
+        faq.question.toLowerCase().includes(query) ||
+        faq.answer.toLowerCase().includes(query);
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [activeCategory, search]);
 
   return (
-    <div style={{ fontFamily: "var(--font-body)" }}>
-      {/* Hero */}
-      <section className="py-16 px-6 text-center" style={{ background: "linear-gradient(160deg,#fef0f5,#f3e8ff 60%,#fef0f5)" }}>
-        <div className="max-w-2xl mx-auto">
-          <p className="text-sm font-semibold mb-3 uppercase tracking-widest" style={{ color: "#7c3aed", fontFamily: "var(--font-display)" }}>Help Center</p>
-          <h1 className="text-4xl font-extrabold mb-4" style={{ fontFamily: "var(--font-display)", color: "#12082a" }}>
-            Frequently Asked Questions
-          </h1>
-          <p className="text-base mb-8" style={{ color: "#7a6080" }}>
-            Everything you need to know about ClariBot. Can't find an answer?{" "}
-            <button onClick={() => navigate("/chat")} className="font-semibold hover:underline" style={{ color: "#7c3aed" }}>Chat with us →</button>
-          </p>
+    <div className="min-h-screen bg-slate-50">
+      <StoreHeader />
 
-          {/* Search */}
-          <div className="relative max-w-xl mx-auto">
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: "#7a6080" }} />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search questions…"
-              className="w-full pl-12 pr-5 py-4 rounded-2xl text-sm outline-none border shadow-sm transition-colors focus:border-[#7c3aed]"
-              style={{ background: "#fff", borderColor: "rgba(124,58,237,0.2)", color: "#12082a" }}
-            />
-          </div>
-        </div>
-      </section>
+      <main>
+        <section className="bg-gradient-to-br from-sky-700 via-sky-600 to-cyan-500 px-6 py-16 text-white">
+          <div className="mx-auto max-w-4xl text-center">
+            <p className="text-sm font-black uppercase tracking-[0.22em] text-sky-100">
+              ClariMart Help Centre
+            </p>
 
-      <section className="max-w-6xl mx-auto px-6 py-12">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Category sidebar */}
-          <aside className="lg:w-56 flex-shrink-0">
-            <p className="text-xs font-bold uppercase tracking-wider mb-3 px-2" style={{ color: "#7a6080" }}>Categories</p>
-            <div className="flex flex-row lg:flex-col gap-1 flex-wrap lg:flex-nowrap">
-              {CATEGORIES.map(({ id, label, icon: Icon }) => (
-                <button
-                  key={id}
-                  onClick={() => setActiveCategory(id)}
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-left transition-all"
-                  style={{
-                    background: activeCategory === id ? "rgba(124,58,237,0.1)" : "transparent",
-                    color: activeCategory === id ? "#7c3aed" : "#4a3060",
-                    fontFamily: "var(--font-body)",
-                  }}
-                >
-                  {Icon && <Icon size={15} />}
-                  {label}
-                  <span className="ml-auto text-xs font-normal" style={{ color: "#7a6080" }}>
-                    {id === "all" ? FAQS.length : FAQS.filter(f => f.category === id).length}
-                  </span>
-                </button>
-              ))}
+            <h1 className="mt-4 text-4xl font-black md:text-6xl">
+              How can we help?
+            </h1>
+
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-sky-100">
+              Find answers about shopping, delivery, demo payments,
+              orders, returns, customer accounts and ClariBot support.
+            </p>
+
+            <div className="relative mx-auto mt-8 max-w-2xl">
+              <Search
+                size={21}
+                className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"
+              />
+
+              <input
+                value={search}
+                onChange={(event) =>
+                  setSearch(event.target.value)
+                }
+                placeholder="Search for delivery, returns, payment, tracking..."
+                className="w-full rounded-full border-0 bg-white py-5 pl-14 pr-6 text-gray-900 shadow-xl outline-none placeholder:text-gray-400"
+              />
             </div>
-          </aside>
-
-          {/* FAQ list */}
-          <div className="flex-1 min-w-0">
-            {filtered.length === 0 ? (
-              <div className="text-center py-16">
-                <MessageCircle size={36} className="mx-auto mb-4 opacity-30" />
-                <p className="font-semibold mb-1" style={{ color: "#12082a" }}>No results found</p>
-                <p className="text-sm mb-4" style={{ color: "#7a6080" }}>Try a different search term or browse by category.</p>
-                <button onClick={() => navigate("/chat")} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold" style={{ background: "linear-gradient(135deg,#7c3aed,#9d5cf5)" }}>
-                  Ask ClariBot directly <ArrowRight size={15} />
-                </button>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-3">
-                <p className="text-xs mb-2" style={{ color: "#7a6080" }}>
-                  {filtered.length} {filtered.length === 1 ? "result" : "results"}
-                  {search && ` for "${search}"`}
-                </p>
-                {filtered.map((f) => (
-                  <FaqItem key={f.q} q={f.q} a={f.a} />
-                ))}
-              </div>
-            )}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Still have questions */}
-      <section className="py-16 px-6" style={{ background: "linear-gradient(160deg,#fef0f5,#f3e8ff 60%,#fef0f5)" }}>
-        <div className="max-w-xl mx-auto text-center">
-          <h2 className="text-2xl font-extrabold mb-3" style={{ fontFamily: "var(--font-display)", color: "#12082a" }}>Still have questions?</h2>
-          <p className="text-sm mb-6" style={{ color: "#7a6080" }}>Our AI support team is online 24/7. Average response time: under 2 seconds.</p>
-          <button
-            onClick={() => navigate("/chat")}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-bold text-sm transition-all hover:opacity-90 hover:shadow-lg"
-            style={{ background: "linear-gradient(135deg,#7c3aed,#9d5cf5)", fontFamily: "var(--font-display)" }}
-          >
-            <MessageCircle size={17} />
-            Chat with ClariBot
-          </button>
-        </div>
-      </section>
+        <section className="mx-auto max-w-7xl px-6 py-12">
+          <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
+            <aside className="h-fit rounded-3xl border bg-white p-4 shadow-sm lg:sticky lg:top-40">
+              <p className="px-3 pb-3 text-xs font-black uppercase tracking-[0.18em] text-gray-400">
+                Browse Topics
+              </p>
+
+              <div className="space-y-1">
+                {categories.map((category) => {
+                  const Icon = category.icon;
+
+                  const count =
+                    category.id === "all"
+                      ? faqs.length
+                      : faqs.filter(
+                          (faq) => faq.category === category.id
+                        ).length;
+
+                  return (
+                    <button
+                      key={category.id}
+                      type="button"
+                      onClick={() =>
+                        setActiveCategory(category.id)
+                      }
+                      className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left font-bold transition ${
+                        activeCategory === category.id
+                          ? "bg-sky-600 text-white"
+                          : "text-gray-600 hover:bg-sky-50 hover:text-sky-700"
+                      }`}
+                    >
+                      <Icon size={18} />
+
+                      <span className="flex-1">
+                        {category.label}
+                      </span>
+
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-xs ${
+                          activeCategory === category.id
+                            ? "bg-white/20 text-white"
+                            : "bg-gray-100 text-gray-500"
+                        }`}
+                      >
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </aside>
+
+            <div>
+              <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+                <div>
+                  <p className="text-sm font-black uppercase tracking-wider text-sky-600">
+                    Frequently Asked Questions
+                  </p>
+
+                  <h2 className="mt-1 text-3xl font-black text-slate-900">
+                    {
+                      categories.find(
+                        (category) =>
+                          category.id === activeCategory
+                      )?.label
+                    }
+                  </h2>
+                </div>
+
+                <p className="text-sm font-bold text-gray-500">
+                  {filteredFaqs.length}{" "}
+                  {filteredFaqs.length === 1
+                    ? "question"
+                    : "questions"}
+                </p>
+              </div>
+
+              {filteredFaqs.length === 0 ? (
+                <div className="rounded-3xl border bg-white px-6 py-16 text-center shadow-sm">
+                  <MessageCircle
+                    size={55}
+                    className="mx-auto text-gray-300"
+                  />
+
+                  <h3 className="mt-5 text-2xl font-black">
+                    No answers found
+                  </h3>
+
+                  <p className="mx-auto mt-2 max-w-md text-gray-500">
+                    Try another search term or ask ClariBot for help.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredFaqs.map((faq) => (
+                    <FaqItem
+                      key={faq.question}
+                      question={faq.question}
+                      answer={faq.answer}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        <section className="px-6 pb-16">
+          <div className="mx-auto grid max-w-7xl gap-6 md:grid-cols-2">
+            <div className="rounded-3xl bg-slate-900 p-8 text-white shadow-xl">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-sky-500">
+                <Bot size={29} />
+              </div>
+
+              <h2 className="mt-6 text-3xl font-black">
+                Ask ClariBot
+              </h2>
+
+              <p className="mt-3 max-w-lg leading-7 text-slate-300">
+                ClariBot can recommend products, track an order,
+                explain delivery and create exact-item return requests.
+              </p>
+
+              <p className="mt-6 text-sm font-black text-sky-300">
+                Open the ClariBot Support button at the bottom-right
+                corner of the page.
+              </p>
+            </div>
+
+            <div className="rounded-3xl border bg-white p-8 shadow-sm">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-100 text-green-700">
+                <MessageCircle size={29} />
+              </div>
+
+              <h2 className="mt-6 text-3xl font-black">
+                Still need help?
+              </h2>
+
+              <p className="mt-3 max-w-lg leading-7 text-gray-600">
+                Contact the ClariMart support team for help with an
+                order, product, return request or customer account.
+              </p>
+
+              <Link
+                to="/contact"
+                className="mt-6 inline-flex rounded-full bg-sky-600 px-6 py-3 font-black text-white transition hover:bg-sky-700"
+              >
+                Contact ClariMart
+              </Link>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <StoreFooter />
+      <ClariBotWidget />
     </div>
   );
 }
