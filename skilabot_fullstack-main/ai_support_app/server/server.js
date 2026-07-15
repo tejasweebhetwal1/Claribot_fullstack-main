@@ -342,12 +342,9 @@ function getBotReply(userText) {
     );
   }
 
-  if (
-    msg.includes("breakfast") ||
-    msg.includes("morning")
-  ) {
+  if (msg.includes("breakfast") || msg.includes("morning")) {
     return createBotResponse(
-      "For a balanced Mediterranean-style breakfast, I recommend honey, yogurt and tahini. These products work well for toast, breakfast bowls, dips and healthy meals.",
+      "For a balanced Mediterranean-style breakfast, I recommend honey, yogurt and tahini.",
       getProductsByIds(["2", "4", "1"])
     );
   }
@@ -396,45 +393,19 @@ function getBotReply(userText) {
   if (
     msg.includes("sale") ||
     msg.includes("offer") ||
-    msg.includes("offers") ||
     msg.includes("discount") ||
-    msg.includes("special") ||
-    msg.includes("promotion")
+    msg.includes("special")
   ) {
     return createBotResponse(
-      "Here are today’s best-value products. Tahini has a reduced price, Turkish Delight is only $5, and the 2kg yogurt is excellent family value. Delivery is free for orders over $50.",
+      "Here are today’s best-value products. Tahini has a reduced price, Turkish Delight is only $5, and the 2kg yogurt is excellent family value.",
       getProductsByIds(["1", "3", "4"])
     );
   }
 
-  if (
-    msg.includes("healthy") ||
-    msg.includes("health")
-  ) {
+  if (msg.includes("healthy") || msg.includes("health")) {
     return createBotResponse(
-      "For healthier choices, I recommend tahini, natural flower honey and Turkish-style yogurt. They are versatile options for breakfast and home cooking.",
+      "For healthier choices, I recommend tahini, natural flower honey and Turkish-style yogurt.",
       getProductsByIds(["1", "2", "4"])
-    );
-  }
-
-  if (
-    msg.includes("hummus") ||
-    msg.includes("make hummus")
-  ) {
-    return createBotResponse(
-      "Tahini is the main ClariMart product I recommend for hummus. You may also need chickpeas, lemon juice, garlic and olive oil.",
-      getProductsByIds(["1"])
-    );
-  }
-
-  if (
-    msg.includes("cooking") ||
-    msg.includes("cook") ||
-    msg.includes("meal")
-  ) {
-    return createBotResponse(
-      "For cooking, my top recommendations are tahini for sauces and dressings, yogurt for dips and marinades, and halal beef sucuk for savoury meals.",
-      getProductsByIds(["1", "4", "5"])
     );
   }
 
@@ -442,12 +413,10 @@ function getBotReply(userText) {
     msg.includes("recommend") ||
     msg.includes("suggest") ||
     msg.includes("best") ||
-    msg.includes("items") ||
-    msg.includes("products") ||
-    msg.includes("available")
+    msg.includes("products")
   ) {
     return createBotResponse(
-      "Here are my top ClariMart recommendations based on value, popularity and variety. Tell me whether you prefer breakfast, sweets, halal food, cooking products or budget items for a more personalised suggestion.",
+      "Here are my top ClariMart recommendations based on value, popularity and variety.",
       getProductsByIds(["1", "2", "4", "6"])
     );
   }
@@ -469,38 +438,6 @@ function getBotReply(userText) {
     );
   }
 
-  if (
-    msg.includes("stock") ||
-    msg.includes("quantity") ||
-    msg.includes("in stock")
-  ) {
-    const stockList = products
-      .map(
-        (product) =>
-          `• ${product.name}: ${product.stock} available`
-      )
-      .join("\n");
-
-    return createBotResponse(
-      `Here is the current stock information:\n\n${stockList}`
-    );
-  }
-
-  if (
-    msg.includes("premium") ||
-    msg.includes("expensive") ||
-    msg.includes("highest price")
-  ) {
-    const highest = [...products].sort(
-      (a, b) => b.price - a.price
-    )[0];
-
-    return createBotResponse(
-      `${highest.name} is our highest-priced speciality product at ${highest.displayPrice}.`,
-      [highest]
-    );
-  }
-
   if (matchedProduct) {
     return createBotResponse(
       `${matchedProduct.name} is available for ${matchedProduct.displayPrice}. ${matchedProduct.reason}`,
@@ -514,29 +451,26 @@ function getBotReply(userText) {
     msg.includes("deliver")
   ) {
     return createBotResponse(
-      "Delivery is free for orders over $50. For orders below $50, the delivery fee is $8.99."
+      "Standard delivery is $8.99 and free for orders over $50. Express delivery is $14.99. Store pickup is free."
     );
   }
 
   if (
-    msg.includes("cart") ||
     msg.includes("checkout") ||
     msg.includes("payment") ||
-    msg.includes("card") ||
-    msg.includes("order")
+    msg.includes("card")
   ) {
     return createBotResponse(
-      "Choose a product and click Add to Cart. Then open the Cart page, review your items and continue to demo checkout. No real money is deducted."
+      "This is a demo checkout. Use card number 4242 4242 4242 4242, expiry 12/30 and CVV 123. No real money is deducted."
     );
   }
 
   if (
     msg.includes("refund") ||
-    msg.includes("return") ||
-    msg.includes("cancel")
+    msg.includes("return")
   ) {
     return createBotResponse(
-      "Refund requests should include the order number, product name and reason. Opened or perishable items may only be refunded where there is a quality issue."
+      "Select Returns / Refunds from the ClariBot menu, enter your exact order number and choose the specific product you want to return."
     );
   }
 
@@ -547,23 +481,12 @@ function getBotReply(userText) {
     msg.includes("close")
   ) {
     return createBotResponse(
-      "ClariMart is open Monday to Saturday from 9:00 AM to 6:00 PM. Online shopping and ClariBot support are available anytime."
-    );
-  }
-
-  if (
-    msg.includes("contact") ||
-    msg.includes("support") ||
-    msg.includes("phone") ||
-    msg.includes("email")
-  ) {
-    return createBotResponse(
-      "You can contact ClariMart support at support@claribot.com. You can also ask me about products, prices, stock, offers, delivery and checkout."
+      "ClariMart is open Monday to Saturday from 9:00 AM to 6:00 PM."
     );
   }
 
   return createBotResponse(
-    "I can recommend products by category, price, meal type or preference. Try asking: “best breakfast products”, “cheap sweets”, “halal products”, “healthy items” or “what is on sale?”"
+    "I can recommend products, explain delivery and checkout, track orders and create return requests."
   );
 }
 
@@ -656,13 +579,6 @@ app.post("/api/auth/request-otp", async (req, res) => {
     writeDB(db);
 
     await sendOtpEmail(email, otp);
-
-    console.log("\n======================================");
-    console.log("CLARIBOT OTP EMAIL SENT");
-    console.log(`Email: ${email}`);
-    console.log(`OTP: ${otp}`);
-    console.log("Valid for: 10 minutes");
-    console.log("======================================\n");
 
     res.json({
       ok: true,
@@ -847,7 +763,7 @@ app.post("/api/auth/login", async (req, res) => {
 });
 
 /* =========================================================
-   ADMIN SUMMARY
+   ADMIN SUMMARY AND SETTINGS
 ========================================================= */
 
 app.get("/api/admin/summary", (req, res) => {
@@ -863,16 +779,20 @@ app.get("/api/admin/summary", (req, res) => {
   });
 });
 
-/* =========================================================
-   ADMIN SETTINGS
-========================================================= */
-
 app.get("/api/admin/settings", (req, res) => {
   res.json({
-    botName: "ClariBot",
-    supportEmail: "support@claribot.com",
-    status: "active",
+    businessName: "ClariMart",
+    escalationEmail: "admin@clarimart.com",
+    botTone: "Friendly and concise",
+    retentionDays: 90,
+    confidenceThreshold: 85,
+    maxTurns: 8,
+    slackWebhook: "",
   });
+});
+
+app.put("/api/admin/settings", (req, res) => {
+  res.json(req.body);
 });
 
 /* =========================================================
@@ -915,7 +835,7 @@ app.post("/api/conversations", (req, res) => {
         id: Date.now().toString(),
         role: "bot",
         text:
-          "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. Ask me about products, prices, recommendations, delivery, checkout or refunds.",
+          "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant.",
         recommendedProducts: [],
         createdAt: nowTime,
       },
@@ -930,163 +850,67 @@ app.post("/api/conversations", (req, res) => {
   res.status(201).json(conversation);
 });
 
-/* =========================================================
-   SEND CHAT MESSAGE
-========================================================= */
+app.post("/api/conversations/:id/messages", (req, res) => {
+  const db = readDB();
 
-app.post(
-  "/api/conversations/:id/messages",
-  (req, res) => {
-    const db = readDB();
+  const conversation = db.conversations.find(
+    (item) => item.id === req.params.id
+  );
 
-    const conversation = db.conversations.find(
-      (item) => item.id === req.params.id
-    );
-
-    if (!conversation) {
-      return res.status(404).json({
-        message: "Conversation not found",
-      });
-    }
-
-    const text = String(req.body.text || "");
-    const nowTime = new Date().toISOString();
-
-    const userMessage = {
-      id: Date.now().toString(),
-      role: "user",
-      text,
-      createdAt: nowTime,
-    };
-
-    // IMPORTANT:
-    // getBotReply returns an object containing:
-    // {
-    //   text: string,
-    //   recommendedProducts: array
-    // }
-
-    const botReply = getBotReply(text);
-
-    const botMessage = {
-      id: (Date.now() + 1).toString(),
-      role: "bot",
-
-      // React must receive a normal string here
-      text: botReply.text,
-
-      // Product cards are stored separately
-      recommendedProducts:
-        botReply.recommendedProducts || [],
-
-      createdAt: new Date().toISOString(),
-    };
-
-    conversation.messages.push(
-      userMessage,
-      botMessage
-    );
-
-    conversation.updatedAt =
-      new Date().toISOString();
-
-    if (
-      conversation.title === "New conversation" &&
-      text.trim()
-    ) {
-      conversation.title =
-        text.length > 28
-          ? `${text.slice(0, 28)}...`
-          : text;
-    }
-
-    writeDB(db);
-
-    res.json({
-      userMessage,
-      botMessage,
-      reply: botMessage,
-      conversation,
+  if (!conversation) {
+    return res.status(404).json({
+      message: "Conversation not found",
     });
   }
-);
+
+  const text = String(req.body.text || "");
+  const nowTime = new Date().toISOString();
+
+  const userMessage = {
+    id: Date.now().toString(),
+    role: "user",
+    text,
+    createdAt: nowTime,
+  };
+
+  const botReply = getBotReply(text);
+
+  const botMessage = {
+    id: (Date.now() + 1).toString(),
+    role: "bot",
+    text: botReply.text,
+    recommendedProducts:
+      botReply.recommendedProducts || [],
+    createdAt: new Date().toISOString(),
+  };
+
+  conversation.messages.push(
+    userMessage,
+    botMessage
+  );
+
+  conversation.updatedAt =
+    new Date().toISOString();
+
+  writeDB(db);
+
+  res.json({
+    userMessage,
+    botMessage,
+    reply: botMessage,
+    conversation,
+  });
+});
 
 /* =========================================================
    ADMIN CONVERSATIONS
 ========================================================= */
 
-app.get(
-  "/api/admin/conversations",
-  (req, res) => {
-    const db = readDB();
+app.get("/api/admin/conversations", (req, res) => {
+  const db = readDB();
 
-    const conversations = db.conversations
-      .map((conversation) => ({
-        ...conversation,
-        sentiment:
-          conversation.sentiment || "neutral",
-        status:
-          conversation.status || "open",
-        messageCount:
-          conversation.messages?.length || 0,
-        updatedAt:
-          conversation.updatedAt ||
-          conversation.createdAt,
-      }))
-      .sort(
-        (a, b) =>
-          new Date(b.updatedAt) -
-          new Date(a.updatedAt)
-      );
-
-    res.json(conversations);
-  }
-);
-
-app.get(
-  "/api/admin/chat-logs",
-  (req, res) => {
-    const db = readDB();
-
-    const logs = db.conversations
-      .map((conversation) => ({
-        ...conversation,
-        sentiment:
-          conversation.sentiment || "neutral",
-        status:
-          conversation.status || "open",
-        messageCount:
-          conversation.messages?.length || 0,
-        updatedAt:
-          conversation.updatedAt ||
-          conversation.createdAt,
-      }))
-      .sort(
-        (a, b) =>
-          new Date(b.updatedAt) -
-          new Date(a.updatedAt)
-      );
-
-    res.json(logs);
-  }
-);
-
-app.get(
-  "/api/admin/conversations/:id",
-  (req, res) => {
-    const db = readDB();
-
-    const conversation = db.conversations.find(
-      (item) => item.id === req.params.id
-    );
-
-    if (!conversation) {
-      return res.status(404).json({
-        message: "Conversation not found",
-      });
-    }
-
-    res.json({
+  const conversations = db.conversations
+    .map((conversation) => ({
       ...conversation,
       sentiment:
         conversation.sentiment || "neutral",
@@ -1097,50 +921,71 @@ app.get(
       updatedAt:
         conversation.updatedAt ||
         conversation.createdAt,
+    }))
+    .sort(
+      (a, b) =>
+        new Date(b.updatedAt) -
+        new Date(a.updatedAt)
+    );
+
+  res.json(conversations);
+});
+
+app.get("/api/admin/chat-logs", (req, res) => {
+  const db = readDB();
+  res.json(db.conversations);
+});
+
+app.get("/api/admin/conversations/:id", (req, res) => {
+  const db = readDB();
+
+  const conversation = db.conversations.find(
+    (item) => item.id === req.params.id
+  );
+
+  if (!conversation) {
+    return res.status(404).json({
+      message: "Conversation not found",
     });
   }
-);
 
-app.delete(
-  "/api/admin/conversations/:id",
-  (req, res) => {
-    const db = readDB();
+  res.json(conversation);
+});
 
-    db.conversations =
-      db.conversations.filter(
-        (conversation) =>
-          conversation.id !== req.params.id
-      );
+app.delete("/api/admin/conversations/:id", (req, res) => {
+  const db = readDB();
 
-    writeDB(db);
+  db.conversations =
+    db.conversations.filter(
+      (conversation) =>
+        conversation.id !== req.params.id
+    );
 
-    res.json({
-      ok: true,
-    });
-  }
-);
+  writeDB(db);
 
-app.delete(
-  "/api/conversations/:id",
-  (req, res) => {
-    const db = readDB();
+  res.json({
+    ok: true,
+  });
+});
 
-    db.conversations =
-      db.conversations.filter(
-        (conversation) =>
-          conversation.id !== req.params.id
-      );
+app.delete("/api/conversations/:id", (req, res) => {
+  const db = readDB();
 
-    writeDB(db);
+  db.conversations =
+    db.conversations.filter(
+      (conversation) =>
+        conversation.id !== req.params.id
+    );
 
-    res.json({
-      ok: true,
-    });
-  }
-);
+  writeDB(db);
+
+  res.json({
+    ok: true,
+  });
+});
 
 /* =========================================================
-   LEADS
+   LEADS AND USERS
 ========================================================= */
 
 app.post("/api/leads", (req, res) => {
@@ -1172,10 +1017,6 @@ app.post("/api/leads", (req, res) => {
   });
 });
 
-/* =========================================================
-   ADMIN USERS
-========================================================= */
-
 app.get("/api/admin/users", (req, res) => {
   const db = readDB();
 
@@ -1192,10 +1033,6 @@ app.get("/api/admin/users", (req, res) => {
   res.json(users);
 });
 
-/* =========================================================
-   ADMIN LEADS
-========================================================= */
-
 app.get("/api/admin/leads", (req, res) => {
   const db = readDB();
 
@@ -1209,22 +1046,131 @@ app.get("/api/admin/leads", (req, res) => {
 });
 
 /* =========================================================
-   ORDERS
+   ORDERS AND RETURNS
 ========================================================= */
+
+app.post("/api/orders", (req, res) => {
+  try {
+    const db = readDB();
+
+    const items = Array.isArray(req.body.items)
+      ? req.body.items
+      : [];
+
+    if (items.length === 0) {
+      return res.status(400).json({
+        ok: false,
+        message: "The order must contain at least one product.",
+      });
+    }
+
+    const order = {
+      id: `DEMO-${Date.now()}`,
+      customer: req.body.customer || {},
+      items,
+      subtotal: Number(req.body.subtotal || 0),
+      delivery: Number(req.body.delivery || 0),
+      total: Number(req.body.total || 0),
+      deliveryMethod:
+        req.body.deliveryMethod || "standard",
+      paymentStatus: "Paid (Demo)",
+      orderStatus: "Received",
+      createdAt: new Date().toISOString(),
+    };
+
+    db.orders.push(order);
+    writeDB(db);
+
+    return res.status(201).json({
+      ok: true,
+      message: "Demo order created successfully.",
+      order,
+    });
+  } catch (error) {
+    console.error("Create order error:", error);
+
+    return res.status(500).json({
+      ok: false,
+      message: "The demo order could not be saved.",
+    });
+  }
+});
+
+app.get("/api/orders/:id/return-items", (req, res) => {
+  try {
+    const db = readDB();
+
+    const requestedId = String(
+      req.params.id || ""
+    )
+      .trim()
+      .toLowerCase();
+
+    const order = db.orders.find(
+      (item) =>
+        String(item.id || "")
+          .trim()
+          .toLowerCase() === requestedId
+    );
+
+    if (!order) {
+      return res.status(404).json({
+        ok: false,
+        message:
+          "Order not found. Copy the exact order ID from the order-success page.",
+      });
+    }
+
+    return res.json({
+      ok: true,
+      order: {
+        id: order.id,
+        orderStatus:
+          order.orderStatus || "Received",
+        paymentStatus:
+          order.paymentStatus || "Paid (Demo)",
+        deliveryMethod:
+          order.deliveryMethod || "standard",
+        customer: order.customer || {},
+        items: Array.isArray(order.items)
+          ? order.items
+          : [],
+      },
+    });
+  } catch (error) {
+    console.error(
+      "Return-items lookup error:",
+      error
+    );
+
+    return res.status(500).json({
+      ok: false,
+      message:
+        "The order products could not be loaded.",
+    });
+  }
+});
 
 app.get("/api/orders/:id", (req, res) => {
   const db = readDB();
 
-  const order = (db.orders || []).find(
+  const requestedId = String(
+    req.params.id || ""
+  )
+    .trim()
+    .toLowerCase();
+
+  const order = db.orders.find(
     (item) =>
-      String(item.id).toLowerCase() ===
-      String(req.params.id).toLowerCase()
+      String(item.id || "")
+        .trim()
+        .toLowerCase() === requestedId
   );
 
   if (!order) {
     return res.status(404).json({
       ok: false,
-      message: "Order not found",
+      message: "Order not found.",
     });
   }
 
@@ -1234,10 +1180,121 @@ app.get("/api/orders/:id", (req, res) => {
   });
 });
 
+app.post("/api/returns", (req, res) => {
+  try {
+    const db = readDB();
+
+    const orderId = String(
+      req.body.orderId || ""
+    ).trim();
+
+    const productId = String(
+      req.body.productId || ""
+    ).trim();
+
+    const reason = String(
+      req.body.reason || ""
+    ).trim();
+
+    if (!orderId || !productId || !reason) {
+      return res.status(400).json({
+        ok: false,
+        message:
+          "Order ID, product and return reason are required.",
+      });
+    }
+
+    const order = db.orders.find(
+      (item) =>
+        String(item.id || "")
+          .trim()
+          .toLowerCase() ===
+        orderId.toLowerCase()
+    );
+
+    if (!order) {
+      return res.status(404).json({
+        ok: false,
+        message: "Order not found.",
+      });
+    }
+
+    const product = (
+      Array.isArray(order.items)
+        ? order.items
+        : []
+    ).find(
+      (item) =>
+        String(item.id) === productId
+    );
+
+    if (!product) {
+      return res.status(404).json({
+        ok: false,
+        message:
+          "That product was not found in this order.",
+      });
+    }
+
+    const existingReturn = db.returns.find(
+      (item) =>
+        String(item.orderId) ===
+          String(order.id) &&
+        String(item.productId) ===
+          String(product.id) &&
+        item.status !== "Rejected"
+    );
+
+    if (existingReturn) {
+      return res.status(409).json({
+        ok: false,
+        message:
+          "A return request already exists for this product.",
+        returnRequest: existingReturn,
+      });
+    }
+
+    const returnRequest = {
+      id: `RETURN-${Date.now()}`,
+      orderId: order.id,
+      productId: product.id,
+      productName: product.name,
+      quantity: Number(product.qty || 1),
+      price: Number(product.price || 0),
+      image: product.image || "",
+      reason,
+      customer: order.customer || {},
+      status: "Requested",
+      createdAt: new Date().toISOString(),
+    };
+
+    db.returns.push(returnRequest);
+    writeDB(db);
+
+    return res.status(201).json({
+      ok: true,
+      message:
+        "Return request created successfully.",
+      returnRequest,
+    });
+  } catch (error) {
+    console.error(
+      "Create return request error:",
+      error
+    );
+
+    return res.status(500).json({
+      ok: false,
+      message:
+        "The return request could not be saved.",
+    });
+  }
+});
+
 app.get("/api/admin/orders", (req, res) => {
   const db = readDB();
 
-  const orders = [...(db.orders || [])].sort(
+  const orders = [...db.orders].sort(
     (a, b) =>
       new Date(b.createdAt) -
       new Date(a.createdAt)
@@ -1245,113 +1302,14 @@ app.get("/api/admin/orders", (req, res) => {
 
   res.json(orders);
 });
-app.get("/api/orders/:id/return-items", (req, res) => {
-  const db = readDB();
-
-  const order = (db.orders || []).find(
-    (item) =>
-      String(item.id).toLowerCase() ===
-      String(req.params.id).toLowerCase()
-  );
-
-  if (!order) {
-    return res.status(404).json({
-      ok: false,
-      message: "Order not found",
-    });
-  }
-
-  res.json({
-    ok: true,
-    order: {
-      id: order.id,
-      orderStatus: order.orderStatus,
-      customer: order.customer,
-      items: order.items || [],
-    },
-  });
-});
-
-app.post("/api/returns", (req, res) => {
-  const db = readDB();
-
-  const orderId = String(req.body.orderId || "").trim();
-  const productId = String(req.body.productId || "").trim();
-  const reason = String(req.body.reason || "").trim();
-
-  if (!orderId || !productId || !reason) {
-    return res.status(400).json({
-      ok: false,
-      message: "Order ID, product and return reason are required",
-    });
-  }
-
-  const order = (db.orders || []).find(
-    (item) =>
-      String(item.id).toLowerCase() === orderId.toLowerCase()
-  );
-
-  if (!order) {
-    return res.status(404).json({
-      ok: false,
-      message: "Order not found",
-    });
-  }
-
-  const product = (order.items || []).find(
-    (item) => String(item.id) === productId
-  );
-
-  if (!product) {
-    return res.status(404).json({
-      ok: false,
-      message: "That product was not found in this order",
-    });
-  }
-
-  const existingReturn = (db.returns || []).find(
-    (item) =>
-      item.orderId === order.id &&
-      item.productId === product.id &&
-      item.status !== "Rejected"
-  );
-
-  if (existingReturn) {
-    return res.status(409).json({
-      ok: false,
-      message: "A return request already exists for this product",
-      returnRequest: existingReturn,
-    });
-  }
-
-  const returnRequest = {
-    id: "RETURN-" + Date.now(),
-    orderId: order.id,
-    productId: product.id,
-    productName: product.name,
-    quantity: product.qty || 1,
-    price: product.price || 0,
-    reason,
-    customer: order.customer || {},
-    status: "Requested",
-    createdAt: new Date().toISOString(),
-  };
-
-  db.returns.push(returnRequest);
-  writeDB(db);
-
-  res.status(201).json({
-    ok: true,
-    message: "Return request created",
-    returnRequest,
-  });
-});
 
 app.get("/api/admin/returns", (req, res) => {
   const db = readDB();
 
-  const returns = (db.returns || []).sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  const returns = [...db.returns].sort(
+    (a, b) =>
+      new Date(b.createdAt) -
+      new Date(a.createdAt)
   );
 
   res.json(returns);

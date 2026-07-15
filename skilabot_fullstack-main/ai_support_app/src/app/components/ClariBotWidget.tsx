@@ -29,6 +29,8 @@ type ReturnItem = {
   image?: string;
 };
 
+type ReturnStep = "none" | "order-id" | "item" | "reason";
+
 type ChatMessage = {
   id: string;
   role: "user" | "bot";
@@ -69,13 +71,12 @@ export default function ClariBotWidget() {
   const [loading, setLoading] = useState(false);
   const [listening, setListening] = useState(false);
   const [voicePanelOpen, setVoicePanelOpen] = useState(false);
-  const [returnStep, setReturnStep] = useState<
-  "none" | "order-id" | "item" | "reason"
->("none");
 
-const [returnOrderId, setReturnOrderId] = useState("");
-const [selectedReturnItem, setSelectedReturnItem] =
-  useState<ReturnItem | null>(null);
+  const [returnStep, setReturnStep] = useState<ReturnStep>("none");
+  const [returnOrderId, setReturnOrderId] = useState("");
+  const [returnItems, setReturnItems] = useState<ReturnItem[]>([]);
+  const [selectedReturnItem, setSelectedReturnItem] =
+    useState<ReturnItem | null>(null);
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -117,8 +118,18 @@ const [selectedReturnItem, setSelectedReturnItem] =
     ]);
   }
 
+  function clearReturnFlow() {
+    setReturnStep("none");
+    setReturnOrderId("");
+    setReturnItems([]);
+    setSelectedReturnItem(null);
+  }
+
   function resetChat() {
+    setInput("");
     setAwaitingOrderId(false);
+    clearReturnFlow();
+
     setMessages([
       {
         id: makeId(),
@@ -130,6 +141,9 @@ const [selectedReturnItem, setSelectedReturnItem] =
   }
 
   function showMainMenu() {
+    setAwaitingOrderId(false);
+    clearReturnFlow();
+
     addBotMessage({
       text: "What would you like help with?",
       actions: mainMenuActions,
@@ -145,10 +159,17 @@ const [selectedReturnItem, setSelectedReturnItem] =
       addBotMessage({
         text: `There are currently no ${category} products available in this demo.`,
         actions: [
-          { label: "Choose Another Category", value: "shop-products" },
-          { label: "Main Menu", value: "main-menu" },
+          {
+            label: "Choose Another Category",
+            value: "shop-products",
+          },
+          {
+            label: "Main Menu",
+            value: "main-menu",
+          },
         ],
       });
+
       return;
     }
 
@@ -156,10 +177,22 @@ const [selectedReturnItem, setSelectedReturnItem] =
       text: `Here are some ${category} products you may like.`,
       products: matches,
       actions: [
-        { label: "More Categories", value: "shop-products" },
-        { label: "View Cart", value: "view-cart" },
-        { label: "Checkout", value: "checkout" },
-        { label: "Main Menu", value: "main-menu" },
+        {
+          label: "More Categories",
+          value: "shop-products",
+        },
+        {
+          label: "View Cart",
+          value: "view-cart",
+        },
+        {
+          label: "Checkout",
+          value: "checkout",
+        },
+        {
+          label: "Main Menu",
+          value: "main-menu",
+        },
       ],
     });
   }
@@ -178,17 +211,36 @@ const [selectedReturnItem, setSelectedReturnItem] =
           `Delivery: ${result.order.deliveryMethod || "Standard"}\n` +
           `Total: $${Number(result.order.total || 0).toFixed(2)}`,
         actions: [
-          { label: "Track Another Order", value: "track-order" },
-          { label: "Main Menu", value: "main-menu" },
+          {
+            label: "Track Another Order",
+            value: "track-order",
+          },
+          {
+            label: "Main Menu",
+            value: "main-menu",
+          },
         ],
       });
-    } catch {
+    } catch (error: any) {
+      console.error("Track order error:", error);
+
       addBotMessage({
-        text: "I couldn’t find that order. Please check the order ID and try again.",
+        text:
+          error?.message ||
+          "I couldn’t find that order. Please check the order ID and try again.",
         actions: [
-          { label: "Try Again", value: "track-order" },
-          { label: "Talk to Human", value: "human-support" },
-          { label: "Main Menu", value: "main-menu" },
+          {
+            label: "Try Again",
+            value: "track-order",
+          },
+          {
+            label: "Talk to Human",
+            value: "human-support",
+          },
+          {
+            label: "Main Menu",
+            value: "main-menu",
+          },
         ],
       });
     } finally {
@@ -198,13 +250,19 @@ const [selectedReturnItem, setSelectedReturnItem] =
   }
 
   async function handleAction(action: QuickAction) {
+    if (loading) return;
+
     addUserMessage(action.label);
 
     if (action.value === "shop-products") {
+      setAwaitingOrderId(false);
+      clearReturnFlow();
+
       addBotMessage({
         text: "What category are you looking for?",
         actions: categoryActions,
       });
+
       return;
     }
 
@@ -215,45 +273,103 @@ const [selectedReturnItem, setSelectedReturnItem] =
     }
 
     if (action.value === "track-order") {
+      clearReturnFlow();
       setAwaitingOrderId(true);
 
       addBotMessage({
         text: "Please enter your demo order ID. It should look like DEMO-1234567890.",
       });
+
       return;
     }
 
     if (action.value === "returns") {
-  setReturnStep("order-id");
-  setReturnOrderId("");
-  setSelectedReturnItem(null);
+      setAwaitingOrderId(false);
+      clearReturnFlow();
+      setReturnStep("order-id");
 
-  addBotMessage({
-    text: "Please enter the demo order ID containing the product you want to return.",
-  });
+      addBotMessage({
+        text: "Please enter the demo order ID containing the product you want to return.",
+      });
 
-  return;
-}
+      return;
+    }
+
+    if (action.value.startsWith("return-item:")) {
+      const productId = action.value.replace("return-item:", "");
+
+      const item = returnItems.find(
+        (returnItem) => String(returnItem.id) === String(productId)
+      );
+
+      if (!item) {
+        addBotMessage({
+          text: "I could not identify that product. Please restart the return process.",
+          actions: [
+            {
+              label: "Returns / Refunds",
+              value: "returns",
+            },
+            {
+              label: "Main Menu",
+              value: "main-menu",
+            },
+          ],
+        });
+
+        clearReturnFlow();
+        return;
+      }
+
+      setSelectedReturnItem(item);
+      setReturnStep("reason");
+
+      addBotMessage({
+        text: `You selected ${item.name}. Please type the reason you want to return this item.`,
+      });
+
+      return;
+    }
 
     if (action.value === "delivery") {
+      setAwaitingOrderId(false);
+      clearReturnFlow();
+
       addBotMessage({
         text: "Standard delivery costs $8.99 and is free for orders over $50. Express delivery costs $14.99. Store pickup is free.",
         actions: [
-          { label: "Shop Products", value: "shop-products" },
-          { label: "Main Menu", value: "main-menu" },
+          {
+            label: "Shop Products",
+            value: "shop-products",
+          },
+          {
+            label: "Main Menu",
+            value: "main-menu",
+          },
         ],
       });
+
       return;
     }
 
     if (action.value === "human-support") {
+      setAwaitingOrderId(false);
+      clearReturnFlow();
+
       addBotMessage({
         text: "A human support request can be handled through support@clarimart.com or 02 1234 5678. For this demo, you can also use the Contact page.",
         actions: [
-          { label: "Open Contact Page", value: "contact" },
-          { label: "Main Menu", value: "main-menu" },
+          {
+            label: "Open Contact Page",
+            value: "contact",
+          },
+          {
+            label: "Main Menu",
+            value: "main-menu",
+          },
         ],
       });
+
       return;
     }
 
@@ -286,11 +402,158 @@ const [selectedReturnItem, setSelectedReturnItem] =
     addBotMessage({
       text: `${product.name} has been added to your cart.`,
       actions: [
-        { label: "Continue Shopping", value: "shop-products" },
-        { label: "View Cart", value: "view-cart" },
-        { label: "Checkout", value: "checkout" },
+        {
+          label: "Continue Shopping",
+          value: "shop-products",
+        },
+        {
+          label: "View Cart",
+          value: "view-cart",
+        },
+        {
+          label: "Checkout",
+          value: "checkout",
+        },
       ],
     });
+  }
+
+  async function handleReturnOrderLookup(orderId: string) {
+    setLoading(true);
+
+    try {
+      const result = await api.getReturnItems(orderId);
+      const items: ReturnItem[] = result.order.items || [];
+
+      setReturnOrderId(result.order.id);
+      setReturnItems(items);
+
+      if (items.length === 0) {
+        clearReturnFlow();
+
+        addBotMessage({
+          text: "This order does not contain any products that can be returned.",
+          actions: [
+            {
+              label: "Main Menu",
+              value: "main-menu",
+            },
+          ],
+        });
+
+        return;
+      }
+
+      setReturnStep("item");
+
+      addBotMessage({
+        text: `I found order ${result.order.id}. Which specific product would you like to return?`,
+        returnItems: items,
+        actions: items.map((item) => ({
+          label: `${item.name} × ${item.qty}`,
+          value: `return-item:${item.id}`,
+        })),
+      });
+    } catch (error: any) {
+      console.error("Return order lookup error:", error);
+
+      clearReturnFlow();
+
+      addBotMessage({
+        text:
+          error?.message ||
+          "I could not find that order. Please check the order ID and try again.",
+        actions: [
+          {
+            label: "Try Again",
+            value: "returns",
+          },
+          {
+            label: "Main Menu",
+            value: "main-menu",
+          },
+        ],
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleReturnReason(reason: string) {
+    if (!selectedReturnItem || !returnOrderId) {
+      clearReturnFlow();
+
+      addBotMessage({
+        text: "The return details are incomplete. Please restart the return process.",
+        actions: [
+          {
+            label: "Returns / Refunds",
+            value: "returns",
+          },
+          {
+            label: "Main Menu",
+            value: "main-menu",
+          },
+        ],
+      });
+
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const result = await api.createReturn({
+        orderId: returnOrderId,
+        productId: selectedReturnItem.id,
+        reason,
+      });
+
+      addBotMessage({
+        text:
+          `Your return request has been created successfully.\n\n` +
+          `Return ID: ${result.returnRequest.id}\n` +
+          `Order: ${result.returnRequest.orderId}\n` +
+          `Product: ${result.returnRequest.productName}\n` +
+          `Quantity: ${result.returnRequest.quantity || selectedReturnItem.qty}\n` +
+          `Reason: ${result.returnRequest.reason || reason}\n` +
+          `Status: ${result.returnRequest.status}`,
+        actions: [
+          {
+            label: "Return Another Item",
+            value: "returns",
+          },
+          {
+            label: "Main Menu",
+            value: "main-menu",
+          },
+        ],
+      });
+
+      clearReturnFlow();
+    } catch (error: any) {
+      console.error("Create return error:", error);
+
+      addBotMessage({
+        text:
+          error?.message ||
+          "The return request could not be created. Please contact support.",
+        actions: [
+          {
+            label: "Try Again",
+            value: "returns",
+          },
+          {
+            label: "Talk to Human",
+            value: "human-support",
+          },
+        ],
+      });
+
+      clearReturnFlow();
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function sendMessage() {
@@ -301,11 +564,34 @@ const [selectedReturnItem, setSelectedReturnItem] =
     addUserMessage(text);
     setInput("");
 
+    // Return flow: customer typed an order ID.
+    if (returnStep === "order-id") {
+      await handleReturnOrderLookup(text);
+      return;
+    }
+
+    // Return flow: customer typed the return reason.
+    if (returnStep === "reason") {
+      await handleReturnReason(text);
+      return;
+    }
+
+    // Normal order-tracking flow.
     if (awaitingOrderId) {
       await trackOrder(text);
       return;
     }
 
+    // Prevent typed messages while waiting for a return item button.
+    if (returnStep === "item") {
+      addBotMessage({
+        text: "Please select one of the product buttons shown above.",
+      });
+
+      return;
+    }
+
+    // Normal ClariBot conversation.
     setLoading(true);
 
     try {
@@ -320,12 +606,23 @@ const [selectedReturnItem, setSelectedReturnItem] =
           result.reply?.text ||
           "I can help with products, delivery, checkout, returns and orders.",
         actions: [
-          { label: "Shop Products", value: "shop-products" },
-          { label: "Track Order", value: "track-order" },
-          { label: "Main Menu", value: "main-menu" },
+          {
+            label: "Shop Products",
+            value: "shop-products",
+          },
+          {
+            label: "Track Order",
+            value: "track-order",
+          },
+          {
+            label: "Main Menu",
+            value: "main-menu",
+          },
         ],
       });
-    } catch {
+    } catch (error) {
+      console.error("Normal chatbot error:", error);
+
       addBotMessage({
         text: "I can help with products, delivery, checkout, returns, store hours and demo orders.",
         actions: mainMenuActions,
@@ -338,28 +635,39 @@ const [selectedReturnItem, setSelectedReturnItem] =
   function speakLatestMessage() {
     const latestBotMessage = [...messages]
       .reverse()
-      .find((message) => message.role === "bot" && message.text);
+      .find(
+        (message) =>
+          message.role === "bot" &&
+          message.text
+      );
 
-    if (!latestBotMessage?.text || !("speechSynthesis" in window)) {
+    if (
+      !latestBotMessage?.text ||
+      !("speechSynthesis" in window)
+    ) {
       return;
     }
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(
-      latestBotMessage.text
-    );
+    const utterance =
+      new SpeechSynthesisUtterance(
+        latestBotMessage.text
+      );
 
     utterance.rate = 1;
     utterance.pitch = 1;
 
-    window.speechSynthesis.speak(utterance);
+    window.speechSynthesis.speak(
+      utterance
+    );
   }
 
   function startVoiceInput() {
     const SpeechRecognitionConstructor =
       (window as any).SpeechRecognition ||
-      (window as any).webkitSpeechRecognition;
+      (window as any)
+        .webkitSpeechRecognition;
 
     if (!SpeechRecognitionConstructor) {
       addBotMessage({
@@ -370,7 +678,8 @@ const [selectedReturnItem, setSelectedReturnItem] =
       return;
     }
 
-    const recognition = new SpeechRecognitionConstructor();
+    const recognition =
+      new SpeechRecognitionConstructor();
 
     recognition.lang = "en-AU";
     recognition.interimResults = false;
@@ -394,8 +703,12 @@ const [selectedReturnItem, setSelectedReturnItem] =
       });
     };
 
-    recognition.onresult = (event: any) => {
-      const spokenText = event.results?.[0]?.[0]?.transcript || "";
+    recognition.onresult = (
+      event: any
+    ) => {
+      const spokenText =
+        event.results?.[0]?.[0]
+          ?.transcript || "";
 
       setInput(spokenText);
     };
@@ -403,8 +716,12 @@ const [selectedReturnItem, setSelectedReturnItem] =
     recognition.start();
   }
 
-  function scrollProducts(messageId: string, direction: number) {
-    const element = productRowRefs.current[messageId];
+  function scrollProducts(
+    messageId: string,
+    direction: number
+  ) {
+    const element =
+      productRowRefs.current[messageId];
 
     element?.scrollBy({
       left: direction * 260,
@@ -420,7 +737,10 @@ const [selectedReturnItem, setSelectedReturnItem] =
         className="fixed bottom-5 right-5 z-[80] flex items-center gap-3 rounded-full bg-sky-600 px-5 py-4 font-black text-white shadow-2xl hover:bg-sky-700"
       >
         <Bot size={22} />
-        <span className="hidden sm:inline">ClariBot Support</span>
+
+        <span className="hidden sm:inline">
+          ClariBot Support
+        </span>
       </button>
     );
   }
@@ -435,9 +755,13 @@ const [selectedReturnItem, setSelectedReturnItem] =
             </div>
 
             <div>
-              <p className="font-black">ClariBot</p>
+              <p className="font-black">
+                ClariBot
+              </p>
+
               <p className="text-xs text-sky-100">
-                Your ClariMart virtual assistant
+                Your ClariMart virtual
+                assistant
               </p>
             </div>
           </div>
@@ -501,96 +825,150 @@ const [selectedReturnItem, setSelectedReturnItem] =
                 )}
               </div>
 
-              {message.products && message.products.length > 0 && (
-                <div className="relative mt-3">
-                  <button
-                    type="button"
-                    onClick={() => scrollProducts(message.id, -1)}
-                    className="absolute left-1 top-1/2 z-10 -translate-y-1/2 rounded-full border bg-white p-2 shadow"
-                  >
-                    <ChevronLeft size={18} />
-                  </button>
-
-                  <div
-                    ref={(element) => {
-                      productRowRefs.current[message.id] = element;
-                    }}
-                    className="flex snap-x gap-3 overflow-x-auto px-7 pb-2 scrollbar-hide"
-                  >
-                    {message.products.map((product) => (
-                      <article
-                        key={product.id}
-                        className="w-[230px] shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-700 bg-slate-900"
-                      >
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="h-36 w-full bg-white object-contain p-2"
-                        />
-
-                        <div className="p-4 text-white">
-                          <p className="text-xs font-bold text-sky-400">
-                            {product.category}
-                          </p>
-
-                          <h3 className="mt-1 min-h-[48px] font-black">
-                            {product.name}
-                          </h3>
-
-                          <p className="mt-2 text-xl font-black">
-                            ${product.price.toFixed(2)}
-                          </p>
-
-                          <div className="mt-4 grid gap-2">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                navigate(`/product/${product.id}`);
-                                setOpen(false);
-                              }}
-                              className="rounded-xl border border-sky-500 px-3 py-2 text-sm font-black text-sky-300"
-                            >
-                              View Product
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => addProduct(product)}
-                              className="flex items-center justify-center gap-2 rounded-xl bg-sky-600 px-3 py-2 text-sm font-black text-white"
-                            >
-                              <ShoppingCart size={15} />
-                              Add to Cart
-                            </button>
-                          </div>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => scrollProducts(message.id, 1)}
-                    className="absolute right-1 top-1/2 z-10 -translate-y-1/2 rounded-full border bg-white p-2 shadow"
-                  >
-                    <ChevronRight size={18} />
-                  </button>
-                </div>
-              )}
-
-              {message.actions && message.actions.length > 0 && (
-                <div className="ml-10 mt-3 flex flex-wrap gap-2">
-                  {message.actions.map((action) => (
+              {message.products &&
+                message.products.length >
+                  0 && (
+                  <div className="relative mt-3">
                     <button
-                      key={`${message.id}-${action.value}`}
                       type="button"
-                      onClick={() => handleAction(action)}
-                      className="rounded-xl border border-sky-500/60 bg-sky-950 px-4 py-2 text-sm font-black text-sky-100 transition hover:bg-sky-800"
+                      onClick={() =>
+                        scrollProducts(
+                          message.id,
+                          -1
+                        )
+                      }
+                      className="absolute left-1 top-1/2 z-10 -translate-y-1/2 rounded-full border bg-white p-2 shadow"
                     >
-                      {action.label}
+                      <ChevronLeft
+                        size={18}
+                      />
                     </button>
-                  ))}
-                </div>
-              )}
+
+                    <div
+                      ref={(element) => {
+                        productRowRefs.current[
+                          message.id
+                        ] = element;
+                      }}
+                      className="flex snap-x gap-3 overflow-x-auto px-7 pb-2"
+                    >
+                      {message.products.map(
+                        (product) => (
+                          <article
+                            key={
+                              product.id
+                            }
+                            className="w-[230px] shrink-0 snap-start overflow-hidden rounded-2xl border border-slate-700 bg-slate-900"
+                          >
+                            <img
+                              src={
+                                product.image
+                              }
+                              alt={
+                                product.name
+                              }
+                              className="h-36 w-full bg-white object-contain p-2"
+                            />
+
+                            <div className="p-4 text-white">
+                              <p className="text-xs font-bold text-sky-400">
+                                {
+                                  product.category
+                                }
+                              </p>
+
+                              <h3 className="mt-1 min-h-[48px] font-black">
+                                {
+                                  product.name
+                                }
+                              </h3>
+
+                              <p className="mt-2 text-xl font-black">
+                                $
+                                {product.price.toFixed(
+                                  2
+                                )}
+                              </p>
+
+                              <div className="mt-4 grid gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    navigate(
+                                      `/product/${product.id}`
+                                    );
+
+                                    setOpen(
+                                      false
+                                    );
+                                  }}
+                                  className="rounded-xl border border-sky-500 px-3 py-2 text-sm font-black text-sky-300"
+                                >
+                                  View Product
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    addProduct(
+                                      product
+                                    )
+                                  }
+                                  className="flex items-center justify-center gap-2 rounded-xl bg-sky-600 px-3 py-2 text-sm font-black text-white"
+                                >
+                                  <ShoppingCart
+                                    size={
+                                      15
+                                    }
+                                  />
+                                  Add to Cart
+                                </button>
+                              </div>
+                            </div>
+                          </article>
+                        )
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        scrollProducts(
+                          message.id,
+                          1
+                        )
+                      }
+                      className="absolute right-1 top-1/2 z-10 -translate-y-1/2 rounded-full border bg-white p-2 shadow"
+                    >
+                      <ChevronRight
+                        size={18}
+                      />
+                    </button>
+                  </div>
+                )}
+
+              {message.actions &&
+                message.actions.length >
+                  0 && (
+                  <div className="ml-10 mt-3 flex flex-wrap gap-2">
+                    {message.actions.map(
+                      (action) => (
+                        <button
+                          key={`${message.id}-${action.value}`}
+                          type="button"
+                          onClick={() =>
+                            handleAction(
+                              action
+                            )
+                          }
+                          className="rounded-xl border border-sky-500/60 bg-sky-950 px-4 py-2 text-sm font-black text-sky-100 transition hover:bg-sky-800"
+                        >
+                          {action.label}
+                        </button>
+                      )
+                    )}
+                  </div>
+                )}
             </div>
           ))}
 
@@ -613,7 +991,9 @@ const [selectedReturnItem, setSelectedReturnItem] =
           <div className="flex items-end gap-2 rounded-2xl border border-slate-700 bg-slate-950 p-2">
             <button
               type="button"
-              onClick={() => setVoicePanelOpen(true)}
+              onClick={() =>
+                setVoicePanelOpen(true)
+              }
               className="rounded-xl p-3 text-sky-400 hover:bg-slate-800"
               title="Voice assistant"
             >
@@ -623,17 +1003,29 @@ const [selectedReturnItem, setSelectedReturnItem] =
             <textarea
               rows={1}
               value={input}
-              onChange={(event) => setInput(event.target.value)}
+              onChange={(event) =>
+                setInput(event.target.value)
+              }
               onKeyDown={(event) => {
-                if (event.key === "Enter" && !event.shiftKey) {
+                if (
+                  event.key === "Enter" &&
+                  !event.shiftKey
+                ) {
                   event.preventDefault();
                   sendMessage();
                 }
               }}
               placeholder={
-                awaitingOrderId
+                awaitingOrderId ||
+                returnStep === "order-id"
                   ? "Enter your order ID..."
-                  : "Message ClariBot..."
+                  : returnStep ===
+                      "reason"
+                    ? "Enter your return reason..."
+                    : returnStep ===
+                        "item"
+                      ? "Select a product above..."
+                      : "Message ClariBot..."
               }
               className="max-h-24 flex-1 resize-none bg-transparent px-2 py-3 text-sm text-white outline-none placeholder:text-gray-500"
             />
@@ -650,7 +1042,9 @@ const [selectedReturnItem, setSelectedReturnItem] =
             <button
               type="button"
               onClick={sendMessage}
-              disabled={!input.trim() || loading}
+              disabled={
+                !input.trim() || loading
+              }
               className="rounded-xl bg-sky-600 p-3 text-white disabled:opacity-40"
             >
               <Send size={19} />
@@ -667,7 +1061,9 @@ const [selectedReturnItem, setSelectedReturnItem] =
             </h2>
 
             <p className="mt-3 text-gray-400">
-              Speak naturally and your message will appear in the chat input.
+              Speak naturally and your
+              message will appear in the chat
+              input.
             </p>
 
             <button
@@ -683,12 +1079,16 @@ const [selectedReturnItem, setSelectedReturnItem] =
             </button>
 
             <p className="mt-5 font-bold">
-              {listening ? "Listening..." : "Tap the microphone to start"}
+              {listening
+                ? "Listening..."
+                : "Tap the microphone to start"}
             </p>
 
             <button
               type="button"
-              onClick={() => setVoicePanelOpen(false)}
+              onClick={() =>
+                setVoicePanelOpen(false)
+              }
               className="mt-8 rounded-full border border-gray-700 px-6 py-3 font-black text-gray-300"
             >
               Cancel

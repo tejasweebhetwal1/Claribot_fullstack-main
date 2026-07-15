@@ -432,6 +432,122 @@
       ],
       "createdAt": "2026-07-13T06:03:07.427Z",
       "updatedAt": "2026-07-13T06:03:07.438Z"
+    },
+    {
+      "id": "1783924639971",
+      "userId": "guest",
+      "title": "ClariMart website support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1783924639971",
+          "role": "bot",
+          "text": "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. Ask me about products, prices, offers, special items, delivery, checkout, refunds or opening hours.",
+          "createdAt": "2026-07-13T06:37:19.971Z"
+        },
+        {
+          "id": "1783924639981",
+          "role": "user",
+          "text": "DEMO-1783924626687",
+          "createdAt": "2026-07-13T06:37:19.980Z"
+        },
+        {
+          "id": "1783924639982",
+          "role": "bot",
+          "text": "I’m ClariBot, your ClariMart shopping assistant. I can help with product details, prices, offers, stock, halal items, dairy, sweets, breakfast recommendations, delivery, cart, checkout, refunds and opening hours.",
+          "createdAt": "2026-07-13T06:37:19.981Z"
+        }
+      ],
+      "createdAt": "2026-07-13T06:37:19.971Z",
+      "updatedAt": "2026-07-13T06:37:19.981Z"
+    },
+    {
+      "id": "1783924995996",
+      "userId": "guest",
+      "title": "ClariMart website support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1783924995996",
+          "role": "bot",
+          "text": "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. Ask me about products, prices, offers, special items, delivery, checkout, refunds or opening hours.",
+          "createdAt": "2026-07-13T06:43:15.996Z"
+        },
+        {
+          "id": "1783924996007",
+          "role": "user",
+          "text": "DEMO-1783924626687",
+          "createdAt": "2026-07-13T06:43:16.007Z"
+        },
+        {
+          "id": "1783924996008",
+          "role": "bot",
+          "text": "I’m ClariBot, your ClariMart shopping assistant. I can help with product details, prices, offers, stock, halal items, dairy, sweets, breakfast recommendations, delivery, cart, checkout, refunds and opening hours.",
+          "createdAt": "2026-07-13T06:43:16.007Z"
+        }
+      ],
+      "createdAt": "2026-07-13T06:43:15.996Z",
+      "updatedAt": "2026-07-13T06:43:16.007Z"
+    },
+    {
+      "id": "1783925016755",
+      "userId": "guest",
+      "title": "ClariMart website support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1783925016755",
+          "role": "bot",
+          "text": "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. Ask me about products, prices, offers, special items, delivery, checkout, refunds or opening hours.",
+          "createdAt": "2026-07-13T06:43:36.755Z"
+        },
+        {
+          "id": "1783925016765",
+          "role": "user",
+          "text": "DEMO-1783924626687",
+          "createdAt": "2026-07-13T06:43:36.765Z"
+        },
+        {
+          "id": "1783925016766",
+          "role": "bot",
+          "text": "I’m ClariBot, your ClariMart shopping assistant. I can help with product details, prices, offers, stock, halal items, dairy, sweets, breakfast recommendations, delivery, cart, checkout, refunds and opening hours.",
+          "createdAt": "2026-07-13T06:43:36.765Z"
+        }
+      ],
+      "createdAt": "2026-07-13T06:43:36.755Z",
+      "updatedAt": "2026-07-13T06:43:36.765Z"
+    },
+    {
+      "id": "1783932134228",
+      "userId": "guest",
+      "title": "ClariMart website support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1783932134228",
+          "role": "bot",
+          "text": "Hi! 👋 I’m ClariBot, your ClariMart shopping assistant. Ask me about products, prices, offers, special items, delivery, checkout, refunds or opening hours.",
+          "createdAt": "2026-07-13T08:42:14.228Z"
+        },
+        {
+          "id": "1783932134239",
+          "role": "user",
+          "text": "DEMO-1783932122849",
+          "createdAt": "2026-07-13T08:42:14.239Z"
+        },
+        {
+          "id": "1783932134240",
+          "role": "bot",
+          "text": "I’m ClariBot, your ClariMart shopping assistant. I can help with product details, prices, offers, stock, halal items, dairy, sweets, breakfast recommendations, delivery, cart, checkout, refunds and opening hours.",
+          "createdAt": "2026-07-13T08:42:14.239Z"
+        }
+      ],
+      "createdAt": "2026-07-13T08:42:14.228Z",
+      "updatedAt": "2026-07-13T08:42:14.239Z"
     }
   ],
   "leads": [
@@ -474,10 +590,16 @@
       "createdAt": "2026-07-07T13:19:11.809Z"
     },
     {
+      "email": "tessa@gmail.com",
+      "otp": "336589",
+      "expiresAt": 1784086638320,
+      "createdAt": "2026-07-15T03:27:18.320Z"
+    },
+    {
       "email": "tejasweebhetwal1@gmail.com",
-      "otp": "776798",
-      "expiresAt": 1783491037813,
-      "createdAt": "2026-07-08T06:00:37.813Z"
+      "otp": "993145",
+      "expiresAt": 1784086662784,
+      "createdAt": "2026-07-15T03:27:42.784Z"
     }
   ],
   "orders": [
@@ -626,6 +748,210 @@
       "paymentStatus": "Paid (Demo)",
       "orderStatus": "Received",
       "createdAt": "2026-07-13T06:02:29.403Z"
+    },
+    {
+      "id": "DEMO-1783924626687",
+      "customer": {
+        "name": "Tessa Bhetwal",
+        "email": "tej@gmail.com",
+        "phone": "0415271114",
+        "address": "treacy street, hurstville, NSW 2220"
+      },
+      "items": [
+        {
+          "id": "tahini",
+          "name": "Premium Pure Tahini 750g",
+          "category": "Pantry",
+          "price": 10.5,
+          "oldPrice": 12.5,
+          "image": "/tahini.jpeg",
+          "badge": "Sale",
+          "description": "Smooth sesame tahini for dips, sauces and breakfast.",
+          "stock": 25,
+          "qty": 1
+        }
+      ],
+      "subtotal": 10.5,
+      "delivery": 8.99,
+      "total": 19.490000000000002,
+      "paymentStatus": "Paid (Demo)",
+      "orderStatus": "Received",
+      "createdAt": "2026-07-13T06:37:06.687Z"
+    },
+    {
+      "id": "DEMO-1783932122849",
+      "customer": {
+        "name": "Alex Terry",
+        "email": "Alex1@gmail.com",
+        "phone": "0513834442",
+        "address": "61 Jersey avenue, Mortdale, NSW 2223"
+      },
+      "items": [
+        {
+          "id": "cheese",
+          "name": "Mediterranean Cheese",
+          "category": "Dairy",
+          "price": 9.99,
+          "image": "/products/Cheese.png",
+          "description": "Fresh cheese for breakfast and cooking.",
+          "stock": 15,
+          "qty": 1
+        }
+      ],
+      "subtotal": 9.99,
+      "delivery": 8.99,
+      "total": 18.98,
+      "paymentStatus": "Paid (Demo)",
+      "orderStatus": "Received",
+      "createdAt": "2026-07-13T08:42:02.849Z"
+    },
+    {
+      "id": "DEMO-1783933039461",
+      "customer": {
+        "name": "Ethan V",
+        "email": "ethan33@gmail.com",
+        "phone": "02383561556",
+        "address": "greek st , Hurstville, NSW 2220"
+      },
+      "items": [
+        {
+          "id": "tahini",
+          "name": "Premium Pure Tahini 750g",
+          "category": "Pantry",
+          "price": 10.5,
+          "oldPrice": 12.5,
+          "image": "/tahini.jpeg",
+          "badge": "Sale",
+          "description": "Smooth sesame tahini for dips, sauces and breakfast.",
+          "stock": 25,
+          "qty": 1
+        }
+      ],
+      "subtotal": 10.5,
+      "delivery": 8.99,
+      "total": 19.490000000000002,
+      "paymentStatus": "Paid (Demo)",
+      "orderStatus": "Received",
+      "createdAt": "2026-07-13T08:57:19.461Z"
+    },
+    {
+      "id": "DEMO-1783934250730",
+      "customer": {
+        "name": "t b",
+        "email": "tb@gmail.com",
+        "phone": "038276412552",
+        "address": "george street, husrtville, NSW 2220"
+      },
+      "items": [
+        {
+          "id": "honey",
+          "name": "Flower Honey 1kg",
+          "category": "Pantry",
+          "price": 10,
+          "image": "/products/Honey.webp",
+          "badge": "Popular",
+          "description": "Natural flower honey for tea, toast and desserts.",
+          "stock": 18,
+          "qty": 1
+        }
+      ],
+      "subtotal": 10,
+      "delivery": 8.99,
+      "total": 18.990000000000002,
+      "deliveryMethod": "standard",
+      "paymentStatus": "Paid (Demo)",
+      "orderStatus": "Received",
+      "createdAt": "2026-07-13T09:17:30.730Z"
+    },
+    {
+      "id": "DEMO-1784085487416",
+      "customer": {
+        "name": "Tejaswee Bhetwal",
+        "email": "tejasweebhetwal1@gmail.com",
+        "phone": "0415261114",
+        "address": "U 1002 23-31 Treacy Street Hurstville NSW 2220, Sydney, NSW 2220"
+      },
+      "items": [
+        {
+          "id": "tahini",
+          "name": "Premium Pure Tahini 750g",
+          "category": "Pantry",
+          "price": 10.5,
+          "oldPrice": 12.5,
+          "image": "/tahini.jpeg",
+          "badge": "Sale",
+          "description": "Smooth sesame tahini for dips, sauces and breakfast.",
+          "stock": 25,
+          "qty": 1
+        }
+      ],
+      "subtotal": 10.5,
+      "delivery": 8.99,
+      "total": 19.490000000000002,
+      "deliveryMethod": "standard",
+      "paymentStatus": "Paid (Demo)",
+      "orderStatus": "Received",
+      "createdAt": "2026-07-15T03:18:07.417Z"
+    },
+    {
+      "id": "DEMO-1784085602630",
+      "customer": {
+        "name": "Tejaswee Bhetwal",
+        "email": "tejasweebhetwal1@gmail.com",
+        "phone": "0415261114",
+        "address": "U 1002 23-31 Treacy Street Hurstville NSW 2220, Sydney, NSW 2220"
+      },
+      "items": [
+        {
+          "id": "tahini",
+          "name": "Premium Pure Tahini 750g",
+          "category": "Pantry",
+          "price": 10.5,
+          "oldPrice": 12.5,
+          "image": "/tahini.jpeg",
+          "badge": "Sale",
+          "description": "Smooth sesame tahini for dips, sauces and breakfast.",
+          "stock": 25,
+          "qty": 1
+        },
+        {
+          "id": "yogurt",
+          "name": "Turkish Style Yogurt 2kg",
+          "category": "Dairy",
+          "price": 7,
+          "image": "/products/Yoghurt.webp",
+          "description": "Thick Turkish-style yogurt for breakfast and cooking.",
+          "stock": 12,
+          "qty": 1
+        }
+      ],
+      "subtotal": 17.5,
+      "delivery": 8.99,
+      "total": 26.490000000000002,
+      "deliveryMethod": "standard",
+      "paymentStatus": "Paid (Demo)",
+      "orderStatus": "Received",
+      "createdAt": "2026-07-15T03:20:02.631Z"
+    }
+  ],
+  "returns": [
+    {
+      "id": "RETURN-1783934273644",
+      "orderId": "DEMO-1783934250730",
+      "productId": "honey",
+      "productName": "Flower Honey 1kg",
+      "quantity": 1,
+      "price": 10,
+      "image": "/products/Honey.webp",
+      "reason": "Damaged",
+      "customer": {
+        "name": "t b",
+        "email": "tb@gmail.com",
+        "phone": "038276412552",
+        "address": "george street, husrtville, NSW 2220"
+      },
+      "status": "Requested",
+      "createdAt": "2026-07-13T09:17:53.644Z"
     }
   ]
 }
