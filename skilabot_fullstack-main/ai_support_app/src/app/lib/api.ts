@@ -1,5 +1,6 @@
 const API_BASE =
-  (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:4000";
+  (import.meta as any).env?.VITE_API_BASE_URL ||
+  "http://localhost:4000";
 
 export type ApiUser = {
   id: string;
@@ -71,21 +72,83 @@ export type ApiSummary = {
   recentConversations?: ApiConversation[];
 };
 
+export type ApiOrderItem = {
+  id: string;
+  name: string;
+  category?: string;
+  price: number;
+  qty: number;
+  image?: string;
+};
+
+export type ApiOrder = {
+  id: string;
+  customer: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+  };
+  items: ApiOrderItem[];
+  subtotal: number;
+  delivery: number;
+  total: number;
+  deliveryMethod?: string;
+  paymentStatus?: string;
+  orderStatus?: string;
+  createdAt: string;
+};
+
+export type ReturnStatus =
+  | "Requested"
+  | "Approved"
+  | "Rejected"
+  | "Completed";
+
+export type ApiReturn = {
+  id: string;
+  orderId: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  price: number;
+  image?: string;
+  reason: string;
+  status: ReturnStatus;
+  customer?: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+  };
+  createdAt: string;
+  updatedAt?: string;
+};
+
 export function getToken() {
   return localStorage.getItem("skilabot_token");
 }
 
 export function getUser(): ApiUser | null {
   try {
-    return JSON.parse(localStorage.getItem("skilabot_user") || "null");
+    return JSON.parse(
+      localStorage.getItem("skilabot_user") || "null"
+    );
   } catch {
     return null;
   }
 }
 
-export function saveSession(token: string, user: ApiUser) {
+export function saveSession(
+  token: string,
+  user: ApiUser
+) {
   localStorage.setItem("skilabot_token", token);
-  localStorage.setItem("skilabot_user", JSON.stringify(user));
+
+  localStorage.setItem(
+    "skilabot_user",
+    JSON.stringify(user)
+  );
 }
 
 export function clearSession() {
@@ -104,21 +167,34 @@ async function request<T>(
   const token = getToken();
 
   if (token) {
-    headers.set("Authorization", `Bearer ${token}`);
+    headers.set(
+      "Authorization",
+      `Bearer ${token}`
+    );
   }
 
-  const res = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers,
-  });
+  let response: Response;
 
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
+  try {
+    response = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers,
+    });
+  } catch {
     throw new Error(
-      (data as any).error ||
-        (data as any).message ||
-        "Request failed"
+      "Could not connect to the backend. Make sure it is running on port 4000."
+    );
+  }
+
+  const data = await response
+    .json()
+    .catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(
+      (data as any).message ||
+        (data as any).error ||
+        `Request failed with status ${response.status}`
     );
   }
 
@@ -127,46 +203,191 @@ async function request<T>(
 
 export const api = {
   requestOtp: (email: string) =>
-    request<{ ok: boolean; message: string }>("/api/auth/request-otp", {
+    request<{
+      ok: boolean;
+      message: string;
+    }>("/api/auth/request-otp", {
       method: "POST",
       body: JSON.stringify({ email }),
     }),
-    
 
-  signup: (name: string, email: string, password: string, otp?: string) =>
-  request<{ token: string; user: ApiUser }>("/api/auth/signup", {
-    method: "POST",
-    body: JSON.stringify({ name, email, password, otp }),
-  }),
-
-  login: (email: string, password: string) =>
-    request<{ token: string; user: ApiUser }>("/api/auth/login", {
+  signup: (
+    name: string,
+    email: string,
+    password: string,
+    otp?: string
+  ) =>
+    request<{
+      token: string;
+      user: ApiUser;
+    }>("/api/auth/signup", {
       method: "POST",
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+        otp,
+      }),
+    }),
+
+  login: (
+    email: string,
+    password: string
+  ) =>
+    request<{
+      token: string;
+      user: ApiUser;
+    }>("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({
+        email,
+        password,
+      }),
     }),
 
   forgot: (email: string) =>
-    request<{ ok: boolean; message: string }>("/api/auth/forgot", {
+    request<{
+      ok: boolean;
+      message: string;
+    }>("/api/auth/forgot", {
       method: "POST",
       body: JSON.stringify({ email }),
     }),
 
-  adminLogin: (email: string, password: string) =>
-    request<{ token: string; user: ApiUser }>("/api/admin/login", {
+  adminLogin: (
+    email: string,
+    password: string
+  ) =>
+    request<{
+      token: string;
+      user: ApiUser;
+    }>("/api/admin/login", {
       method: "POST",
-      body: JSON.stringify({ email, password }),
-      
+      body: JSON.stringify({
+        email,
+        password,
+      }),
     }),
-      getReturnItems: (orderId: string) =>
+
+  conversations: () =>
+    request<ApiConversation[]>(
+      "/api/conversations"
+    ),
+
+  newConversation: (
+    title = "New conversation"
+  ) =>
+    request<ApiConversation>(
+      "/api/conversations",
+      {
+        method: "POST",
+        body: JSON.stringify({ title }),
+      }
+    ),
+
+  deleteConversation: (id: string) =>
+    request<{ ok: boolean }>(
+      `/api/conversations/${encodeURIComponent(id)}`,
+      {
+        method: "DELETE",
+      }
+    ),
+
+  chat: async (
+    message: string,
+    conversationId?: string | number
+  ) => {
+    if (!conversationId) {
+      throw new Error(
+        "Conversation ID is required"
+      );
+    }
+
+    const data = await request<{
+      userMessage?: ApiMessage;
+      botMessage?: ApiMessage;
+      reply?: ApiMessage;
+      conversation: ApiConversation;
+    }>(
+      `/api/conversations/${encodeURIComponent(
+        String(conversationId)
+      )}/messages`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          text: message,
+        }),
+      }
+    );
+
+    return {
+      conversation: data.conversation,
+      reply:
+        data.reply ||
+        data.botMessage!,
+    };
+  },
+
+  createLead: (
+    email: string,
+    source = "landing",
+    extra?: Record<string, string>
+  ) =>
+    request("/api/leads", {
+      method: "POST",
+      body: JSON.stringify({
+        email,
+        source,
+        ...extra,
+      }),
+    }),
+
+  createOrder: (order: any) =>
+    request<{
+      ok: boolean;
+      message: string;
+      order: ApiOrder;
+    }>("/api/orders", {
+      method: "POST",
+      body: JSON.stringify(order),
+    }),
+
+  trackOrder: (orderId: string) =>
+    request<{
+      ok: boolean;
+      order: ApiOrder;
+    }>(
+      `/api/orders/${encodeURIComponent(
+        orderId.trim()
+      )}`
+    ),
+
+  customerOrders: (email: string) =>
+    request<{
+      ok: boolean;
+      orders: ApiOrder[];
+    }>(
+      `/api/customer/orders?email=${encodeURIComponent(
+        email.trim()
+      )}`
+    ),
+
+  getReturnItems: (orderId: string) =>
     request<{
       ok: boolean;
       order: {
         id: string;
         orderStatus?: string;
+        paymentStatus?: string;
+        deliveryMethod?: string;
         customer?: any;
-        items: any[];
+        items: ApiOrderItem[];
       };
-    }>(`/api/orders/${encodeURIComponent(orderId)}/return-items`),
+    }>(
+      `/api/orders/${encodeURIComponent(
+        orderId.trim()
+      )}/return-items`
+    ),
 
   createReturn: (data: {
     orderId: string;
@@ -176,114 +397,120 @@ export const api = {
     request<{
       ok: boolean;
       message: string;
-      returnRequest: any;
+      returnRequest: ApiReturn;
     }>("/api/returns", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
-  adminReturns: () =>
-    request<any[]>("/api/admin/returns"),
-
-  // Conversations
-  conversations: () =>
-    request<ApiConversation[]>("/api/conversations"),
-
-  newConversation: (title = "New conversation") =>
-    request<ApiConversation>("/api/conversations", {
-      method: "POST",
-      body: JSON.stringify({ title }),
-    }),
-
-  deleteConversation: (id: string) =>
-    request<{ ok: boolean }>(`/api/conversations/${id}`, {
-      method: "DELETE",
-    }),
-
-  // IMPORTANT FIXED CHAT FUNCTION
-  chat: async (message: string, conversationId?: string | number) => {
-    if (!conversationId) {
-      throw new Error("Conversation ID is required");
-    }
-
-    const data = await request<{
-      userMessage?: ApiMessage;
-      botMessage?: ApiMessage;
-      reply?: ApiMessage;
-      conversation: ApiConversation;
-    }>(`/api/conversations/${conversationId}/messages`, {
-      method: "POST",
-      body: JSON.stringify({ text: message }),
-    });
-
-    return {
-      conversation: data.conversation,
-      reply: data.reply || data.botMessage!,
-    };
-  },
-
-  // Leads
-  createLead: (
-    email: string,
-    source = "landing",
-    extra?: Record<string, string>
-  ) =>
-    request("/api/leads", {
-      method: "POST",
-      body: JSON.stringify({ email, source, ...extra }),
-    }),
-
-  // Admin
   adminSummary: () =>
-    request<ApiSummary>("/api/admin/summary"),
+    request<ApiSummary>(
+      "/api/admin/summary"
+    ),
 
   adminUsers: () =>
-    request<ApiUser[]>("/api/admin/users"),
+    request<ApiUser[]>(
+      "/api/admin/users"
+    ),
 
   adminLeads: () =>
-    request("/api/admin/leads"),
+    request<any[]>(
+      "/api/admin/leads"
+    ),
 
   adminExportUrl: () =>
     `${API_BASE}/api/admin/export`,
 
   adminSettings: () =>
-    request<ApiSettings>("/api/admin/settings"),
+    request<ApiSettings>(
+      "/api/admin/settings"
+    ),
 
-  saveSettings: (settings: ApiSettings) =>
-    request<ApiSettings>("/api/admin/settings", {
-      method: "PUT",
-      body: JSON.stringify(settings),
-    }),
+  saveSettings: (
+    settings: ApiSettings
+  ) =>
+    request<ApiSettings>(
+      "/api/admin/settings",
+      {
+        method: "PUT",
+        body: JSON.stringify(settings),
+      }
+    ),
 
   adminConversations: () =>
-    request<ApiConversation[]>("/api/admin/conversations"),
+    request<ApiConversation[]>(
+      "/api/admin/conversations"
+    ),
 
-  adminDeleteConversation: (id: string) =>
-    request<{ ok: boolean }>(`/api/admin/conversations/${id}`, {
-      method: "DELETE",
-    }),
+  adminDeleteConversation: (
+    id: string
+  ) =>
+    request<{ ok: boolean }>(
+      `/api/admin/conversations/${encodeURIComponent(
+        id
+      )}`,
+      {
+        method: "DELETE",
+      }
+    ),
 
-  adminGetConversation: (id: string) =>
-    request<ApiConversation>(`/api/admin/conversations/${id}`),
+  adminGetConversation: (
+    id: string
+  ) =>
+    request<ApiConversation>(
+      `/api/admin/conversations/${encodeURIComponent(
+        id
+      )}`
+    ),
 
   adminChatLogs: () =>
-    request("/api/admin/chat-logs"),
+    request<any[]>(
+      "/api/admin/chat-logs"
+    ),
 
-  messageFeedback: (messageId: string | number, helpful: boolean) =>
-    request<{ ok: boolean }>(`/api/messages/${messageId}/feedback`, {
-      method: "POST",
-      body: JSON.stringify({ helpful }),
-    }),
-      createOrder: (order: any) =>
-    request<{ ok: boolean; order: any }>("/api/orders", {
-      method: "POST",
-      body: JSON.stringify(order),
-    }),
-    trackOrder: (orderId: string) =>
-    request<{ ok: boolean; order: any }>(
-      `/api/orders/${encodeURIComponent(orderId)}`
+  messageFeedback: (
+    messageId: string | number,
+    helpful: boolean
+  ) =>
+    request<{ ok: boolean }>(
+      `/api/messages/${encodeURIComponent(
+        String(messageId)
+      )}/feedback`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          helpful,
+        }),
+      }
     ),
 
   adminOrders: () =>
-    request<any[]>("/api/admin/orders"),
+    request<ApiOrder[]>(
+      "/api/admin/orders"
+    ),
+
+  adminReturns: () =>
+    request<ApiReturn[]>(
+      "/api/admin/returns"
+    ),
+
+  updateReturnStatus: (
+    returnId: string,
+    status: ReturnStatus
+  ) =>
+    request<{
+      ok: boolean;
+      message: string;
+      returnRequest: ApiReturn;
+    }>(
+      `/api/admin/returns/${encodeURIComponent(
+        returnId
+      )}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          status,
+        }),
+      }
+    ),
 };

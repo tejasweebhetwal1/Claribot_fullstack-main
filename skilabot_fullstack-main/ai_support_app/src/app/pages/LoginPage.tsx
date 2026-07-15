@@ -163,7 +163,7 @@ export default function LoginPage() {
           : await api.login(email.trim().toLowerCase(), password);
 
       saveSession(session.token, session.user);
-      navigate("/shop");
+      navigate("/account");
     } catch (err: any) {
       setError(err.message || "Something went wrong.");
     } finally {

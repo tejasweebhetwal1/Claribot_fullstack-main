@@ -932,6 +932,123 @@
       "paymentStatus": "Paid (Demo)",
       "orderStatus": "Received",
       "createdAt": "2026-07-15T03:20:02.631Z"
+    },
+    {
+      "id": "DEMO-1784088213044",
+      "customer": {
+        "name": "Tejaswee Bhetwal",
+        "email": "tejasweebhetwal1@gmail.com",
+        "phone": "0415261114",
+        "address": "U 1002 23-31 Treacy Street Hurstville NSW 2220, Sydney, NSW 2220"
+      },
+      "items": [
+        {
+          "id": "yogurt",
+          "name": "Turkish Style Yogurt 2kg",
+          "category": "Dairy",
+          "price": 7,
+          "image": "/products/Yoghurt.webp",
+          "description": "Thick Turkish-style yogurt for breakfast and cooking.",
+          "stock": 12,
+          "qty": 1
+        }
+      ],
+      "subtotal": 7,
+      "delivery": 8.99,
+      "total": 15.99,
+      "deliveryMethod": "standard",
+      "paymentStatus": "Paid (Demo)",
+      "orderStatus": "Received",
+      "createdAt": "2026-07-15T04:03:33.044Z"
+    },
+    {
+      "id": "DEMO-1784090728212",
+      "customer": {
+        "name": "Tejaswee Bhetwal",
+        "email": "tejasweebhetwal1@gmail.com",
+        "phone": "0415261114",
+        "address": "U 1002 23-31 Treacy Street Hurstville NSW 2220, Sydney, NSW 2220"
+      },
+      "items": [
+        {
+          "id": "sucuk",
+          "name": "Halal Beef Sucuk 500g",
+          "category": "Halal Meat",
+          "price": 13.6,
+          "oldPrice": 15,
+          "image": "/products/sucuk.jpg",
+          "badge": "Halal",
+          "description": "Spiced halal beef sucuk sausage.",
+          "stock": 9,
+          "qty": 1
+        }
+      ],
+      "subtotal": 13.6,
+      "delivery": 8.99,
+      "total": 22.59,
+      "deliveryMethod": "standard",
+      "paymentStatus": "Paid (Demo)",
+      "orderStatus": "Received",
+      "createdAt": "2026-07-15T04:45:28.212Z"
+    },
+    {
+      "id": "DEMO-1784090763960",
+      "customer": {
+        "name": "Tejaswee Bhetwal",
+        "email": "tejasweebhetwal1@gmail.com",
+        "phone": "0415261114",
+        "address": "U 1002 23-31 Treacy Street Hurstville NSW 2220, Sydney, NSW 2220"
+      },
+      "items": [
+        {
+          "id": "honey",
+          "name": "Flower Honey 1kg",
+          "category": "Pantry",
+          "price": 10,
+          "image": "/products/Honey.webp",
+          "badge": "Popular",
+          "description": "Natural flower honey for tea, toast and desserts.",
+          "stock": 18,
+          "qty": 1
+        }
+      ],
+      "subtotal": 10,
+      "delivery": 8.99,
+      "total": 18.990000000000002,
+      "deliveryMethod": "standard",
+      "paymentStatus": "Paid (Demo)",
+      "orderStatus": "Received",
+      "createdAt": "2026-07-15T04:46:03.960Z"
+    },
+    {
+      "id": "DEMO-1784090849421",
+      "customer": {
+        "name": "Tejaswee Bhetwal",
+        "email": "mukesh55@gmail.com",
+        "phone": "0415261114",
+        "address": "U 1002 23-31 Treacy Street Hurstville NSW 2220, Sydney, NSW 2220"
+      },
+      "items": [
+        {
+          "id": "tahini",
+          "name": "Premium Pure Tahini 750g",
+          "category": "Pantry",
+          "price": 10.5,
+          "oldPrice": 12.5,
+          "image": "/tahini.jpeg",
+          "badge": "Sale",
+          "description": "Smooth sesame tahini for dips, sauces and breakfast.",
+          "stock": 25,
+          "qty": 1
+        }
+      ],
+      "subtotal": 10.5,
+      "delivery": 8.99,
+      "total": 19.490000000000002,
+      "deliveryMethod": "standard",
+      "paymentStatus": "Paid (Demo)",
+      "orderStatus": "Received",
+      "createdAt": "2026-07-15T04:47:29.421Z"
     }
   ],
   "returns": [
@@ -952,6 +1069,24 @@
       },
       "status": "Requested",
       "createdAt": "2026-07-13T09:17:53.644Z"
+    },
+    {
+      "id": "RETURN-1784088243326",
+      "orderId": "DEMO-1784088213044",
+      "productId": "yogurt",
+      "productName": "Turkish Style Yogurt 2kg",
+      "quantity": 1,
+      "price": 7,
+      "image": "/products/Yoghurt.webp",
+      "reason": "damaged",
+      "customer": {
+        "name": "Tejaswee Bhetwal",
+        "email": "tejasweebhetwal1@gmail.com",
+        "phone": "0415261114",
+        "address": "U 1002 23-31 Treacy Street Hurstville NSW 2220, Sydney, NSW 2220"
+      },
+      "status": "Requested",
+      "createdAt": "2026-07-15T04:04:03.326Z"
     }
   ]
 }
