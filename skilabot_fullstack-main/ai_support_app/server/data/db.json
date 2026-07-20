@@ -548,6 +548,54 @@
       ],
       "createdAt": "2026-07-13T08:42:14.228Z",
       "updatedAt": "2026-07-13T08:42:14.239Z"
+    },
+    {
+      "id": "1784430713624",
+      "userId": "guest",
+      "title": "ClariMart website support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1784430713639",
+          "role": "user",
+          "text": "DEMO-1784430679562",
+          "createdAt": "2026-07-19T03:11:53.639Z"
+        },
+        {
+          "id": "1784430713641",
+          "role": "bot",
+          "text": "I can help with products, delivery, checkout, order tracking and returns.",
+          "recommendedProducts": [],
+          "createdAt": "2026-07-19T03:11:53.640Z"
+        }
+      ],
+      "createdAt": "2026-07-19T03:11:53.624Z",
+      "updatedAt": "2026-07-19T03:11:53.640Z"
+    },
+    {
+      "id": "1784430721283",
+      "userId": "guest",
+      "title": "ClariMart website support",
+      "status": "open",
+      "sentiment": "neutral",
+      "messages": [
+        {
+          "id": "1784430721296",
+          "role": "user",
+          "text": "return",
+          "createdAt": "2026-07-19T03:12:01.296Z"
+        },
+        {
+          "id": "1784430721297",
+          "role": "bot",
+          "text": "Select Returns / Refunds, enter your order number and choose the exact item.",
+          "recommendedProducts": [],
+          "createdAt": "2026-07-19T03:12:01.296Z"
+        }
+      ],
+      "createdAt": "2026-07-19T03:12:01.283Z",
+      "updatedAt": "2026-07-19T03:12:01.296Z"
     }
   ],
   "leads": [
@@ -597,9 +645,9 @@
     },
     {
       "email": "tejasweebhetwal1@gmail.com",
-      "otp": "336505",
-      "expiresAt": 1784117768230,
-      "createdAt": "2026-07-15T12:06:08.230Z"
+      "otp": "800088",
+      "expiresAt": 1784431599966,
+      "createdAt": "2026-07-19T03:16:39.967Z"
     }
   ],
   "orders": [
@@ -1049,6 +1097,106 @@
       "paymentStatus": "Paid (Demo)",
       "orderStatus": "Received",
       "createdAt": "2026-07-15T04:47:29.421Z"
+    },
+    {
+      "id": "DEMO-1784430679562",
+      "customer": {
+        "name": "Tejaswee Bhetwal",
+        "email": "tejasweebhetwal1@gmail.com",
+        "phone": "0415261114",
+        "address": "U 1002 23-31 Treacy Street Hurstville NSW 2220, Sydney, NSW 2220"
+      },
+      "items": [
+        {
+          "id": "sucuk",
+          "name": "Halal Beef Sucuk 500g",
+          "category": "Halal Meat",
+          "price": 13.6,
+          "oldPrice": 15,
+          "image": "/products/sucuk.jpg",
+          "badge": "Halal",
+          "description": "Spiced halal beef sucuk sausage.",
+          "stock": 9,
+          "qty": 1
+        },
+        {
+          "id": "honey",
+          "name": "Flower Honey 1kg",
+          "category": "Pantry",
+          "price": 10,
+          "image": "/products/Honey.webp",
+          "badge": "Popular",
+          "description": "Natural flower honey for tea, toast and desserts.",
+          "stock": 18,
+          "qty": 1
+        },
+        {
+          "id": "turkish-delight",
+          "name": "Rose Turkish Delight 250g",
+          "category": "Sweets",
+          "price": 5,
+          "image": "/products/Turkish Delight.webp",
+          "description": "Soft rose flavoured Turkish delight.",
+          "stock": 40,
+          "qty": 1
+        }
+      ],
+      "subtotal": 28.6,
+      "delivery": 8.99,
+      "total": 37.59,
+      "deliveryMethod": "standard",
+      "paymentStatus": "Paid (Demo)",
+      "orderStatus": "Received",
+      "createdAt": "2026-07-19T03:11:19.562Z"
+    },
+    {
+      "id": "DEMO-1784431072318",
+      "customer": {
+        "name": "Tejaswee Bhetwal",
+        "email": "tejasweebhetwal1@gmail.com",
+        "phone": "0415261114",
+        "address": "U 1002 23-31 Treacy Street Hurstville NSW 2220, Sydney, NSW 2220"
+      },
+      "items": [
+        {
+          "id": "yogurt",
+          "name": "Turkish Style Yogurt 2kg",
+          "category": "Dairy",
+          "price": 7,
+          "image": "/products/Yoghurt.webp",
+          "description": "Thick Turkish-style yogurt for breakfast and cooking.",
+          "stock": 12,
+          "qty": 1
+        },
+        {
+          "id": "olive-oil",
+          "name": "Extra Virgin Olive Oil 1L",
+          "category": "Pantry",
+          "price": 14.95,
+          "image": "/products/Olive Oil.avif",
+          "description": "Rich olive oil for salads, cooking and dips.",
+          "stock": 16,
+          "qty": 1
+        },
+        {
+          "id": "honey",
+          "name": "Flower Honey 1kg",
+          "category": "Pantry",
+          "price": 10,
+          "image": "/products/Honey.webp",
+          "badge": "Popular",
+          "description": "Natural flower honey for tea, toast and desserts.",
+          "stock": 18,
+          "qty": 1
+        }
+      ],
+      "subtotal": 31.95,
+      "delivery": 8.99,
+      "total": 40.94,
+      "deliveryMethod": "standard",
+      "paymentStatus": "Paid (Demo)",
+      "orderStatus": "Received",
+      "createdAt": "2026-07-19T03:17:52.318Z"
     }
   ],
   "returns": [
@@ -1088,5 +1236,14 @@
       "status": "Requested",
       "createdAt": "2026-07-15T04:04:03.326Z"
     }
-  ]
+  ],
+  "settings": {
+    "businessName": "ClariMart",
+    "escalationEmail": "admin@clarimart.com",
+    "botTone": "Friendly and concise",
+    "retentionDays": 90,
+    "confidenceThreshold": 85,
+    "maxTurns": 8,
+    "slackWebhook": ""
+  }
 }
